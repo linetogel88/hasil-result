@@ -657,6 +657,23 @@
       animation:copyButtonPop .42s ease;
     }
     .copy-btn.copied svg{transform:scale(1.15)}
+
+    /* Paksa semua jenis kartu memakai efek hijau yang sama.
+       Sebelumnya aturan .card.multi .copy-btn memiliki specificity lebih tinggi,
+       sehingga tombol 3-prize tetap terlihat ungu walau statusnya TERSALIN. */
+    .copy-btn.copied,
+    .copy-btn.copied:hover,
+    .card.multi .copy-btn.copied,
+    .card.multi .copy-btn.copied:hover{
+      color:#dffff0;
+      border-color:rgba(62,226,144,.62);
+      background:linear-gradient(135deg,rgba(26,153,94,.98),rgba(20,111,82,.98));
+      box-shadow:
+        0 0 0 3px rgba(58,224,145,.12),
+        0 0 28px rgba(48,216,136,.42),
+        0 0 0 1px rgba(120,255,180,.24) inset;
+    }
+
     .card.copy-success{
       border-color:rgba(62,226,144,.50);
       box-shadow:
