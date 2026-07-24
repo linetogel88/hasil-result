@@ -811,7 +811,7 @@
               <span id="dateDisplay">Pilih tanggal</span>
               <svg class="date-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 10 5 5 5-5"></path></svg>
             </button>
-            <input id="dateFilter" type="hidden">
+            <input id="dateFilter" type="hidden" value="">
             <div class="date-menu" id="dateMenu" role="listbox" aria-label="Pilih data maksimal 7 hari"></div>
           </div>
           <button class="today-btn" id="todayBtn" type="button">◉ HARI INI</button>
@@ -1590,26 +1590,95 @@
       }).join('');
     }
 
+    function clearDisplayedResults(){
+      allResults=[];
+      lastDataSignature='';
+      confirmedEmptyCycles=0;
+      els.grid.innerHTML='';
+      updateCounts();
+      els.grid.classList.add('hidden');
+    }
+
+    function showNoResultForDate(dateKey){
+      clearDisplayedResults();
+      currentDataMode='snapshot';
+      currentSnapshotDate=dateKey;
+
+      const info=formatDateOption(dateKey);
+      showState(
+        'Belum ada hasil result di tanggal ini',
+        `Belum ada hasil result untuk ${info.dayName}, ${info.fullDate}.`
+      );
+    }
+
+    function setSelectedDateDisplay(dateKey){
+      els.dateFilter.value=dateKey;
+      els.dateDisplay.textContent=prettyDate(dateKey);
+      renderDateMenu();
+    }
+
+    function resetDateSelectionToToday(){
+      const today=dashboardMeta.today||getWibTodayKey();
+
+      clearTimeout(copiedResetTimer);
+      copiedMarketId='';
+      copiedUntil=0;
+      resetAllCopyVisuals();
+
+      currentDataMode='live';
+      currentSnapshotDate='';
+      setSelectedDateDisplay(today);
+      closeDateMenu();
+
+      return today;
+    }
+
     async function selectDashboardDate(value,{silent=false}={}){
       if(!value)return;
 
-      els.dateFilter.value=value;
-      els.dateDisplay.textContent=prettyDate(value);
-      closeDateMenu();
-      renderDateMenu();
+      const today=dashboardMeta.today||getWibTodayKey();
 
-      if(!dashboardMeta.today||value===dashboardMeta.today){
-        if(dashboardMeta.todayLocked&&dashboardMeta.today){
-          await loadStoredSnapshot(dashboardMeta.today,{silent});
+      setSelectedDateDisplay(value);
+      closeDateMenu();
+
+      // Setiap pergantian tanggal langsung membersihkan tampilan tanggal lama,
+      // supaya kartu hari ini tidak terlihat saat pengguna memilih tanggal lain.
+      clearTimeout(copiedResetTimer);
+      copiedMarketId='';
+      copiedUntil=0;
+      resetAllCopyVisuals();
+      clearDisplayedResults();
+
+      if(value===today){
+        currentDataMode='live';
+        currentSnapshotDate='';
+
+        if(dashboardMeta.todayLocked){
+          const found=await loadStoredSnapshot(today,{silent:true});
+          if(!found)showNoResultForDate(today);
         }else{
-          currentDataMode='live';
-          currentSnapshotDate='';
           await loadSheetData({silent:true});
+
+          if(!allResults.length){
+            showNoResultForDate(today);
+          }
         }
         return;
       }
 
-      await loadStoredSnapshot(value,{silent});
+      currentDataMode='snapshot';
+      currentSnapshotDate=value;
+
+      // Bila metadata sudah menyatakan tanggal belum tersimpan,
+      // tampilkan pesan kosong secara langsung tanpa menunggu server.
+      const available=new Set(dashboardMeta.availableDates||[]);
+      if(!available.has(value)){
+        showNoResultForDate(value);
+        return;
+      }
+
+      const found=await loadStoredSnapshot(value,{silent:true});
+      if(!found)showNoResultForDate(value);
     }
 
     function selectedDateKey(){
@@ -1635,10 +1704,7 @@
       try{
         const response=await serverCall('getStoredSnapshot',dateKey);
         if(!response?.found){
-          if(!silent)showToast(`Data tanggal ${dateKey} belum tersimpan.`,'error');
-          if(els.dateFilter.value){
-            showState('Data belum tersedia','Belum ada data tersimpan untuk tanggal yang dipilih.');
-          }
+          showNoResultForDate(dateKey);
           return false;
         }
 
@@ -1646,6 +1712,11 @@
         currentDataMode='snapshot';
         currentSnapshotDate=dateKey;
         applyWallpaper(response.wallpaper||dashboardMeta.wallpaper||'');
+
+        if(!parsed.length){
+          showNoResultForDate(dateKey);
+          return false;
+        }
 
         allResults=parsed;
         lastDataSignature=dataSignature(parsed);
@@ -1682,10 +1753,10 @@
         updateDateLimits(dashboardMeta);
 
         if(!els.dateFilter.value&&dashboardMeta.today){
-          els.dateFilter.value=dashboardMeta.today;
-          els.dateDisplay.textContent=prettyDate(dashboardMeta.today);
+          setSelectedDateDisplay(dashboardMeta.today);
+        }else{
+          renderDateMenu();
         }
-        renderDateMenu();
 
         const selected=els.dateFilter.value;
 
@@ -2070,8 +2141,16 @@
     });
 
     els.todayBtn.addEventListener('click',async()=>{
-      const value=dashboardMeta.today||getWibTodayKey();
-      await selectDashboardDate(value,{silent:false});
+      const today=resetDateSelectionToToday();
+      clearDisplayedResults();
+
+      if(dashboardMeta.todayLocked){
+        const found=await loadStoredSnapshot(today,{silent:true});
+        if(!found)showNoResultForDate(today);
+      }else{
+        await loadSheetData({silent:true});
+        if(!allResults.length)showNoResultForDate(today);
+      }
     });
     els.newest.addEventListener('click',()=>{
       activeSort='newest';
@@ -2086,6 +2165,23 @@
       renderResults();
     });
 
+    window.addEventListener('pageshow',event=>{
+      if(!event.persisted)return;
+
+      const today=resetDateSelectionToToday();
+      clearDisplayedResults();
+
+      if(dashboardMeta.todayLocked){
+        loadStoredSnapshot(today,{silent:true}).then(found=>{
+          if(!found)showNoResultForDate(today);
+        });
+      }else{
+        loadSheetData({silent:true}).then(()=>{
+          if(!allResults.length)showNoResultForDate(today);
+        });
+      }
+    });
+
     document.addEventListener('visibilitychange',()=>{
       if(document.hidden)return;
       if(isGoogleWebApp())loadDashboardMeta({silent:true});
@@ -2098,18 +2194,37 @@
     updateLastUpdateText(new Date());
     setInterval(()=>updateLastUpdateText(new Date()),1000);
 
-    // Data live tetap diperiksa cepat dari Google Sheet.
-    loadSheetData();
+    async function initializeDashboard(){
+      // Browser kadang memulihkan nilai input sebelum F5.
+      // Nilai tersebut selalu dikosongkan dan dashboard kembali ke hari ini.
+      els.dateFilter.value='';
+      const fallbackToday=getWibTodayKey();
+      setSelectedDateDisplay(fallbackToday);
+      currentDataMode='live';
+      currentSnapshotDate='';
 
-    // Metadata database, status kunci, wallpaper, dan arsip 7 hari
-    // diperiksa berkala tanpa menampilkan loading.
-    if(isGoogleWebApp()){
-      loadDashboardMeta({silent:true});
+      if(isGoogleWebApp()){
+        await loadDashboardMeta({silent:true});
+      }
+
+      const today=dashboardMeta.today||fallbackToday;
+      setSelectedDateDisplay(today);
+
+      if(dashboardMeta.todayLocked){
+        const found=await loadStoredSnapshot(today,{silent:true});
+        if(!found)showNoResultForDate(today);
+      }else{
+        await loadSheetData({silent:true});
+        if(!allResults.length)showNoResultForDate(today);
+      }
+
+      await loadWallpaperDirectFromSheet();
     }
+
+    initializeDashboard();
 
     // Baca Background!A2 langsung dari Google Sheet publik.
     // Ini membuat wallpaper tetap update walaupun metadata server terlambat.
-    loadWallpaperDirectFromSheet();
     wallpaperPollTimer=setInterval(()=>{
       if(!document.hidden)loadWallpaperDirectFromSheet();
     },5000);
