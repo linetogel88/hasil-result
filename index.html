@@ -68,12 +68,6 @@
       filter:blur(var(--wallpaper-blur));
       transform:scale(1.04);
       z-index:0;
-      animation:orbDrift 18s ease-in-out infinite alternate;
-    }
-
-    @keyframes orbDrift{
-      0%{transform:translate(0,0)}
-      100%{transform:translate(-20px,15px)}
     }
 
     /* Vignette + grain overlay */
@@ -961,6 +955,12 @@
     let currentSnapshotDate = '';
     let appliedWallpaperUrl = null;
 
+    // Menyimpan status tombol yang terakhir berhasil disalin.
+    // Status ini tetap dipakai saat kartu dirender ulang oleh update realtime.
+    let copiedMarketId = '';
+    let copiedUntil = 0;
+    let copiedResetTimer = null;
+
     // Menyimpan urutan pertama kali setiap pasaran muncul lengkap.
     // Pasaran yang muncul lebih dulu akan tetap berada di atas.
     // Pasaran baru berikutnya otomatis ditambahkan di bawah tanpa
@@ -1094,6 +1094,11 @@
         .map(line=>line.trim())
         .filter(line=>line.length)
         .join('\n');
+    }
+
+    if(!window.CSS)window.CSS={};
+    if(!CSS.escape){
+      CSS.escape=value=>String(value).replace(/[^a-zA-Z0-9_-]/g,char=>`\\${char}`);
     }
 
     function escapeHtml(value=''){
@@ -1739,13 +1744,18 @@
     }
 
     function cardTemplate(item){
+      const isCopied=item.id===copiedMarketId&&Date.now()<copiedUntil;
+      const copyIcon=isCopied
+        ? '<path d="m5 12 4 4L19 6"></path>'
+        : '<rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>';
+
       return `
-        <article class="card ${item.isMulti?'multi':''}">
+        <article class="card ${item.isMulti?'multi':''} ${isCopied?'copy-success':''}">
           <h2 class="card-title">${escapeHtml(item.market)}</h2>
           <div class="card-text">${(item.localizedLines||item.lines.map(localizeDateLanguage)).map(escapeHtml).join('\n')}</div>
-          <button class="copy-btn" type="button" data-copy-id="${escapeHtml(item.id)}">
-            <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-            <span class="copy-label">SALIN</span>
+          <button class="copy-btn ${isCopied?'copied':''}" type="button" data-copy-id="${escapeHtml(item.id)}">
+            <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${copyIcon}</svg>
+            <span class="copy-label">${isCopied?'TERSALIN':'SALIN'}</span>
           </button>
         </article>`;
     }
@@ -1897,32 +1907,53 @@
     }
 
     function showCopySuccess(button,item){
-      const card=button.closest('.card');
-      const label=button.querySelector('.copy-label');
-      const icon=button.querySelector('.copy-icon');
+      copiedMarketId=item.id;
+      copiedUntil=Date.now()+1800;
 
-      button.classList.remove('copied');
-      if(card)card.classList.remove('copy-success');
-      void button.offsetWidth;
+      const applyCurrentButtonEffect=()=>{
+        const currentButton=els.grid.querySelector(
+          `[data-copy-id="${CSS.escape(item.id)}"]`
+        );
+        if(!currentButton)return;
 
-      button.classList.add('copied');
-      if(card)card.classList.add('copy-success');
-      if(label)label.textContent='TERSALIN';
-      if(icon){
-        icon.innerHTML='<path d="m5 12 4 4L19 6"></path>';
-      }
+        const card=currentButton.closest('.card');
+        const label=currentButton.querySelector('.copy-label');
+        const icon=currentButton.querySelector('.copy-icon');
 
+        currentButton.classList.add('copied');
+        if(card)card.classList.add('copy-success');
+        if(label)label.textContent='TERSALIN';
+        if(icon)icon.innerHTML='<path d="m5 12 4 4L19 6"></path>';
+      };
+
+      // Terapkan pada tombol yang diklik dan tombol terbaru jika dashboard
+      // sempat dirender ulang selama proses clipboard.
+      applyCurrentButtonEffect();
       showToast(`Hasil ${item.market} berhasil disalin`);
 
-      clearTimeout(button._copyResetTimer);
-      button._copyResetTimer=setTimeout(()=>{
-        button.classList.remove('copied');
+      clearTimeout(copiedResetTimer);
+      copiedResetTimer=setTimeout(()=>{
+        if(copiedMarketId!==item.id)return;
+
+        copiedMarketId='';
+        copiedUntil=0;
+
+        const currentButton=els.grid.querySelector(
+          `[data-copy-id="${CSS.escape(item.id)}"]`
+        );
+        if(!currentButton)return;
+
+        const card=currentButton.closest('.card');
+        const label=currentButton.querySelector('.copy-label');
+        const icon=currentButton.querySelector('.copy-icon');
+
+        currentButton.classList.remove('copied');
         if(card)card.classList.remove('copy-success');
         if(label)label.textContent='SALIN';
         if(icon){
-          icon.innerHTML='<rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>';
+          icon.innerHTML='<rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2 2v1"></path>';
         }
-      },1500);
+      },1800);
     }
 
     els.grid.addEventListener('click',async event=>{
