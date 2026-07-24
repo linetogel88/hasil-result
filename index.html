@@ -960,6 +960,7 @@
     let copiedMarketId = '';
     let copiedUntil = 0;
     let copiedResetTimer = null;
+    let copiedEffectVersion = 0;
 
     // Menyimpan urutan pertama kali setiap pasaran muncul lengkap.
     // Pasaran yang muncul lebih dulu akan tetap berada di atas.
@@ -1790,6 +1791,16 @@
       els.grid.innerHTML=rows.map(cardTemplate).join('');
       els.state.classList.add('hidden');
       els.grid.classList.remove('hidden');
+
+      // Bila render ulang terjadi saat efek copy masih aktif,
+      // terapkan kembali hanya pada satu tombol yang sedang disalin.
+      if(copiedMarketId&&Date.now()<copiedUntil){
+        applyCopyVisual(copiedMarketId);
+      }else if(copiedMarketId){
+        copiedMarketId='';
+        copiedUntil=0;
+        resetAllCopyVisuals();
+      }
     }
 
     function dataSignature(rows){
@@ -1906,71 +1917,91 @@
       }
     }
 
-    function showCopySuccess(button,item){
-      copiedMarketId=item.id;
-      copiedUntil=Date.now()+1800;
+    function resetAllCopyVisuals(){
+      els.grid.querySelectorAll('.copy-btn').forEach(copyButton=>{
+        copyButton.classList.remove('copied');
+        copyButton.disabled=false;
+        delete copyButton.dataset.copying;
 
-      const applyCurrentButtonEffect=()=>{
-        const currentButton=els.grid.querySelector(
-          `[data-copy-id="${CSS.escape(item.id)}"]`
-        );
-        if(!currentButton)return;
+        const label=copyButton.querySelector('.copy-label');
+        const icon=copyButton.querySelector('.copy-icon');
+        const card=copyButton.closest('.card');
 
-        const card=currentButton.closest('.card');
-        const label=currentButton.querySelector('.copy-label');
-        const icon=currentButton.querySelector('.copy-icon');
-
-        currentButton.classList.add('copied');
-        if(card)card.classList.add('copy-success');
-        if(label)label.textContent='TERSALIN';
-        if(icon)icon.innerHTML='<path d="m5 12 4 4L19 6"></path>';
-      };
-
-      // Terapkan pada tombol yang diklik dan tombol terbaru jika dashboard
-      // sempat dirender ulang selama proses clipboard.
-      applyCurrentButtonEffect();
-      showToast(`Hasil ${item.market} berhasil disalin`);
-
-      clearTimeout(copiedResetTimer);
-      copiedResetTimer=setTimeout(()=>{
-        if(copiedMarketId!==item.id)return;
-
-        copiedMarketId='';
-        copiedUntil=0;
-
-        const currentButton=els.grid.querySelector(
-          `[data-copy-id="${CSS.escape(item.id)}"]`
-        );
-        if(!currentButton)return;
-
-        const card=currentButton.closest('.card');
-        const label=currentButton.querySelector('.copy-label');
-        const icon=currentButton.querySelector('.copy-icon');
-
-        currentButton.classList.remove('copied');
         if(card)card.classList.remove('copy-success');
         if(label)label.textContent='SALIN';
         if(icon){
-          icon.innerHTML='<rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2 2v1"></path>';
+          icon.innerHTML='<rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>';
         }
-      },1800);
+      });
+    }
+
+    function findCopyButtonById(itemId){
+      return [...els.grid.querySelectorAll('[data-copy-id]')]
+        .find(copyButton=>copyButton.dataset.copyId===itemId)||null;
+    }
+
+    function applyCopyVisual(itemId){
+      const currentButton=findCopyButtonById(itemId);
+      if(!currentButton)return;
+
+      const card=currentButton.closest('.card');
+      const label=currentButton.querySelector('.copy-label');
+      const icon=currentButton.querySelector('.copy-icon');
+
+      currentButton.classList.add('copied');
+      if(card)card.classList.add('copy-success');
+      if(label)label.textContent='TERSALIN';
+      if(icon)icon.innerHTML='<path d="m5 12 4 4L19 6"></path>';
+    }
+
+    function showCopySuccess(button,item){
+      clearTimeout(copiedResetTimer);
+
+      // Bersihkan efek tombol sebelumnya terlebih dahulu. Versi lama
+      // menghentikan timer lama tanpa menghapus warna hijau tombol lama,
+      // sehingga beberapa tombol dapat tertinggal hijau.
+      resetAllCopyVisuals();
+
+      copiedEffectVersion+=1;
+      const effectVersion=copiedEffectVersion;
+
+      copiedMarketId=item.id;
+      copiedUntil=Date.now()+1500;
+
+      applyCopyVisual(item.id);
+      showToast(`Hasil ${item.market} berhasil disalin`);
+
+      copiedResetTimer=setTimeout(()=>{
+        if(effectVersion!==copiedEffectVersion)return;
+
+        copiedMarketId='';
+        copiedUntil=0;
+        resetAllCopyVisuals();
+      },1500);
     }
 
     els.grid.addEventListener('click',async event=>{
       const button=event.target.closest('[data-copy-id]');
-      if(!button||button.disabled)return;
+      if(!button||button.dataset.copying==='true')return;
 
       const item=allResults.find(row=>row.id===button.dataset.copyId);
       if(!item)return;
 
-      button.disabled=true;
+      button.dataset.copying='true';
+
       const copiedLines=item.localizedLines||item.lines.map(localizeDateLanguage);
       const success=await copyText(copiedLines.join('\n'));
-      button.disabled=false;
+
+      // Tombol dapat terganti ketika data realtime dirender ulang,
+      // jadi status proses dibersihkan pada elemen lama maupun elemen terbaru.
+      delete button.dataset.copying;
+      const latestButton=findCopyButtonById(item.id);
+      if(latestButton)delete latestButton.dataset.copying;
 
       if(success){
-        showCopySuccess(button,item);
+        showCopySuccess(latestButton||button,item);
       }else{
+        resetAllCopyVisuals();
         showToast('Data gagal disalin. Izinkan akses clipboard browser.','error');
       }
     });
