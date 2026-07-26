@@ -811,7 +811,7 @@
               <span id="dateDisplay">Pilih tanggal</span>
               <svg class="date-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 10 5 5 5-5"></path></svg>
             </button>
-            <input id="dateFilter" type="hidden" value="">
+            <input id="dateFilter" type="hidden">
             <div class="date-menu" id="dateMenu" role="listbox" aria-label="Pilih data maksimal 7 hari"></div>
           </div>
           <button class="today-btn" id="todayBtn" type="button">◉ HARI INI</button>
@@ -862,7 +862,11 @@
     const ARCHIVE_CONFIG = Object.freeze({
       metaRefreshMs:10000,
       serverTimeoutMs:15000,
-      timezone:'Asia/Jakarta'
+      timezone:'Asia/Jakarta',
+
+      // Backend database untuk dashboard yang dibuka dari Vercel.
+      // Jangan memakai URL /dev; gunakan URL deployment yang berakhir /exec.
+      webAppUrl:'https://script.google.com/macros/s/AKfycbz18iPjvQ7QPflBoIJfepYsF447GAUfB8oJxmXl3XhB8zn-ZL5lqtcKXtIDYoZpnkR2/exec'
     });
 
     /*
@@ -971,6 +975,7 @@
     let currentDataMode = 'live';
     let currentSnapshotDate = '';
     let appliedWallpaperUrl = null;
+    let dateSelectionVersion = 0;
 
     // Menyimpan status tombol yang terakhir berhasil disalin.
     // Status ini tetap dipakai saat kartu dirender ulang oleh update realtime.
@@ -1381,19 +1386,101 @@
       return Boolean(window.google&&google.script&&google.script.run);
     }
 
-    function serverCall(functionName,...args){
+    function serverCallThroughJsonp(functionName,...args){
       return new Promise((resolve,reject)=>{
-        if(!isGoogleWebApp()){
-          // Mode HTML biasa: fungsi live Google Sheet tetap berjalan,
-          // sedangkan database Apps Script dilewati tanpa pesan ke pengguna.
-          reject(Object.assign(
-            new Error('SERVER_MODE_UNAVAILABLE'),
-            {silentServerError:true}
-          ));
+        const baseUrl=String(ARCHIVE_CONFIG.webAppUrl||'').trim();
+
+        if(!/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/i.test(baseUrl)){
+          reject(new Error('URL Web App database belum valid.'));
           return;
         }
 
+        const callbackName=
+          `dashboardApiCallback_${Date.now()}_${Math.random()
+            .toString(36)
+            .slice(2)}`;
+
+        const script=document.createElement('script');
         let settled=false;
+
+        const cleanup=()=>{
+          clearTimeout(timer);
+          script.remove();
+
+          try{
+            delete window[callbackName];
+          }catch{
+            window[callbackName]=undefined;
+          }
+        };
+
+        const finish=(handler,value)=>{
+          if(settled)return;
+          settled=true;
+          cleanup();
+          handler(value);
+        };
+
+        window[callbackName]=response=>{
+          if(response&&response.ok===false){
+            finish(
+              reject,
+              new Error(response.message||'Database mengembalikan error.')
+            );
+            return;
+          }
+
+          finish(resolve,response);
+        };
+
+        const query=new URLSearchParams({
+          api:'1',
+          action:functionName,
+          callback:callbackName,
+          cacheBust:`${Date.now()}-${Math.random().toString(36).slice(2)}`
+        });
+
+        if(functionName==='getStoredSnapshot'){
+          query.set('dateKey',String(args[0]||''));
+        }else if(functionName==='getWallpaperDataUrl'){
+          query.set('url',String(args[0]||''));
+        }else{
+          args.forEach((value,index)=>{
+            query.set(`arg${index}`,String(value??''));
+          });
+        }
+
+        script.src=`${baseUrl}?${query.toString()}`;
+        script.async=true;
+
+        script.onerror=()=>{
+          finish(
+            reject,
+            new Error('API database Google Apps Script gagal dimuat.')
+          );
+        };
+
+        const timer=setTimeout(()=>{
+          finish(
+            reject,
+            new Error('Koneksi API database terlalu lama.')
+          );
+        },ARCHIVE_CONFIG.serverTimeoutMs);
+
+        document.head.appendChild(script);
+      });
+    }
+
+    function serverCall(functionName,...args){
+      if(!isGoogleWebApp()){
+        // Ketika dashboard dibuka dari Vercel, gunakan API JSONP
+        // dari deployment Apps Script.
+        return serverCallThroughJsonp(functionName,...args);
+      }
+
+      return new Promise((resolve,reject)=>{
+        let settled=false;
+
         const timer=setTimeout(()=>{
           if(settled)return;
           settled=true;
@@ -1411,7 +1498,11 @@
           .withSuccessHandler(value=>finish(resolve,value))
           .withFailureHandler(error=>finish(
             reject,
-            new Error(error?.message||String(error)||'Terjadi kesalahan pada database.')
+            new Error(
+              error?.message||
+              String(error)||
+              'Terjadi kesalahan pada database.'
+            )
           ));
 
         runner[functionName](...args);
@@ -1590,45 +1681,46 @@
       }).join('');
     }
 
-    function clearDisplayedResults(){
+    function showNoResultForDate(dateKey){
+      const info=formatDateOption(dateKey);
+
+      currentDataMode='snapshot-empty';
+      currentSnapshotDate=dateKey;
       allResults=[];
       lastDataSignature='';
       confirmedEmptyCycles=0;
-      els.grid.innerHTML='';
+
       updateCounts();
-      els.grid.classList.add('hidden');
-    }
-
-    function showNoResultForDate(dateKey){
-      clearDisplayedResults();
-      currentDataMode='snapshot';
-      currentSnapshotDate=dateKey;
-
-      const info=formatDateOption(dateKey);
       showState(
         'Belum ada hasil result di tanggal ini',
-        `Belum ada hasil result untuk ${info.dayName}, ${info.fullDate}.`
+        `${info.dayName}, ${info.fullDate}`
       );
     }
 
-    function setSelectedDateDisplay(dateKey){
-      els.dateFilter.value=dateKey;
-      els.dateDisplay.textContent=prettyDate(dateKey);
-      renderDateMenu();
+    function showNoResultToday(){
+      currentDataMode='live';
+      currentSnapshotDate='';
+      allResults=[];
+      lastDataSignature='';
+      confirmedEmptyCycles=0;
+
+      updateCounts();
+      showState(
+        'Belum ada hasil result hari ini',
+        'Hasil akan tampil otomatis setelah data prize sudah lengkap.'
+      );
     }
 
     function resetDateSelectionToToday(){
       const today=dashboardMeta.today||getWibTodayKey();
 
-      clearTimeout(copiedResetTimer);
-      copiedMarketId='';
-      copiedUntil=0;
-      resetAllCopyVisuals();
-
+      dateSelectionVersion+=1;
+      els.dateFilter.value=today;
+      els.dateDisplay.textContent=prettyDate(today);
       currentDataMode='live';
       currentSnapshotDate='';
-      setSelectedDateDisplay(today);
       closeDateMenu();
+      renderDateMenu();
 
       return today;
     }
@@ -1636,49 +1728,36 @@
     async function selectDashboardDate(value,{silent=false}={}){
       if(!value)return;
 
+      const selectionVersion=++dateSelectionVersion;
       const today=dashboardMeta.today||getWibTodayKey();
+      const isToday=value===today;
 
-      setSelectedDateDisplay(value);
+      els.dateFilter.value=value;
+      els.dateDisplay.textContent=prettyDate(value);
       closeDateMenu();
+      renderDateMenu();
 
-      // Setiap pergantian tanggal langsung membersihkan tampilan tanggal lama,
-      // supaya kartu hari ini tidak terlihat saat pengguna memilih tanggal lain.
-      clearTimeout(copiedResetTimer);
-      copiedMarketId='';
-      copiedUntil=0;
-      resetAllCopyVisuals();
-      clearDisplayedResults();
+      // Hilangkan kartu tanggal sebelumnya seketika agar tidak terlihat
+      // seolah-olah pilihan tanggal tidak berpindah.
+      if(isToday){
+        showNoResultToday();
+        applyWallpaper(dashboardMeta.wallpaper||'');
+      }else{
+        showNoResultForDate(value);
+      }
 
-      if(value===today){
-        currentDataMode='live';
-        currentSnapshotDate='';
-
-        if(dashboardMeta.todayLocked){
-          const found=await loadStoredSnapshot(today,{silent:true});
-          if(!found)showNoResultForDate(today);
+      if(isToday){
+        if(dashboardMeta.todayLocked&&dashboardMeta.today){
+          await loadStoredSnapshot(today,{silent,selectionVersion});
         }else{
+          currentDataMode='live';
+          currentSnapshotDate='';
           await loadSheetData({silent:true});
-
-          if(!allResults.length){
-            showNoResultForDate(today);
-          }
         }
         return;
       }
 
-      currentDataMode='snapshot';
-      currentSnapshotDate=value;
-
-      // Bila metadata sudah menyatakan tanggal belum tersimpan,
-      // tampilkan pesan kosong secara langsung tanpa menunggu server.
-      const available=new Set(dashboardMeta.availableDates||[]);
-      if(!available.has(value)){
-        showNoResultForDate(value);
-        return;
-      }
-
-      const found=await loadStoredSnapshot(value,{silent:true});
-      if(!found)showNoResultForDate(value);
+      await loadStoredSnapshot(value,{silent,selectionVersion});
     }
 
     function selectedDateKey(){
@@ -1698,11 +1777,26 @@
       renderDateMenu();
     }
 
-    async function loadStoredSnapshot(dateKey,{silent=true}={}){
+    async function loadStoredSnapshot(
+      dateKey,
+      {silent=true,selectionVersion=null}={}
+    ){
       if(!dateKey)return false;
 
       try{
         const response=await serverCall('getStoredSnapshot',dateKey);
+
+        // Abaikan respons lama apabila pengguna sudah memilih tanggal lain.
+        if(
+          selectedDateKey()!==dateKey ||
+          (
+            selectionVersion!==null &&
+            selectionVersion!==dateSelectionVersion
+          )
+        ){
+          return false;
+        }
+
         if(!response?.found){
           showNoResultForDate(dateKey);
           return false;
@@ -1715,7 +1809,7 @@
 
         if(!parsed.length){
           showNoResultForDate(dateKey);
-          return false;
+          return true;
         }
 
         allResults=parsed;
@@ -1725,12 +1819,10 @@
         renderResults();
         return true;
       }catch(error){
-        if(error?.silentServerError||error?.message==='SERVER_MODE_UNAVAILABLE'){
-          console.info('Arsip Apps Script tidak tersedia pada mode HTML biasa.');
-          return false;
-        }
+        if(selectedDateKey()!==dateKey)return false;
 
         console.error('Gagal membaca database arsip:',error);
+        showNoResultForDate(dateKey);
         if(!silent)showToast('Data tanggal tersebut belum dapat dibaca.','error');
         return false;
       }
@@ -1753,10 +1845,10 @@
         updateDateLimits(dashboardMeta);
 
         if(!els.dateFilter.value&&dashboardMeta.today){
-          setSelectedDateDisplay(dashboardMeta.today);
-        }else{
-          renderDateMenu();
+          els.dateFilter.value=dashboardMeta.today;
+          els.dateDisplay.textContent=prettyDate(dashboardMeta.today);
         }
+        renderDateMenu();
 
         const selected=els.dateFilter.value;
 
@@ -1787,14 +1879,6 @@
           await loadSheetData({silent:true});
         }
       }catch(error){
-        // Ketika file dibuka sebagai HTML biasa, database Apps Script memang
-        // tidak tersedia. Kesalahan ini cukup disimpan di console dan tidak
-        // perlu ditampilkan pada dashboard.
-        if(error?.silentServerError||error?.message==='SERVER_MODE_UNAVAILABLE'){
-          console.info('Metadata Apps Script dilewati karena dashboard bukan mode Web App.');
-          return;
-        }
-
         console.error('Gagal membaca metadata dashboard:',error);
         // Error metadata tidak mengganggu data live, jadi tidak perlu
         // menampilkan pesan merah kepada pengguna.
@@ -2141,16 +2225,8 @@
     });
 
     els.todayBtn.addEventListener('click',async()=>{
-      const today=resetDateSelectionToToday();
-      clearDisplayedResults();
-
-      if(dashboardMeta.todayLocked){
-        const found=await loadStoredSnapshot(today,{silent:true});
-        if(!found)showNoResultForDate(today);
-      }else{
-        await loadSheetData({silent:true});
-        if(!allResults.length)showNoResultForDate(today);
-      }
+      const today=dashboardMeta.today||getWibTodayKey();
+      await selectDashboardDate(today,{silent:false});
     });
     els.newest.addEventListener('click',()=>{
       activeSort='newest';
@@ -2165,75 +2241,39 @@
       renderResults();
     });
 
-    window.addEventListener('pageshow',event=>{
-      if(!event.persisted)return;
-
-      const today=resetDateSelectionToToday();
-      clearDisplayedResults();
-
-      if(dashboardMeta.todayLocked){
-        loadStoredSnapshot(today,{silent:true}).then(found=>{
-          if(!found)showNoResultForDate(today);
-        });
-      }else{
-        loadSheetData({silent:true}).then(()=>{
-          if(!allResults.length)showNoResultForDate(today);
-        });
-      }
-    });
-
     document.addEventListener('visibilitychange',()=>{
       if(document.hidden)return;
-      if(isGoogleWebApp())loadDashboardMeta({silent:true});
+      loadDashboardMeta({silent:true});
       loadWallpaperDirectFromSheet();
       if(isViewingToday()&&!dashboardMeta.todayLocked){
         loadSheetData({silent:true});
       }
     });
 
+    // Setiap halaman dibuka ulang atau F5, pilihan tanggal selalu kembali
+    // ke hari ini. Nilai tanggal lama tidak dibiarkan dipulihkan browser.
+    resetDateSelectionToToday();
+
     updateLastUpdateText(new Date());
     setInterval(()=>updateLastUpdateText(new Date()),1000);
 
-    async function initializeDashboard(){
-      // Browser kadang memulihkan nilai input sebelum F5.
-      // Nilai tersebut selalu dikosongkan dan dashboard kembali ke hari ini.
-      els.dateFilter.value='';
-      const fallbackToday=getWibTodayKey();
-      setSelectedDateDisplay(fallbackToday);
-      currentDataMode='live';
-      currentSnapshotDate='';
+    // Data live tetap diperiksa cepat dari Google Sheet.
+    loadSheetData();
 
-      if(isGoogleWebApp()){
-        await loadDashboardMeta({silent:true});
-      }
-
-      const today=dashboardMeta.today||fallbackToday;
-      setSelectedDateDisplay(today);
-
-      if(dashboardMeta.todayLocked){
-        const found=await loadStoredSnapshot(today,{silent:true});
-        if(!found)showNoResultForDate(today);
-      }else{
-        await loadSheetData({silent:true});
-        if(!allResults.length)showNoResultForDate(today);
-      }
-
-      await loadWallpaperDirectFromSheet();
-    }
-
-    initializeDashboard();
+    // Metadata database, status kunci, wallpaper, dan arsip 7 hari
+    // diperiksa berkala tanpa menampilkan loading.
+    loadDashboardMeta({silent:true});
 
     // Baca Background!A2 langsung dari Google Sheet publik.
     // Ini membuat wallpaper tetap update walaupun metadata server terlambat.
+    loadWallpaperDirectFromSheet();
     wallpaperPollTimer=setInterval(()=>{
       if(!document.hidden)loadWallpaperDirectFromSheet();
     },5000);
 
-    if(isGoogleWebApp()){
-      archiveMetaTimer=setInterval(()=>{
-        if(!document.hidden)loadDashboardMeta({silent:true});
-      },ARCHIVE_CONFIG.metaRefreshMs);
-    }
+    archiveMetaTimer=setInterval(()=>{
+      if(!document.hidden)loadDashboardMeta({silent:true});
+    },ARCHIVE_CONFIG.metaRefreshMs);
 
     refreshTimer=setInterval(()=>{
       if(!document.hidden&&isViewingToday()&&!dashboardMeta.todayLocked){
