@@ -1098,8 +1098,7 @@
       if(
         !response?.found ||
         !response.dateKey ||
-        !Array.isArray(response.cells) ||
-        !response.cells.length
+        !parseStoredCells(response.cells||[]).length
       ){
         return;
       }
@@ -1127,8 +1126,7 @@
           age>ARCHIVE_CONFIG.snapshotCacheMaxAgeMs ||
           !response?.found ||
           response.dateKey!==dateKey ||
-          !Array.isArray(response.cells) ||
-          !response.cells.length
+          !parseStoredCells(response.cells||[]).length
         ){
           safeStorageRemove(snapshotCacheKey(dateKey));
           return null;
@@ -1445,12 +1443,74 @@
       return parseExactLines(lines);
     }
 
+    function splitLegacyStoredText(value=''){
+      const clean=String(value||'').trim();
+      if(!clean)return [];
+
+      // Format database lama pernah menyimpan array dua dimensi.
+      // Saat array tersebut berubah menjadi string, semua sel tersambung koma.
+      // Pisahkan hanya sebelum penanda awal baris agar koma pada Result/SHIO
+      // tetap aman.
+      if(
+        clean.includes('Hasil Pengeluaran') &&
+        clean.includes(',')
+      ){
+        return clean
+          .split(
+            /,\s*(?=(?:Hasil\s+Pengeluaran|Hari\b|Result(?:\s*\d+)?\s*:|Selamat\s+Kepada\s+Pemenang))/i
+          )
+          .map(part=>part.trim())
+          .filter(Boolean);
+      }
+
+      return [clean];
+    }
+
+    function flattenStoredCells(value,result=[]){
+      if(value===undefined||value===null)return result;
+
+      if(Array.isArray(value)){
+        value.forEach(item=>flattenStoredCells(item,result));
+        return result;
+      }
+
+      if(typeof value==='object'){
+        Object.values(value).forEach(
+          item=>flattenStoredCells(item,result)
+        );
+        return result;
+      }
+
+      const text=String(value).trim();
+      if(!text)return result;
+
+      // Mendukung JSON yang masih tersimpan sebagai string.
+      if(
+        (text.startsWith('[')&&text.endsWith(']')) ||
+        (text.startsWith('{')&&text.endsWith('}'))
+      ){
+        try{
+          flattenStoredCells(JSON.parse(text),result);
+          return result;
+        }catch{}
+      }
+
+      splitLegacyStoredText(text).forEach(
+        item=>result.push(item)
+      );
+
+      return result;
+    }
+
     function parseStoredCells(cells=[]){
+      const flattened=flattenStoredCells(cells);
       const lines=[];
-      for(const value of cells){
+
+      for(const value of flattened){
         const exact=preserveSourceText(value);
         if(exact)lines.push(...exact.split('\n'));
       }
+
       return parseExactLines(lines);
     }
 
@@ -1886,13 +1946,12 @@
     ){
       if(
         !response?.found ||
-        response.dateKey!==dateKey ||
-        !Array.isArray(response.cells)
+        response.dateKey!==dateKey
       ){
         return false;
       }
 
-      const parsed=parseStoredCells(response.cells);
+      const parsed=parseStoredCells(response.cells||[]);
 
       if(!parsed.length){
         return false;
