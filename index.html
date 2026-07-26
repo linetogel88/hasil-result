@@ -860,9 +860,19 @@
     });
 
     const ARCHIVE_CONFIG = Object.freeze({
-      metaRefreshMs:10000,
-      serverTimeoutMs:15000,
+      metaRefreshMs:15000,
+      serverTimeoutMs:20000,
       timezone:'Asia/Jakarta',
+
+      // Retry membuat pembacaan history lebih stabil ketika Apps Script
+      // sedang sibuk, melakukan redirect, atau koneksi sesaat terputus.
+      apiRetries:3,
+      apiRetryDelayMs:700,
+
+      // History LOCKED disimpan juga di browser sebagai cadangan lokal.
+      snapshotCachePrefix:'hasil-result-history-cache-v4:',
+      snapshotCacheMaxAgeMs:8*24*60*60*1000,
+      metaCacheKey:'hasil-result-meta-cache-v4',
 
       // Backend database untuk dashboard yang dibuka dari Vercel.
       // Jangan memakai URL /dev; gunakan URL deployment yang berakhir /exec.
@@ -977,6 +987,15 @@
     let appliedWallpaperUrl = null;
     let dateSelectionVersion = 0;
 
+    // Pengaman agar respons live/history yang terlambat tidak menimpa
+    // tanggal yang sedang dipilih pengguna.
+    let liveRequestVersion = 0;
+    let snapshotRequestVersion = 0;
+    let historyRetryTimer = null;
+
+    // Mencegah request API yang sama berjalan bertumpuk.
+    const pendingServerCalls = new Map();
+
     // Menyimpan status tombol yang terakhir berhasil disalin.
     // Status ini tetap dipakai saat kartu dirender ulang oleh update realtime.
     let copiedMarketId = '';
@@ -1046,6 +1065,114 @@
 
     function normalizeForSearch(value=''){
       return String(value).replace(/\s+/g,' ').trim();
+    }
+
+    function safeStorageRead(key){
+      try{
+        return localStorage.getItem(key);
+      }catch{
+        return null;
+      }
+    }
+
+    function safeStorageWrite(key,value){
+      try{
+        localStorage.setItem(key,value);
+        return true;
+      }catch{
+        return false;
+      }
+    }
+
+    function safeStorageRemove(key){
+      try{
+        localStorage.removeItem(key);
+      }catch{}
+    }
+
+    function snapshotCacheKey(dateKey){
+      return `${ARCHIVE_CONFIG.snapshotCachePrefix}${dateKey}`;
+    }
+
+    function saveSnapshotCache(response){
+      if(
+        !response?.found ||
+        !response.dateKey ||
+        !Array.isArray(response.cells) ||
+        !response.cells.length
+      ){
+        return;
+      }
+
+      safeStorageWrite(
+        snapshotCacheKey(response.dateKey),
+        JSON.stringify({
+          savedAt:Date.now(),
+          response
+        })
+      );
+    }
+
+    function readSnapshotCache(dateKey){
+      const raw=safeStorageRead(snapshotCacheKey(dateKey));
+      if(!raw)return null;
+
+      try{
+        const cached=JSON.parse(raw);
+        const age=Date.now()-Number(cached?.savedAt||0);
+        const response=cached?.response;
+
+        if(
+          age<0 ||
+          age>ARCHIVE_CONFIG.snapshotCacheMaxAgeMs ||
+          !response?.found ||
+          response.dateKey!==dateKey ||
+          !Array.isArray(response.cells) ||
+          !response.cells.length
+        ){
+          safeStorageRemove(snapshotCacheKey(dateKey));
+          return null;
+        }
+
+        return response;
+      }catch{
+        safeStorageRemove(snapshotCacheKey(dateKey));
+        return null;
+      }
+    }
+
+    function saveMetaCache(meta){
+      if(!meta?.ok||!meta.today)return;
+      safeStorageWrite(
+        ARCHIVE_CONFIG.metaCacheKey,
+        JSON.stringify({
+          savedAt:Date.now(),
+          meta
+        })
+      );
+    }
+
+    function readMetaCache(){
+      const raw=safeStorageRead(ARCHIVE_CONFIG.metaCacheKey);
+      if(!raw)return null;
+
+      try{
+        const cached=JSON.parse(raw);
+        const age=Date.now()-Number(cached?.savedAt||0);
+
+        // Cache metadata hanya sebagai fallback singkat.
+        if(age<0||age>6*60*60*1000||!cached?.meta?.today){
+          return null;
+        }
+
+        return cached.meta;
+      }catch{
+        return null;
+      }
+    }
+
+    function wait(ms){
+      return new Promise(resolve=>setTimeout(resolve,ms));
     }
 
     const ENGLISH_DATE_WORDS = Object.freeze({
@@ -1386,7 +1513,7 @@
       return Boolean(window.google&&google.script&&google.script.run);
     }
 
-    function serverCallThroughJsonp(functionName,...args){
+    function serverCallThroughJsonpOnce(functionName,...args){
       return new Promise((resolve,reject)=>{
         const baseUrl=String(ARCHIVE_CONFIG.webAppUrl||'').trim();
 
@@ -1402,9 +1529,10 @@
 
         const script=document.createElement('script');
         let settled=false;
+        let timer=null;
 
         const cleanup=()=>{
-          clearTimeout(timer);
+          if(timer)clearTimeout(timer);
           script.remove();
 
           try{
@@ -1452,6 +1580,7 @@
 
         script.src=`${baseUrl}?${query.toString()}`;
         script.async=true;
+        script.referrerPolicy='no-referrer';
 
         script.onerror=()=>{
           finish(
@@ -1460,7 +1589,7 @@
           );
         };
 
-        const timer=setTimeout(()=>{
+        timer=setTimeout(()=>{
           finish(
             reject,
             new Error('Koneksi API database terlalu lama.')
@@ -1471,10 +1600,28 @@
       });
     }
 
-    function serverCall(functionName,...args){
+    async function serverCallThroughJsonp(functionName,...args){
+      let lastError=null;
+
+      for(let attempt=1;attempt<=ARCHIVE_CONFIG.apiRetries;attempt++){
+        try{
+          return await serverCallThroughJsonpOnce(functionName,...args);
+        }catch(error){
+          lastError=error;
+
+          if(attempt<ARCHIVE_CONFIG.apiRetries){
+            await wait(
+              ARCHIVE_CONFIG.apiRetryDelayMs*attempt
+            );
+          }
+        }
+      }
+
+      throw lastError||new Error('API database tidak merespons.');
+    }
+
+    function serverCallRaw(functionName,...args){
       if(!isGoogleWebApp()){
-        // Ketika dashboard dibuka dari Vercel, gunakan API JSONP
-        // dari deployment Apps Script.
         return serverCallThroughJsonp(functionName,...args);
       }
 
@@ -1507,6 +1654,25 @@
 
         runner[functionName](...args);
       });
+    }
+
+    function serverCall(functionName,...args){
+      const requestKey=
+        `${functionName}:${JSON.stringify(args)}`;
+
+      if(pendingServerCalls.has(requestKey)){
+        return pendingServerCalls.get(requestKey);
+      }
+
+      const request=serverCallRaw(functionName,...args)
+        .finally(()=>{
+          if(pendingServerCalls.get(requestKey)===request){
+            pendingServerCalls.delete(requestKey);
+          }
+        });
+
+      pendingServerCalls.set(requestKey,request);
+      return request;
     }
 
     function safeCssUrl(value=''){
@@ -1697,6 +1863,63 @@
       );
     }
 
+    function showHistoryPending(dateKey){
+      const info=formatDateOption(dateKey);
+
+      currentDataMode='snapshot-pending';
+      currentSnapshotDate=dateKey;
+      allResults=[];
+      lastDataSignature='';
+      confirmedEmptyCycles=0;
+
+      updateCounts();
+      showState(
+        'Menyiapkan history hasil',
+        `${info.dayName}, ${info.fullDate}`
+      );
+    }
+
+    function applyStoredSnapshotResponse(
+      response,
+      dateKey,
+      {fromCache=false}={}
+    ){
+      if(
+        !response?.found ||
+        response.dateKey!==dateKey ||
+        !Array.isArray(response.cells)
+      ){
+        return false;
+      }
+
+      const parsed=parseStoredCells(response.cells);
+
+      if(!parsed.length){
+        return false;
+      }
+
+      currentDataMode=fromCache?'snapshot-cache':'snapshot';
+      currentSnapshotDate=dateKey;
+      allResults=parsed;
+      lastDataSignature=dataSignature(parsed);
+      confirmedEmptyCycles=0;
+
+      applyWallpaper(
+        response.wallpaper||
+        dashboardMeta.wallpaper||
+        ''
+      );
+
+      updateLastUpdateText(new Date());
+      renderResults();
+
+      if(!fromCache){
+        saveSnapshotCache(response);
+      }
+
+      return true;
+    }
+
     function showNoResultToday(){
       currentDataMode='live';
       currentSnapshotDate='';
@@ -1729,6 +1952,10 @@
       if(!value)return;
 
       const selectionVersion=++dateSelectionVersion;
+      liveRequestVersion+=1;
+      snapshotRequestVersion+=1;
+      clearTimeout(historyRetryTimer);
+
       const today=dashboardMeta.today||getWibTodayKey();
       const isToday=value===today;
 
@@ -1737,13 +1964,19 @@
       closeDateMenu();
       renderDateMenu();
 
-      // Hilangkan kartu tanggal sebelumnya seketika agar tidak terlihat
-      // seolah-olah pilihan tanggal tidak berpindah.
       if(isToday){
         showNoResultToday();
         applyWallpaper(dashboardMeta.wallpaper||'');
       }else{
-        showNoResultForDate(value);
+        const cached=readSnapshotCache(value);
+
+        if(!cached||!applyStoredSnapshotResponse(
+          cached,
+          value,
+          {fromCache:true}
+        )){
+          showHistoryPending(value);
+        }
       }
 
       if(isToday){
@@ -1783,12 +2016,17 @@
     ){
       if(!dateKey)return false;
 
+      const requestVersion=++snapshotRequestVersion;
+      const cached=readSnapshotCache(dateKey);
+
       try{
         const response=await serverCall('getStoredSnapshot',dateKey);
 
-        // Abaikan respons lama apabila pengguna sudah memilih tanggal lain.
+        // Abaikan respons lama apabila pengguna sudah memilih tanggal lain
+        // atau request yang lebih baru sudah berjalan.
         if(
           selectedDateKey()!==dateKey ||
+          requestVersion!==snapshotRequestVersion ||
           (
             selectionVersion!==null &&
             selectionVersion!==dateSelectionVersion
@@ -1797,33 +2035,100 @@
           return false;
         }
 
-        if(!response?.found){
-          showNoResultForDate(dateKey);
-          return false;
-        }
+        if(response?.found){
+          if(applyStoredSnapshotResponse(response,dateKey)){
+            return true;
+          }
 
-        const parsed=parseStoredCells(response.cells||[]);
-        currentDataMode='snapshot';
-        currentSnapshotDate=dateKey;
-        applyWallpaper(response.wallpaper||dashboardMeta.wallpaper||'');
+          // Record ada, tetapi belum memiliki hasil lengkap.
+          // Cache yang sebelumnya valid tetap lebih aman daripada
+          // mengosongkan layar akibat pembacaan parsial sesaat.
+          if(cached&&applyStoredSnapshotResponse(
+            cached,
+            dateKey,
+            {fromCache:true}
+          )){
+            return true;
+          }
 
-        if(!parsed.length){
           showNoResultForDate(dateKey);
           return true;
         }
 
-        allResults=parsed;
-        lastDataSignature=dataSignature(parsed);
-        confirmedEmptyCycles=0;
-        updateLastUpdateText(new Date());
-        renderResults();
-        return true;
+        // Ketika backend sesaat membaca "tidak ditemukan", jangan hapus
+        // history valid yang sudah pernah tersimpan di browser.
+        if(cached&&applyStoredSnapshotResponse(
+          cached,
+          dateKey,
+          {fromCache:true}
+        )){
+          return true;
+        }
+
+        showNoResultForDate(dateKey);
+        return false;
       }catch(error){
-        if(selectedDateKey()!==dateKey)return false;
+        if(
+          selectedDateKey()!==dateKey ||
+          requestVersion!==snapshotRequestVersion
+        ){
+          return false;
+        }
 
         console.error('Gagal membaca database arsip:',error);
-        showNoResultForDate(dateKey);
-        if(!silent)showToast('Data tanggal tersebut belum dapat dibaca.','error');
+
+        // Pertahankan hasil yang sudah tampil.
+        if(
+          currentSnapshotDate===dateKey &&
+          allResults.length
+        ){
+          if(!silent){
+            showToast(
+              'Koneksi history terputus sesaat. Data terakhir tetap ditampilkan.',
+              'error'
+            );
+          }
+          return true;
+        }
+
+        // Gunakan cache browser bila API sedang tidak stabil.
+        if(cached&&applyStoredSnapshotResponse(
+          cached,
+          dateKey,
+          {fromCache:true}
+        )){
+          if(!silent){
+            showToast(
+              'History ditampilkan dari cadangan browser.',
+              'error'
+            );
+          }
+          return true;
+        }
+
+        // Error koneksi tidak boleh dianggap sebagai history kosong.
+        showHistoryPending(dateKey);
+
+        clearTimeout(historyRetryTimer);
+        historyRetryTimer=setTimeout(()=>{
+          if(selectedDateKey()===dateKey){
+            loadStoredSnapshot(
+              dateKey,
+              {
+                silent:true,
+                selectionVersion:dateSelectionVersion
+              }
+            );
+          }
+        },2500);
+
+        if(!silent){
+          showToast(
+            'History sedang dicoba kembali.',
+            'error'
+          );
+        }
+
         return false;
       }
     }
@@ -1832,6 +2137,8 @@
       try{
         const meta=await serverCall('getDashboardMeta');
         if(!meta?.ok)throw new Error(meta?.message||'Metadata dashboard tidak valid.');
+
+        saveMetaCache(meta);
 
         dashboardMeta={
           today:meta.today||'',
@@ -1860,7 +2167,10 @@
         }
 
         if(selected&&dashboardMeta.today&&selected!==dashboardMeta.today){
-          if(currentDataMode!=='snapshot'||currentSnapshotDate!==selected){
+          if(
+            !String(currentDataMode).startsWith('snapshot') ||
+            currentSnapshotDate!==selected
+          ){
             await loadStoredSnapshot(selected,{silent});
           }
           return;
@@ -1880,8 +2190,28 @@
         }
       }catch(error){
         console.error('Gagal membaca metadata dashboard:',error);
-        // Error metadata tidak mengganggu data live, jadi tidak perlu
-        // menampilkan pesan merah kepada pengguna.
+
+        // Saat API metadata gagal sesaat, pertahankan metadata terakhir.
+        // Gunakan cache hanya ketika metadata aktif belum tersedia.
+        if(!dashboardMeta.today){
+          const cachedMeta=readMetaCache();
+
+          if(cachedMeta?.today){
+            dashboardMeta={
+              today:cachedMeta.today||'',
+              todayLocked:Boolean(cachedMeta.todayLocked),
+              availableDates:Array.isArray(cachedMeta.availableDates)
+                ? cachedMeta.availableDates
+                : [],
+              oldestDate:cachedMeta.oldestDate||'',
+              wallpaper:cachedMeta.wallpaper||'',
+              wallpaperSource:cachedMeta.wallpaperSource||''
+            };
+
+            updateDateLimits(dashboardMeta);
+            renderDateMenu();
+          }
+        }
       }
     }
 
@@ -2007,6 +2337,9 @@
         return;
       }
 
+      const requestVersion=++liveRequestVersion;
+      const selectionVersion=dateSelectionVersion;
+
       currentDataMode='live';
       currentSnapshotDate='';
       isLoading=true;
@@ -2022,13 +2355,30 @@
         for(const attempt of attempts){
           try{
             const parsed=parseResponse(await requestGoogleSheet(attempt));
+
+            if(
+              requestVersion!==liveRequestVersion ||
+              selectionVersion!==dateSelectionVersion ||
+              !isViewingToday() ||
+              dashboardMeta.todayLocked
+            ){
+              return;
+            }
+
             if(parsed.length){
               applySheetResults(parsed,{silent});
               return;
             }
             emptyCandidate=parsed;
             if(!allResults.length){
-              applySheetResults(parsed,{silent});
+              if(
+                requestVersion===liveRequestVersion &&
+                selectionVersion===dateSelectionVersion &&
+                isViewingToday() &&
+                !dashboardMeta.todayLocked
+              ){
+                applySheetResults(parsed,{silent});
+              }
               return;
             }
           }catch(error){
@@ -2053,10 +2403,26 @@
         throw lastError||new Error('Google Sheets tidak memberikan respons.');
       }catch(error){
         console.error(error);
-        if(!allResults.length){
-          showState('Google Sheets tidak dapat diakses','Pastikan akses Google Sheet adalah: Siapa saja yang memiliki link dapat melihat.');
+
+        if(
+          requestVersion===liveRequestVersion &&
+          selectionVersion===dateSelectionVersion &&
+          isViewingToday()
+        ){
+          if(!allResults.length){
+            showState(
+              'Google Sheets tidak dapat diakses',
+              'Pastikan akses Google Sheet adalah: Siapa saja yang memiliki link dapat melihat.'
+            );
+          }
+
+          if(!silent){
+            showToast(
+              error?.message||'Koneksi Google Sheets gagal.',
+              'error'
+            );
+          }
         }
-        if(!silent)showToast(error?.message||'Koneksi Google Sheets gagal.','error');
       }finally{
         isLoading=false;
       }
