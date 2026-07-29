@@ -1,0 +1,2915 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#05070f">
+  <title>Hasil Result</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2305070f'/%3E%3Cpath d='M17 19h30v26H17z' rx='6' fill='%23102045' stroke='%235aa9ff' stroke-width='3'/%3E%3Cpath d='M23 27h18M23 34h13M23 41h16' stroke='%23f3c846' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+  <style>
+    :root{
+      --bg:#04060f;
+      --bg-2:#070b1a;
+      --wallpaper-image:none;
+      --wallpaper-blur:2px;
+      --panel:rgba(10,18,42,.78);
+      --panel-purple:rgba(22,18,58,.78);
+      --border:rgba(99,140,235,.14);
+      --border-strong:rgba(105,166,255,.42);
+      --text:#eef2ff;
+      --muted:#7d8db5;
+      --blue:#4d9fff;
+      --cyan:#2dd4ff;
+      --green:#34ffb0;
+      --yellow:#fcd34d;
+      --purple:#b16cff;
+      --pink:#ff5c8a;
+      --danger:#ff4d6d;
+      --mono:"Consolas","Cascadia Mono","Courier New",monospace;
+      --sans:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+      --glow-blue:0 0 22px rgba(77,159,255,.35);
+      --glow-cyan:0 0 22px rgba(45,212,255,.35);
+      --glow-purple:0 0 22px rgba(177,108,255,.35);
+      --glow-green:0 0 22px rgba(52,255,176,.30);
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--text);
+      font-family:var(--sans);
+      background-color:#04060f;
+      background-image:
+        radial-gradient(circle at 50% 0,rgba(112,80,255,.10),transparent 34rem),
+        linear-gradient(180deg,#070a18 0%,#040611 100%);
+      background-size:cover;
+      background-position:center top;
+      background-attachment:fixed;
+      overflow-x:hidden;
+    }
+
+    /* Atmospheric glow orbs */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:-18px;
+      pointer-events:none;
+      background-image:
+        linear-gradient(rgba(6,10,22,.34),rgba(6,10,22,.34)),
+        var(--wallpaper-image),
+        radial-gradient(600px circle at 15% 12%,rgba(77,159,255,.10),transparent 60%),
+        radial-gradient(700px circle at 85% 8%,rgba(177,108,255,.10),transparent 60%),
+        radial-gradient(800px circle at 50% 95%,rgba(45,212,255,.06),transparent 60%);
+      background-size:cover,cover,auto,auto,auto;
+      background-position:center top,center top,15% 12%,85% 8%,50% 95%;
+      background-repeat:no-repeat;
+      filter:blur(var(--wallpaper-blur));
+      transform:scale(1.04);
+      z-index:0;
+    }
+
+    /* Vignette + grain overlay */
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(180deg,rgba(2,4,12,.45),transparent 12%,transparent 85%,rgba(2,4,12,.65)),
+        radial-gradient(circle at 50% 50%,transparent 40%,rgba(2,3,10,.35) 100%);
+      z-index:0;
+    }
+
+    button,input{font:inherit}
+    button{cursor:pointer}
+
+    .app{
+      position:relative;
+      z-index:1;
+      width:min(1308px,calc(100% - 26px));
+      margin:14px auto 34px;
+    }
+
+    /* ===== TOPBAR ===== */
+    .topbar{
+      position:relative;
+      z-index:50;
+      min-height:49px;
+      padding:8px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      border:1px solid rgba(99,140,235,.18);
+      border-radius:14px;
+      background:linear-gradient(180deg,rgba(8,14,32,.85),rgba(6,10,24,.92));
+      box-shadow:
+        0 18px 40px rgba(0,0,0,.45),
+        0 0 0 1px rgba(255,255,255,.02) inset,
+        0 0 30px rgba(77,159,255,.08) inset;
+      backdrop-filter:blur(20px) saturate(140%);
+      -webkit-backdrop-filter:blur(20px) saturate(140%);
+      overflow:visible;
+    }
+
+    .topbar::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:inherit;
+      background:linear-gradient(120deg,transparent 30%,rgba(77,159,255,.06) 50%,transparent 70%);
+      pointer-events:none;
+    }
+
+    .top-left,.top-right,.stats,.date-actions,.sort-actions{
+      display:flex;
+      align-items:center;
+    }
+    .top-left{gap:11px;min-width:0}
+    .top-right{gap:9px;justify-content:flex-end;flex-wrap:wrap}
+    .date-actions{gap:9px}
+
+    .status-pill{
+      position:relative;
+      height:25px;
+      padding:0 11px;
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      border:1px solid rgba(255,94,109,.35);
+      border-radius:999px;
+      background:linear-gradient(180deg,rgba(120,28,46,.35),rgba(80,18,32,.45));
+      color:#ff8a94;
+      font-size:10px;
+      font-weight:900;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      white-space:nowrap;
+      box-shadow:0 0 16px rgba(255,77,109,.18),0 0 0 1px rgba(255,77,109,.08) inset;
+    }
+    .status-dot{
+      width:6px;height:6px;border-radius:50%;
+      background:var(--danger);
+      box-shadow:0 0 10px var(--danger),0 0 16px rgba(255,77,109,.5);
+      animation:pulseDot 1.6s ease-in-out infinite;
+    }
+    @keyframes pulseDot{
+      0%,100%{transform:scale(1);opacity:1}
+      50%{transform:scale(1.4);opacity:.7}
+    }
+
+    .title{
+      margin:0;
+      font-size:15px;
+      font-weight:900;
+      letter-spacing:.27em;
+      white-space:nowrap;
+      background:linear-gradient(180deg,#ffffff 0%,#a9c4ff 100%);
+      -webkit-background-clip:text;
+      background-clip:text;
+      -webkit-text-fill-color:transparent;
+      filter:drop-shadow(0 0 14px rgba(77,159,255,.35));
+    }
+
+    .stats{
+      gap:11px;
+      height:28px;
+      padding:0 12px;
+      border-radius:9px;
+      background:linear-gradient(180deg,rgba(18,28,58,.55),rgba(12,20,44,.6));
+      border:1px solid rgba(99,140,235,.10);
+      color:#8495bd;
+      font-size:10px;
+      font-weight:800;
+      white-space:nowrap;
+      box-shadow:0 0 0 1px rgba(255,255,255,.02) inset;
+    }
+    .stat{display:flex;align-items:center;gap:5px}
+    .stat i{
+      width:5px;height:5px;border-radius:50%;display:block;
+      box-shadow:0 0 8px currentColor,0 0 14px currentColor;
+    }
+    .stat.total i{color:#7d92c8;background:currentColor}
+    .stat.normal i{color:#4d9fff;background:currentColor}
+    .stat.hoki i{color:#34ffb0;background:currentColor}
+    .stat b{color:#a9b8da;font-weight:900}
+
+    /* ===== DATE PICKER ===== */
+    .date-control,.today-btn,.refresh-btn,.sort-btn,.tab-btn,.copy-btn,.search-wrap{
+      border:1px solid var(--border);
+      background:rgba(8,16,38,.85);
+      color:#dce6ff;
+      transition:all .22s ease;
+    }
+
+    .date-picker{position:relative;z-index:35}
+
+    .date-control{
+      position:relative;
+      height:33px;
+      min-width:145px;
+      padding:0 10px;
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      gap:8px;
+      border-radius:9px;
+      color:#dce5fa;
+      font-size:11px;
+      font-weight:800;
+      white-space:nowrap;
+      overflow:hidden;
+      cursor:pointer;
+    }
+    .date-control:hover{
+      border-color:rgba(80,175,255,.35);
+      box-shadow:0 0 14px rgba(77,159,255,.15);
+    }
+    .date-control > svg:first-child{
+      width:14px;height:14px;color:#7894c7;flex:0 0 auto;
+    }
+    .date-control #dateDisplay{
+      flex:1;
+      text-align:left;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .date-chevron{
+      width:13px!important;
+      height:13px!important;
+      color:#6f86b4!important;
+      transition:transform .18s ease;
+      flex:0 0 auto;
+    }
+    .date-picker.open .date-chevron{transform:rotate(180deg)}
+    .date-picker.open .date-control{
+      border-color:rgba(80,175,255,.55);
+      background:rgba(12,29,64,.96);
+      box-shadow:0 0 0 3px rgba(54,148,255,.10),0 0 22px rgba(77,159,255,.20);
+    }
+
+    .date-menu{
+      position:absolute;
+      top:calc(100% + 7px);
+      right:0;
+      width:238px;
+      padding:7px;
+      display:none;
+      border:1px solid rgba(88,137,226,.30);
+      border-radius:13px;
+      background:linear-gradient(180deg,rgba(6,12,30,.98),rgba(4,8,22,.98));
+      box-shadow:
+        0 22px 50px rgba(0,0,0,.55),
+        0 0 0 1px rgba(255,255,255,.02) inset,
+        0 0 30px rgba(77,159,255,.12);
+      backdrop-filter:blur(22px) saturate(140%);
+      -webkit-backdrop-filter:blur(22px) saturate(140%);
+      overflow:hidden;
+      z-index:1000;
+    }
+    .date-picker.open .date-menu{
+      display:block;
+      animation:dateMenuIn .18s cubic-bezier(.4,1.4,.5,1);
+    }
+    @keyframes dateMenuIn{
+      from{opacity:0;transform:translateY(-6px) scale(.97)}
+      to{opacity:1;transform:translateY(0) scale(1)}
+    }
+
+    .date-option{
+      width:100%;
+      min-height:40px;
+      padding:7px 10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border:1px solid transparent;
+      border-radius:9px;
+      color:#c8d5f0;
+      background:transparent;
+      text-align:left;
+      cursor:pointer;
+      transition:all .15s ease;
+    }
+    .date-option:hover{
+      border-color:rgba(79,145,255,.30);
+      background:linear-gradient(90deg,rgba(24,46,91,.65),rgba(20,38,76,.55));
+      box-shadow:0 0 14px rgba(77,159,255,.10);
+    }
+    .date-option.active{
+      border-color:rgba(52,190,255,.45);
+      background:linear-gradient(90deg,rgba(27,102,173,.55),rgba(22,50,103,.55));
+      color:#f5f9ff;
+      box-shadow:0 0 18px rgba(45,212,255,.20),0 0 0 1px rgba(45,212,255,.15) inset;
+    }
+    .date-option-main{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width:0;
+    }
+    .date-option-day{
+      color:#eef4ff;
+      font-size:11px;
+      font-weight:900;
+    }
+    .date-option-date{
+      color:#7f91b9;
+      font-size:9px;
+      font-weight:700;
+    }
+    .date-option-badge{
+      min-width:45px;
+      height:20px;
+      padding:0 7px;
+      display:grid;
+      place-items:center;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      color:#8498c2;
+      font-size:8px;
+      font-weight:900;
+      white-space:nowrap;
+    }
+    .date-option.active .date-option-badge{
+      background:rgba(53,201,255,.18);
+      color:#67d8ff;
+      box-shadow:0 0 10px rgba(45,212,255,.25);
+    }
+
+    .today-btn{
+      height:33px;
+      padding:0 13px;
+      border-radius:9px;
+      border-color:rgba(48,193,255,.50);
+      background:linear-gradient(180deg,rgba(31,180,242,.95),rgba(27,139,219,.95));
+      color:#f6fbff;
+      font-size:10px;
+      font-weight:900;
+      white-space:nowrap;
+      box-shadow:
+        0 0 18px rgba(38,178,242,.30),
+        0 0 0 1px rgba(120,220,255,.20) inset,
+        0 4px 14px rgba(0,0,0,.30);
+      text-shadow:0 1px 2px rgba(0,0,0,.30);
+    }
+    .today-btn:hover{
+      box-shadow:
+        0 0 26px rgba(38,178,242,.50),
+        0 0 0 1px rgba(120,220,255,.30) inset,
+        0 6px 18px rgba(0,0,0,.35);
+      transform:translateY(-1px);
+    }
+    .today-btn:active{transform:translateY(0)}
+
+    .updated{text-align:left;line-height:1.05;min-width:110px}
+    .updated small{
+      display:block;
+      margin-bottom:4px;
+      color:#7485aa;
+      font-size:8px;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    .updated strong{
+      font-size:10px;color:#c9d6f1;white-space:nowrap;
+      font-family:var(--mono);
+      letter-spacing:.02em;
+    }
+
+    .refresh-btn{
+      width:33px;height:33px;padding:0;
+      display:grid;place-items:center;
+      border-radius:9px;
+      color:#6f8ab9;
+    }
+    .refresh-btn:hover{
+      color:#9ec0ff;
+      border-color:rgba(80,175,255,.40);
+      box-shadow:0 0 16px rgba(77,159,255,.20);
+    }
+    .refresh-btn:hover svg{animation:spin 1.4s linear infinite}
+    .refresh-btn svg{width:15px;height:15px;transition:color .2s ease}
+    @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+    /* ===== CONTROL ROW ===== */
+    .control-row{
+      position:relative;
+      z-index:1;
+      margin-top:14px;
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:10px;
+    }
+
+    .search-wrap{
+      position:relative;
+      height:42px;
+      padding:0 14px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      border-radius:11px;
+      background:linear-gradient(180deg,rgba(8,18,42,.92),rgba(6,14,32,.92));
+      box-shadow:
+        0 10px 24px rgba(0,0,0,.30),
+        0 0 0 1px rgba(255,255,255,.02) inset;
+    }
+    .search-wrap:focus-within{
+      border-color:rgba(80,175,255,.45);
+      box-shadow:
+        0 10px 24px rgba(0,0,0,.30),
+        0 0 0 3px rgba(54,148,255,.10),
+        0 0 24px rgba(77,159,255,.18);
+    }
+    .search-wrap svg{width:17px;height:17px;color:#7189bb;flex:0 0 auto;transition:color .2s ease}
+    .search-wrap:focus-within svg{color:#4d9fff;filter:drop-shadow(0 0 6px rgba(77,159,255,.5))}
+    .search-wrap input{
+      width:100%;
+      border:0;
+      outline:0;
+      background:transparent;
+      color:#edf3ff;
+      font-size:13px;
+    }
+    .search-wrap input::placeholder{color:#65779e}
+
+    .sort-actions{gap:7px}
+    .sort-btn{
+      min-width:77px;
+      height:42px;
+      padding:0 12px;
+      border-radius:11px;
+      font-size:10px;
+      font-weight:900;
+      color:#64789f;
+    }
+    .sort-btn:hover{
+      color:#9ec0ff;
+      border-color:rgba(80,175,255,.30);
+    }
+    .sort-btn.active{
+      color:#bcd7ff;
+      border-color:rgba(84,153,255,.42);
+      background:linear-gradient(180deg,rgba(14,32,70,.95),rgba(10,24,54,.95));
+      box-shadow:0 0 18px rgba(77,159,255,.18),0 0 0 1px rgba(120,180,255,.10) inset;
+    }
+
+    /* ===== TABS ===== */
+    .tabs{
+      position:relative;
+      z-index:1;
+      margin-top:14px;
+      padding:4px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:4px;
+      border:1px solid rgba(80,112,188,.18);
+      border-radius:11px;
+      background:linear-gradient(180deg,rgba(5,11,27,.92),rgba(4,9,21,.92));
+      box-shadow:0 12px 26px rgba(0,0,0,.30),0 0 0 1px rgba(255,255,255,.02) inset;
+    }
+    .tab-btn{
+      height:36px;
+      padding:0 12px;
+      border-radius:8px;
+      border-color:transparent;
+      color:#556789;
+      font-size:11px;
+      font-weight:900;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      transition:all .22s ease;
+    }
+    .tab-btn:hover{color:#8aa3d0}
+    .tab-btn.active{
+      color:#e1e9ff;
+      border-color:rgba(90,137,225,.30);
+      background:linear-gradient(180deg,rgba(22,38,76,.92),rgba(16,28,58,.92));
+      box-shadow:0 0 18px rgba(77,159,255,.18),0 0 0 1px rgba(120,180,255,.10) inset;
+    }
+    .tab-count{
+      min-width:18px;
+      height:16px;
+      padding:0 5px;
+      border-radius:999px;
+      display:grid;
+      place-items:center;
+      background:rgba(255,255,255,.07);
+      color:#8498c4;
+      font-size:8px;
+    }
+    .tab-count.hoki{
+      background:rgba(49,213,138,.15);
+      color:#50e4a1;
+      box-shadow:0 0 10px rgba(52,255,176,.20);
+    }
+
+    /* ===== GRID & CARDS ===== */
+    .grid{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:14px;
+      align-items:stretch;
+    }
+
+    .card{
+      position:relative;
+      min-height:182px;
+      padding:13px 13px 12px;
+      display:flex;
+      flex-direction:column;
+      border:1px solid rgba(69,124,218,.20);
+      border-radius:14px;
+      background:linear-gradient(180deg,rgba(12,26,58,.92),rgba(8,18,42,.92));
+      box-shadow:
+        0 16px 32px rgba(0,0,0,.40),
+        0 0 0 1px rgba(255,255,255,.02) inset,
+        0 0 30px rgba(77,159,255,.04) inset;
+      overflow:hidden;
+      transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;
+    }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:radial-gradient(400px circle at 50% -20%,rgba(77,159,255,.10),transparent 60%);
+      pointer-events:none;
+      opacity:.8;
+      transition:opacity .3s ease;
+    }
+    .card:hover{
+      transform:translateY(-3px);
+      border-color:rgba(77,159,255,.42);
+      box-shadow:
+        0 22px 40px rgba(0,0,0,.50),
+        0 0 0 1px rgba(120,180,255,.06) inset,
+        0 0 35px rgba(77,159,255,.18) inset;
+    }
+    .card:hover::before{opacity:1.4}
+
+    .card.multi{
+      border-color:rgba(145,96,239,.22);
+      background:linear-gradient(180deg,rgba(22,20,64,.94),rgba(16,14,46,.94));
+    }
+    .card.multi::before{
+      background:radial-gradient(400px circle at 50% -20%,rgba(177,108,255,.12),transparent 60%);
+    }
+    .card.multi:hover{
+      border-color:rgba(177,108,255,.45);
+      box-shadow:
+        0 22px 40px rgba(0,0,0,.50),
+        0 0 0 1px rgba(200,150,255,.06) inset,
+        0 0 35px rgba(177,108,255,.18) inset;
+    }
+
+    .card-title{
+      position:relative;
+      margin:0 0 11px;
+      text-align:center;
+      color:var(--yellow);
+      font-family:var(--mono);
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.20em;
+      line-height:1.2;
+      text-shadow:0 0 14px rgba(252,211,77,.40),0 1px 2px rgba(0,0,0,.50);
+    }
+    .card-title::after{
+      content:"";
+      position:absolute;
+      left:50%;bottom:-7px;
+      width:100px;height:1px;
+      transform:translateX(-50%);
+      background:linear-gradient(90deg,transparent,rgba(252,211,77,.55),transparent);
+    }
+    .card.multi .card-title{
+      color:var(--purple);
+      text-shadow:0 0 14px rgba(177,108,255,.45),0 1px 2px rgba(0,0,0,.50);
+    }
+    .card.multi .card-title::after{
+      background:linear-gradient(90deg,transparent,rgba(177,108,255,.55),transparent);
+    }
+
+    .card-text{
+      position:relative;
+      flex:1;
+      white-space:pre-wrap;
+      word-break:break-word;
+      color:#f5f6fb;
+      font-family:var(--mono);
+      font-size:11.6px;
+      font-weight:700;
+      line-height:1.5;
+      text-shadow:0 1px 2px rgba(0,0,0,.40);
+    }
+
+    .copy-btn{
+      width:100%;
+      height:31px;
+      margin-top:12px;
+      padding:0 12px;
+      border-radius:9px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:7px;
+      color:#7791bd;
+      font-size:9px;
+      font-weight:900;
+      letter-spacing:.13em;
+      text-transform:uppercase;
+      background:linear-gradient(180deg,rgba(20,42,86,.80),rgba(14,30,64,.80));
+      transition:all .22s ease;
+    }
+    .card.multi .copy-btn{
+      background:linear-gradient(180deg,rgba(42,32,94,.80),rgba(30,22,68,.80));
+      color:#9b87d2;
+    }
+    .copy-btn:hover{
+      color:#bcd7ff;
+      border-color:rgba(80,175,255,.40);
+      box-shadow:0 0 16px rgba(77,159,255,.18);
+    }
+    .card.multi .copy-btn:hover{
+      color:#d8c0ff;
+      border-color:rgba(177,108,255,.45);
+      box-shadow:0 0 16px rgba(177,108,255,.22);
+    }
+    .copy-btn svg{width:12px;height:12px;transition:transform .2s ease}
+    .copy-btn:active{transform:scale(.985)}
+
+    .copy-btn.copied{
+      color:#dffff0;
+      border-color:rgba(62,226,144,.55);
+      background:linear-gradient(135deg,rgba(26,153,94,.95),rgba(20,111,82,.95));
+      box-shadow:
+        0 0 0 3px rgba(58,224,145,.10),
+        0 0 26px rgba(48,216,136,.35),
+        0 0 0 1px rgba(120,255,180,.20) inset;
+      animation:copyButtonPop .42s ease;
+    }
+    .copy-btn.copied svg{transform:scale(1.15)}
+
+    /* Paksa semua jenis kartu memakai efek hijau yang sama.
+       Sebelumnya aturan .card.multi .copy-btn memiliki specificity lebih tinggi,
+       sehingga tombol 3-prize tetap terlihat ungu walau statusnya TERSALIN. */
+    .copy-btn.copied,
+    .copy-btn.copied:hover,
+    .card.multi .copy-btn.copied,
+    .card.multi .copy-btn.copied:hover{
+      color:#dffff0;
+      border-color:rgba(62,226,144,.62);
+      background:linear-gradient(135deg,rgba(26,153,94,.98),rgba(20,111,82,.98));
+      box-shadow:
+        0 0 0 3px rgba(58,224,145,.12),
+        0 0 28px rgba(48,216,136,.42),
+        0 0 0 1px rgba(120,255,180,.24) inset;
+    }
+
+    .card.copy-success{
+      border-color:rgba(62,226,144,.50);
+      box-shadow:
+        0 16px 32px rgba(0,0,0,.40),
+        0 0 0 2px rgba(55,220,139,.10),
+        0 0 32px rgba(47,213,134,.25);
+      animation:copyCardPulse .55s ease;
+    }
+
+    @keyframes copyButtonPop{
+      0%{transform:scale(.96)}
+      55%{transform:scale(1.03)}
+      100%{transform:scale(1)}
+    }
+    @keyframes copyCardPulse{
+      0%{transform:translateY(0)}
+      45%{transform:translateY(-3px)}
+      100%{transform:translateY(0)}
+    }
+
+    /* ===== STATE ===== */
+    .state{
+      margin-top:14px;
+      min-height:260px;
+      padding:30px;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      border:1px dashed rgba(88,132,219,.25);
+      border-radius:14px;
+      background:linear-gradient(180deg,rgba(6,14,35,.85),rgba(4,10,26,.85));
+      color:#8294bb;
+      box-shadow:0 14px 30px rgba(0,0,0,.30),0 0 30px rgba(77,159,255,.04) inset;
+    }
+    .state h3{
+      margin:0 0 8px;
+      color:#e9efff;
+      font-size:17px;
+      text-shadow:0 0 18px rgba(77,159,255,.30);
+    }
+    .state p{margin:0;line-height:1.6;font-size:12px}
+
+    /* ===== TOAST ===== */
+    .toast{
+      position:fixed;
+      left:50%;bottom:22px;
+      z-index:99;
+      transform:translate(-50%,20px);
+      opacity:0;
+      pointer-events:none;
+      padding:12px 18px;
+      border-radius:11px;
+      color:#06140d;
+      background:linear-gradient(135deg,#67edaa,#a1ffd0);
+      box-shadow:
+        0 16px 40px rgba(0,0,0,.45),
+        0 0 30px rgba(103,237,170,.40),
+        0 0 0 1px rgba(255,255,255,.20) inset;
+      font-size:12px;
+      font-weight:900;
+      transition:all .26s cubic-bezier(.4,1.4,.5,1);
+    }
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+    .toast.error{
+      color:#26080c;
+      background:linear-gradient(135deg,#ff8d99,#ffd0d5);
+      box-shadow:
+        0 16px 40px rgba(0,0,0,.45),
+        0 0 30px rgba(255,141,153,.40),
+        0 0 0 1px rgba(255,255,255,.20) inset;
+    }
+    .hidden{display:none!important}
+
+    /* ===== RESPONSIVE ===== */
+    @media(max-width:1000px){
+      .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .topbar{align-items:flex-start}
+      .top-right{flex-wrap:wrap}
+    }
+    @media(max-width:760px){
+      .app{width:min(100% - 16px,1294px);margin:8px auto 24px}
+      .topbar{flex-direction:column;align-items:stretch}
+      .top-left,.top-right{justify-content:flex-start;flex-wrap:wrap}
+      .control-row{grid-template-columns:1fr}
+      .sort-actions{display:grid;grid-template-columns:1fr 1fr}
+      .sort-btn{width:100%}
+      .grid{grid-template-columns:1fr}
+      .title{font-size:13px}
+      .updated{min-width:auto}
+    }
+    @media(max-width:480px){
+      .stats{width:100%;justify-content:center}
+      .date-actions{flex-wrap:wrap}
+      .date-picker{flex:1}
+      .date-control{width:100%;min-width:0}
+      .date-menu{left:0;right:auto;width:min(260px,calc(100vw - 32px))}
+      .tabs{grid-template-columns:1fr}
+      .card-text{font-size:11px}
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar{width:10px;height:10px}
+    ::-webkit-scrollbar-track{background:#04060f}
+    ::-webkit-scrollbar-thumb{
+      background:linear-gradient(180deg,rgba(77,159,255,.35),rgba(177,108,255,.35));
+      border-radius:10px;
+      border:2px solid #04060f;
+    }
+    ::-webkit-scrollbar-thumb:hover{
+      background:linear-gradient(180deg,rgba(77,159,255,.55),rgba(177,108,255,.55));
+    }
+
+    /* Selection */
+    ::selection{background:rgba(77,159,255,.30);color:#fff}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="top-left">
+        <div class="status-pill"><span class="status-dot"></span>AKTIF</div>
+        <h1 class="title">HASIL RESULT</h1>
+        <div class="stats">
+          <div class="stat total"><i></i>TOTAL <b id="totalCount">0</b></div>
+          <div class="stat normal"><i></i>BIASA <b id="normalCount">0</b></div>
+          <div class="stat hoki"><i></i>HOKIDRAW <b id="hokiCount">0</b></div>
+        </div>
+      </div>
+
+      <div class="top-right">
+        <div class="date-actions">
+          <div class="date-picker" id="datePicker">
+            <button class="date-control" id="datePickerButton" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M8 2v4M16 2v4M3 10h18"></path></svg>
+              <span id="dateDisplay">Pilih tanggal</span>
+              <svg class="date-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 10 5 5 5-5"></path></svg>
+            </button>
+            <input id="dateFilter" type="hidden">
+            <div class="date-menu" id="dateMenu" role="listbox" aria-label="Pilih data maksimal 7 hari"></div>
+          </div>
+          <button class="today-btn" id="todayBtn" type="button">◉ HARI INI</button>
+        </div>
+        <div class="updated">
+          <small>DIPERBARUI</small>
+          <strong id="lastUpdate">-</strong>
+        </div>
+        <button class="refresh-btn" id="refreshBtn" type="button" title="Muat ulang sekarang" aria-label="Muat ulang sekarang">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.64-6.36"></path><path d="M21 3v6h-6"></path></svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="control-row">
+      <label class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <input id="searchInput" type="search" placeholder="Cari nama pasaran..." autocomplete="off">
+      </label>
+      <div class="sort-actions">
+        <button class="sort-btn active" id="newestBtn" type="button">↓ Terbaru</button>
+        <button class="sort-btn" id="oldestBtn" type="button">↑ Lama</button>
+      </div>
+    </section>
+
+    <nav class="tabs" aria-label="Kategori pasaran">
+      <button class="tab-btn active" type="button" data-tab="normal">Pasaran Biasa <span class="tab-count" id="normalTabCount">0</span></button>
+      <button class="tab-btn" type="button" data-tab="hoki">Hokidraw <span class="tab-count hoki" id="hokiTabCount">0</span></button>
+    </nav>
+
+    <section id="stateBox" class="state hidden"></section>
+
+    <section id="resultGrid" class="grid hidden" aria-live="polite"></section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const CONFIG = Object.freeze({
+      spreadsheetId: '1xFp4rk_meBmOSeG36AHNW9ULzKqGDchX4Hb3XzVlUR0',
+      gid: '4756916',
+      sheetName: 'HASIL DRAW',
+      range: 'B:B',
+      refreshMs: 3000,
+      requestTimeoutMs: 10000
+    });
+
+    const ARCHIVE_CONFIG = Object.freeze({
+      metaRefreshMs:15000,
+      serverTimeoutMs:20000,
+      timezone:'Asia/Jakarta',
+
+      // Retry membuat pembacaan history lebih stabil ketika Apps Script
+      // sedang sibuk, melakukan redirect, atau koneksi sesaat terputus.
+      apiRetries:3,
+      apiRetryDelayMs:700,
+
+      // History LOCKED disimpan juga di browser sebagai cadangan lokal.
+      snapshotCachePrefix:'hasil-result-history-cache-v4:',
+      snapshotCacheMaxAgeMs:8*24*60*60*1000,
+      metaCacheKey:'hasil-result-meta-cache-v4',
+
+      // Backend database untuk dashboard yang dibuka dari Vercel.
+      // Jangan memakai URL /dev; gunakan URL deployment yang berakhir /exec.
+      webAppUrl:'https://script.google.com/macros/s/AKfycbz18iPjvQ7QPflBoIJfepYsF447GAUfB8oJxmXl3XhB8zn-ZL5lqtcKXtIDYoZpnkR2/exec'
+    });
+
+    /*
+      Urutan dan jumlah prize resmi.
+      Nama yang tampil di kartu TETAP diambil persis dari Google Sheet.
+      Daftar ini hanya dipakai untuk mencocokkan, mengurutkan, dan memeriksa
+      apakah semua prize wajib sudah terisi sebelum pasaran ditampilkan.
+    */
+    const MARKET_RULES = Object.freeze([
+      {name:'TOTO MACAU PAGI', prize:1},
+      {name:'KENTUCKY MIDDAY', prize:1},
+      {name:'FLORIDA MIDDAY', prize:1},
+      {name:'HUAHIN 0100', prize:3},
+      {name:'BANGKOK 0130', prize:3},
+      {name:'NEW YORK MIDDAY', prize:1},
+      {name:'NORTH CAROLINA DAY', prize:1},
+      {name:'BRUNEI 02', prize:3},
+      {name:'OREGON03', prize:1},
+      {name:'OREGON06', prize:1},
+      {name:'CALIFORNIA', prize:1},
+      {name:'FLORIDA EVENING', prize:1},
+      {name:'OREGON09', prize:1},
+      {name:'BANGKOK 0930', prize:3},
+      {name:'NEW YORK EVENING', prize:1},
+      {name:'KENTUCKY EVENING', prize:1},
+      {name:'CAROLINA EVENING', prize:1},
+      {name:'TOTOCAMBODIA', prize:3},
+      {name:'CHELSEA 11', prize:3},
+      {name:'OREGON12', prize:1},
+      {name:'POIPET12', prize:3},
+      {name:'BULLSEYE', prize:1},
+      {name:'TOTO MACAU SIANG', prize:1},
+      {name:'SYDNEY', prize:3},
+      {name:'JAKARTA 1400', prize:1},
+      {name:'BRUNEI 14', prize:3},
+      {name:'CHELSEA 15', prize:3},
+      {name:'TOTO MACAU 5D SORE', prize:1},
+      {name:'POIPET15', prize:3},
+      {name:'TOTOMALI1530', prize:3},
+      {name:'TOTO MACAU SORE', prize:1},
+      {name:'HUAHIN 1630', prize:3},
+      {name:'KINGKONG 4D SORE', prize:1},
+      {name:'SINGAPORE 4D', prize:3},
+      {name:'SINGAPORE TOTO', prize:1},
+      {name:'MAGNUM4D', prize:3},
+      {name:'CHELSEA19', prize:3},
+      {name:'TOTO MACAU MALAM I', prize:1},
+      {name:'POIPET19', prize:3},
+      {name:'PCSO', prize:1},
+      {name:'TOTOMALI2030', prize:3},
+      {name:'HUAHIN 2100', prize:3},
+      {name:'CHELSEA21', prize:3},
+      {name:'TOTOMACAU 5D MALAM', prize:1},
+      {name:'NEVADA', prize:3},
+      {name:'BRUNEI 21', prize:3},
+      {name:'TOTOMACAU MALAM II', prize:1},
+      {name:'POIPET22', prize:3},
+      {name:'HONGKONG', prize:3},
+      {name:'TOTO MACAU MALAM III', prize:1},
+      {name:'TOTOMALI2330', prize:3},
+      {name:'JAKARTA 2330', prize:1},
+      {name:'KINGKONG 4D MALAM', prize:1}
+    ]);
+
+    const els = {
+      grid: document.getElementById('resultGrid'),
+      state: document.getElementById('stateBox'),
+      search: document.getElementById('searchInput'),
+      dateFilter: document.getElementById('dateFilter'),
+      dateDisplay: document.getElementById('dateDisplay'),
+      datePicker: document.getElementById('datePicker'),
+      datePickerButton: document.getElementById('datePickerButton'),
+      dateMenu: document.getElementById('dateMenu'),
+      todayBtn: document.getElementById('todayBtn'),
+      lastUpdate: document.getElementById('lastUpdate'),
+      refresh: document.getElementById('refreshBtn'),
+      newest: document.getElementById('newestBtn'),
+      oldest: document.getElementById('oldestBtn'),
+      totalCount: document.getElementById('totalCount'),
+      normalCount: document.getElementById('normalCount'),
+      hokiCount: document.getElementById('hokiCount'),
+      normalTabCount: document.getElementById('normalTabCount'),
+      hokiTabCount: document.getElementById('hokiTabCount'),
+      toast: document.getElementById('toast'),
+      tabs: [...document.querySelectorAll('[data-tab]')]
+    };
+
+    let allResults = [];
+    let activeTab = 'normal';
+    let activeSort = 'newest';
+    let isLoading = false;
+    let refreshTimer = null;
+    let toastTimer = null;
+    let lastDataSignature = '';
+    let confirmedEmptyCycles = 0;
+    let archiveMetaTimer = null;
+    let wallpaperPollTimer = null;
+    let wallpaperProxyRequestUrl = '';
+    let dashboardMeta = {
+      today:'',
+      todayLocked:false,
+      availableDates:[],
+      oldestDate:'',
+      wallpaper:''
+    };
+    let currentDataMode = 'live';
+    let currentSnapshotDate = '';
+    let appliedWallpaperUrl = null;
+    let dateSelectionVersion = 0;
+
+    // Pengaman agar respons live/history yang terlambat tidak menimpa
+    // tanggal yang sedang dipilih pengguna.
+    let liveRequestVersion = 0;
+    let snapshotRequestVersion = 0;
+    let historyRetryTimer = null;
+
+    // Mencegah request API yang sama berjalan bertumpuk.
+    const pendingServerCalls = new Map();
+
+    // Menyimpan status tombol yang terakhir berhasil disalin.
+    // Status ini tetap dipakai saat kartu dirender ulang oleh update realtime.
+    let copiedMarketId = '';
+    let copiedUntil = 0;
+    let copiedResetTimer = null;
+    let copiedEffectVersion = 0;
+
+    // Menyimpan urutan pertama kali setiap pasaran muncul lengkap.
+    // Pasaran yang muncul lebih dulu akan tetap berada di atas.
+    // Pasaran baru berikutnya otomatis ditambahkan di bawah tanpa
+    // menggeser urutan pasaran yang sudah lebih dulu tampil.
+    const MARKET_ACTIVITY_KEY = 'hasil-result-market-first-seen-order-v2';
+    let marketActivity = loadMarketActivity();
+
+    function loadMarketActivity(){
+      try{
+        const saved=JSON.parse(localStorage.getItem(MARKET_ACTIVITY_KEY)||'{}');
+        return saved&&typeof saved==='object'?saved:{};
+      }catch{
+        return {};
+      }
+    }
+
+    function saveMarketActivity(){
+      try{
+        localStorage.setItem(MARKET_ACTIVITY_KEY,JSON.stringify(marketActivity));
+      }catch{}
+    }
+
+    function exactLinesSignature(lines=[]){
+      return JSON.stringify(lines);
+    }
+
+    function applyMarketActivity(rows=[]){
+      let nextOrder=Object.values(marketActivity).reduce((highest,entry)=>{
+        const order=Number(entry?.firstSeenOrder)||0;
+        return Math.max(highest,order);
+      },0)+1;
+
+      const currentIds=new Set(rows.map(item=>item.id));
+
+      // Data yang sedang belum lengkap boleh menghilang sementara,
+      // tetapi urutan pertamanya tetap disimpan apabila muncul kembali.
+      for(const [id,entry] of Object.entries(marketActivity)){
+        if(!currentIds.has(id)){
+          marketActivity[id]={...entry,present:false};
+        }
+      }
+
+      const tracked=rows.map(item=>{
+        const signature=exactLinesSignature(item.lines);
+        const previous=marketActivity[item.id];
+        const firstSeenOrder=Number(previous?.firstSeenOrder)||nextOrder++;
+
+        marketActivity[item.id]={
+          signature,
+          firstSeenOrder,
+          present:true
+        };
+
+        return {...item,firstSeenOrder};
+      });
+
+      saveMarketActivity();
+      return tracked;
+    }
+
+    function normalizeForSearch(value=''){
+      return String(value).replace(/\s+/g,' ').trim();
+    }
+
+    function safeStorageRead(key){
+      try{
+        return localStorage.getItem(key);
+      }catch{
+        return null;
+      }
+    }
+
+    function safeStorageWrite(key,value){
+      try{
+        localStorage.setItem(key,value);
+        return true;
+      }catch{
+        return false;
+      }
+    }
+
+    function safeStorageRemove(key){
+      try{
+        localStorage.removeItem(key);
+      }catch{}
+    }
+
+    function normalizeSnapshotDateKey(value=''){
+      const clean=String(value||'').trim();
+      if(!clean)return '';
+
+      if(/^\d{4}-\d{2}-\d{2}$/.test(clean)){
+        return clean;
+      }
+
+      let match=clean.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+      if(match){
+        return `${match[3]}-${match[2]}-${match[1]}`;
+      }
+
+      match=clean.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+      if(match){
+        return `${match[3]}-${match[2]}-${match[1]}`;
+      }
+
+      const parsed=new Date(clean);
+      if(!Number.isNaN(parsed.getTime())){
+        const formatter=new Intl.DateTimeFormat('en-CA',{
+          timeZone:ARCHIVE_CONFIG.timezone,
+          year:'numeric',
+          month:'2-digit',
+          day:'2-digit'
+        });
+        const parts=formatter.formatToParts(parsed);
+        const map=Object.fromEntries(
+          parts.map(part=>[part.type,part.value])
+        );
+        return `${map.year}-${map.month}-${map.day}`;
+      }
+
+      return clean;
+    }
+
+    function snapshotCacheKey(dateKey){
+      return `${ARCHIVE_CONFIG.snapshotCachePrefix}${dateKey}`;
+    }
+
+    function saveSnapshotCache(response){
+      if(
+        !response?.found ||
+        !response.dateKey ||
+        !parseStoredCells(response.cells||[]).length
+      ){
+        return;
+      }
+
+      const normalizedResponse={
+        ...response,
+        dateKey:normalizeSnapshotDateKey(response.dateKey)
+      };
+
+      safeStorageWrite(
+        snapshotCacheKey(normalizedResponse.dateKey),
+        JSON.stringify({
+          savedAt:Date.now(),
+          response:normalizedResponse
+        })
+      );
+    }
+
+    function readSnapshotCache(dateKey){
+      const raw=safeStorageRead(snapshotCacheKey(dateKey));
+      if(!raw)return null;
+
+      try{
+        const cached=JSON.parse(raw);
+        const age=Date.now()-Number(cached?.savedAt||0);
+        const response=cached?.response;
+
+        if(
+          age<0 ||
+          age>ARCHIVE_CONFIG.snapshotCacheMaxAgeMs ||
+          !response?.found ||
+          normalizeSnapshotDateKey(response.dateKey)!==dateKey ||
+          !parseStoredCells(response.cells||[]).length
+        ){
+          safeStorageRemove(snapshotCacheKey(dateKey));
+          return null;
+        }
+
+        return response;
+      }catch{
+        safeStorageRemove(snapshotCacheKey(dateKey));
+        return null;
+      }
+    }
+
+    function saveMetaCache(meta){
+      if(!meta?.ok||!meta.today)return;
+      safeStorageWrite(
+        ARCHIVE_CONFIG.metaCacheKey,
+        JSON.stringify({
+          savedAt:Date.now(),
+          meta
+        })
+      );
+    }
+
+    function readMetaCache(){
+      const raw=safeStorageRead(ARCHIVE_CONFIG.metaCacheKey);
+      if(!raw)return null;
+
+      try{
+        const cached=JSON.parse(raw);
+        const age=Date.now()-Number(cached?.savedAt||0);
+
+        // Cache metadata hanya sebagai fallback singkat.
+        if(age<0||age>6*60*60*1000||!cached?.meta?.today){
+          return null;
+        }
+
+        return cached.meta;
+      }catch{
+        return null;
+      }
+    }
+
+    function wait(ms){
+      return new Promise(resolve=>setTimeout(resolve,ms));
+    }
+
+    const ENGLISH_DATE_WORDS = Object.freeze({
+      january:'Januari',
+      february:'Februari',
+      march:'Maret',
+      april:'April',
+      may:'Mei',
+      june:'Juni',
+      july:'Juli',
+      august:'Agustus',
+      september:'September',
+      october:'Oktober',
+      november:'November',
+      december:'Desember',
+      jan:'Jan',
+      feb:'Feb',
+      mar:'Mar',
+      apr:'Apr',
+      jun:'Jun',
+      jul:'Jul',
+      aug:'Agu',
+      sep:'Sep',
+      oct:'Okt',
+      nov:'Nov',
+      dec:'Des',
+      monday:'Senin',
+      tuesday:'Selasa',
+      wednesday:'Rabu',
+      thursday:'Kamis',
+      friday:'Jumat',
+      saturday:'Sabtu',
+      sunday:'Minggu'
+    });
+
+    function matchLetterCase(source,replacement){
+      if(source===source.toUpperCase())return replacement.toUpperCase();
+      if(source===source.toLowerCase())return replacement.toLowerCase();
+      return replacement;
+    }
+
+    function localizeDateLanguage(value=''){
+      return String(value).replace(
+        /\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\b/gi,
+        matched=>{
+          const translated=ENGLISH_DATE_WORDS[matched.toLowerCase()]||matched;
+          return matchLetterCase(matched,translated);
+        }
+      );
+    }
+
+    // Pencocokan nama pasaran hanya dipakai untuk mencocokkan daftar aturan.
+    // Teks yang tampil di kartu tetap persis dari Google Sheet.
+    function marketMatchKey(value=''){
+      return normalizeForSearch(value).toUpperCase().replace(/[^A-Z0-9]/g,'');
+    }
+
+    const MARKET_RULE_MAP = new Map(
+      MARKET_RULES.map((rule,order)=>[
+        marketMatchKey(rule.name),
+        Object.freeze({...rule,order})
+      ])
+    );
+
+    function preserveSourceText(value=''){
+      return String(value)
+        .replace(/\r\n?/g,'\n')
+        .split('\n')
+        .map(line=>line.trim())
+        .filter(line=>line.length)
+        .join('\n');
+    }
+
+    if(!window.CSS)window.CSS={};
+    if(!CSS.escape){
+      CSS.escape=value=>String(value).replace(/[^a-zA-Z0-9_-]/g,char=>`\\${char}`);
+    }
+
+    function escapeHtml(value=''){
+      return String(value).replace(/[&<>'"]/g,ch=>({
+        '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'
+      })[ch]);
+    }
+
+    function showToast(message,type='success'){
+      clearTimeout(toastTimer);
+      els.toast.textContent=message;
+      els.toast.className=`toast ${type==='error'?'error':''} show`;
+      toastTimer=setTimeout(()=>els.toast.classList.remove('show'),2200);
+    }
+
+    function showState(title,message){
+      els.state.innerHTML=`<div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(message)}</p></div>`;
+      els.state.classList.remove('hidden');
+      els.grid.classList.add('hidden');
+    }
+
+    function extractCellLines(cell){
+      if(!cell)return [];
+      const value=cell.f!==undefined&&cell.f!==null?cell.f:cell.v;
+      if(value===undefined||value===null)return [];
+      const exact=preserveSourceText(value);
+      return exact?exact.split('\n'):[];
+    }
+
+    function isMarketHeader(line){
+      return /^\s*Hasil\s+Pengeluaran(?:\s+|$)/i.test(line);
+    }
+
+    function marketNameFromHeader(header){
+      const match=String(header).match(/^\s*Hasil\s+Pengeluaran\s+(.+?)\s*$/i);
+      return match?match[1]:'';
+    }
+
+    function groupExactSheetData(lines){
+      const groups=[];
+      let current=null;
+
+      const pushCurrent=()=>{
+        if(current&&current.market)groups.push(current);
+      };
+
+      for(const line of lines){
+        if(isMarketHeader(line)){
+          pushCurrent();
+          const market=marketNameFromHeader(line);
+          current=market?{market,lines:[line]}:null;
+          continue;
+        }
+        if(current)current.lines.push(line);
+      }
+      pushCurrent();
+      return groups;
+    }
+
+    function parsePrizeRow(line=''){
+      // Normalisasi hanya untuk pemeriksaan kelengkapan.
+      // Tulisan yang tampil tetap memakai teks asli Google Sheet.
+      const normalized=String(line)
+        .replace(/\u00a0/g,' ')
+        .replace(/[\u200B-\u200D\uFEFF]/g,'')
+        .replace(/[：﹕]/g,':')
+        .trim();
+
+      const match=normalized.match(/^Result(?:\s*(\d+))?\s*:\s*(.*)$/i);
+      if(!match)return null;
+
+      const value=String(match[2]??'').trim();
+
+      // Result wajib benar-benar diawali angka.
+      // Contoh valid:
+      // 0000
+      // 0312
+      // 0312 , SHIO : KAMBING
+      //
+      // Contoh tidak valid:
+      // kosong
+      // , SHIO : KAMBING
+      // SHIO : KAMBING
+      // -, _, atau tanda placeholder lain
+      const numberMatch=value.match(/^([0-9]+)/);
+      if(!numberMatch)return null;
+
+      return {
+        number:match[1]?Number(match[1]):null,
+        value,
+        resultValue:numberMatch[1]
+      };
+    }
+
+    function filledPrizeRows(lines=[]){
+      return lines.map(parsePrizeRow).filter(Boolean);
+    }
+
+    function hasCompletePrize(lines,expectedPrize){
+      const filled=filledPrizeRows(lines);
+
+      if(expectedPrize===1){
+        // Pasaran 1 prize wajib memiliki satu Result yang benar-benar berisi angka.
+        return filled.some(item=>item.resultValue);
+      }
+
+      // Pasaran 3 prize wajib memiliki Result 1, Result 2, dan Result 3,
+      // dan setiap Result wajib berisi angka. Nilai 0000 tetap valid.
+      const numbered=new Map();
+
+      for(const item of filled){
+        if(
+          Number.isInteger(item.number) &&
+          item.number>=1 &&
+          item.number<=expectedPrize &&
+          item.resultValue
+        ){
+          numbered.set(item.number,item.resultValue);
+        }
+      }
+
+      for(let prizeNumber=1;prizeNumber<=expectedPrize;prizeNumber++){
+        if(!numbered.has(prizeNumber))return false;
+      }
+
+      return true;
+    }
+
+    function dateTokensFromExactLines(lines=[]){
+      const dateLine=lines.find(line=>/^\s*Hari\b/i.test(line))||'';
+      const clean=normalizeForSearch(dateLine)
+        .replace(/^Hari\s*/i,'')
+        .replace(/,/g,'')
+        .toLowerCase();
+      const months={
+        january:'01',february:'02',march:'03',april:'04',may:'05',june:'06',july:'07',august:'08',september:'09',october:'10',november:'11',december:'12',
+        januari:'01',februari:'02',maret:'03',mei:'05',juni:'06',juli:'07',agustus:'08',oktober:'10',desember:'12'
+      };
+      let day='',month='',year='';
+      for(const part of clean.split(/\s+/)){
+        if(/^\d{4}$/.test(part))year=part;
+        else if(/^\d{1,2}$/.test(part)&&!day)day=part.padStart(2,'0');
+        else if(months[part])month=months[part];
+      }
+      return day&&month&&year?[`${year}-${month}-${day}`]:[];
+    }
+
+    function parseExactGroup(group,sourceIndex,rule){
+      const resultCount=filledPrizeRows(group.lines).length;
+      const localizedLines=group.lines.map(localizeDateLanguage);
+
+      return {
+        id:`market-${rule.order}`,
+        index:rule.order,
+        sourceIndex,
+        market:group.market,
+        lines:[...group.lines],
+        localizedLines,
+        expectedPrize:rule.prize,
+        filledPrizeCount:resultCount,
+        isHoki:/\bHOKIDRAW\b/i.test(group.market),
+        isMulti:rule.prize>1,
+        // Pencarian mendukung tulisan asli Inggris dan tampilan Indonesia.
+        searchText:normalizeForSearch(
+          group.lines.join(' ')+' '+localizedLines.join(' ')
+        ).toLowerCase(),
+        dateTokens:dateTokensFromExactLines(group.lines)
+      };
+    }
+
+    function parseExactLines(lines=[]){
+      return groupExactSheetData(lines)
+        .map((group,sourceIndex)=>{
+          const rule=MARKET_RULE_MAP.get(marketMatchKey(group.market));
+          // Pasaran di luar daftar resmi tidak ditampilkan.
+          if(!rule)return null;
+          // Data hanya tampil setelah semua Result wajib sudah terisi.
+          // Nilai 0000 tetap dianggap valid.
+          if(!hasCompletePrize(group.lines,rule.prize))return null;
+          return parseExactGroup(group,sourceIndex,rule);
+        })
+        .filter(Boolean)
+        .sort((a,b)=>a.index-b.index);
+    }
+
+    function parseResponse(response){
+      if(!response||response.status==='error'){
+        const detail=response?.errors?.[0]?.detailed_message||response?.errors?.[0]?.message||'Respons Google Sheets tidak valid.';
+        throw new Error(detail);
+      }
+      const rows=response.table?.rows||[];
+      const lines=[];
+      for(const row of rows)lines.push(...extractCellLines(row.c?.[0]));
+      return parseExactLines(lines);
+    }
+
+    function splitLegacyStoredText(value=''){
+      const clean=String(value||'').trim();
+      if(!clean)return [];
+
+      // Format database lama pernah menyimpan array dua dimensi.
+      // Saat array tersebut berubah menjadi string, semua sel tersambung koma.
+      // Pisahkan hanya sebelum penanda awal baris agar koma pada Result/SHIO
+      // tetap aman.
+      if(
+        clean.includes('Hasil Pengeluaran') &&
+        clean.includes(',')
+      ){
+        return clean
+          .split(
+            /,\s*(?=(?:Hasil\s+Pengeluaran|Hari\b|Result(?:\s*\d+)?\s*:|Selamat\s+Kepada\s+Pemenang))/i
+          )
+          .map(part=>part.trim())
+          .filter(Boolean);
+      }
+
+      return [clean];
+    }
+
+    function flattenStoredCells(value,result=[]){
+      if(value===undefined||value===null)return result;
+
+      if(Array.isArray(value)){
+        value.forEach(item=>flattenStoredCells(item,result));
+        return result;
+      }
+
+      if(typeof value==='object'){
+        Object.values(value).forEach(
+          item=>flattenStoredCells(item,result)
+        );
+        return result;
+      }
+
+      const text=String(value).trim();
+      if(!text)return result;
+
+      // Mendukung JSON yang masih tersimpan sebagai string.
+      if(
+        (text.startsWith('[')&&text.endsWith(']')) ||
+        (text.startsWith('{')&&text.endsWith('}'))
+      ){
+        try{
+          flattenStoredCells(JSON.parse(text),result);
+          return result;
+        }catch{}
+      }
+
+      splitLegacyStoredText(text).forEach(
+        item=>result.push(item)
+      );
+
+      return result;
+    }
+
+    function parseStoredCells(cells=[]){
+      const flattened=flattenStoredCells(cells);
+      const lines=[];
+
+      for(const value of flattened){
+        const exact=preserveSourceText(value);
+        if(exact)lines.push(...exact.split('\n'));
+      }
+
+      return parseExactLines(lines);
+    }
+
+    function requestGoogleSheet(params){
+      return new Promise((resolve,reject)=>{
+        const callbackName=`sheetCallback_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+        const script=document.createElement('script');
+        let settled=false;
+        const cleanup=()=>{
+          clearTimeout(timer);
+          script.remove();
+          try{delete window[callbackName];}catch{window[callbackName]=undefined;}
+        };
+        const finish=(handler,value)=>{
+          if(settled)return;
+          settled=true;
+          cleanup();
+          handler(value);
+        };
+        window[callbackName]=response=>finish(resolve,response);
+        const query=new URLSearchParams({
+          ...params,
+          tqx:`out:json;responseHandler:${callbackName}`,
+          headers:'0',
+          cacheBust:`${Date.now()}-${Math.random().toString(36).slice(2)}`
+        });
+        script.src=`https://docs.google.com/spreadsheets/d/${encodeURIComponent(CONFIG.spreadsheetId)}/gviz/tq?${query.toString()}`;
+        script.async=true;
+        script.onerror=()=>finish(reject,new Error('Permintaan ke Google Sheets gagal dimuat.'));
+        const timer=setTimeout(()=>finish(reject,new Error('Waktu koneksi ke Google Sheets habis.')),CONFIG.requestTimeoutMs);
+        document.head.appendChild(script);
+      });
+    }
+
+    function extractSingleCellValue(response){
+      if(!response||response.status==='error')return '';
+      const cell=response.table?.rows?.[0]?.c?.[0];
+      if(!cell)return '';
+      const value=cell.f!==undefined&&cell.f!==null?cell.f:cell.v;
+      return String(value??'').trim();
+    }
+
+    async function loadWallpaperDirectFromSheet(){
+      // Arsip tanggal lama dan hari yang sudah terkunci memakai wallpaper database.
+      if(!isViewingToday()||dashboardMeta.todayLocked)return;
+
+      try{
+        const response=await requestGoogleSheet({
+          sheet:'Background',
+          range:'A2'
+        });
+        const url=extractSingleCellValue(response);
+        applyWallpaper(url);
+      }catch(error){
+        console.warn('Wallpaper A2 tidak dapat dibaca langsung:',error);
+      }
+    }
+
+    function isGoogleWebApp(){
+      return Boolean(window.google&&google.script&&google.script.run);
+    }
+
+    function serverCallThroughJsonpOnce(functionName,...args){
+      return new Promise((resolve,reject)=>{
+        const baseUrl=String(ARCHIVE_CONFIG.webAppUrl||'').trim();
+
+        if(!/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/i.test(baseUrl)){
+          reject(new Error('URL Web App database belum valid.'));
+          return;
+        }
+
+        const callbackName=
+          `dashboardApiCallback_${Date.now()}_${Math.random()
+            .toString(36)
+            .slice(2)}`;
+
+        const script=document.createElement('script');
+        let settled=false;
+        let timer=null;
+
+        const cleanup=()=>{
+          if(timer)clearTimeout(timer);
+          script.remove();
+
+          try{
+            delete window[callbackName];
+          }catch{
+            window[callbackName]=undefined;
+          }
+        };
+
+        const finish=(handler,value)=>{
+          if(settled)return;
+          settled=true;
+          cleanup();
+          handler(value);
+        };
+
+        window[callbackName]=response=>{
+          if(response&&response.ok===false){
+            finish(
+              reject,
+              new Error(response.message||'Database mengembalikan error.')
+            );
+            return;
+          }
+
+          finish(resolve,response);
+        };
+
+        const query=new URLSearchParams({
+          api:'1',
+          action:functionName,
+          callback:callbackName,
+          cacheBust:`${Date.now()}-${Math.random().toString(36).slice(2)}`
+        });
+
+        if(functionName==='getStoredSnapshot'){
+          query.set('dateKey',String(args[0]||''));
+        }else if(functionName==='getWallpaperDataUrl'){
+          query.set('url',String(args[0]||''));
+        }else{
+          args.forEach((value,index)=>{
+            query.set(`arg${index}`,String(value??''));
+          });
+        }
+
+        script.src=`${baseUrl}?${query.toString()}`;
+        script.async=true;
+        script.referrerPolicy='no-referrer';
+
+        script.onerror=()=>{
+          finish(
+            reject,
+            new Error('API database Google Apps Script gagal dimuat.')
+          );
+        };
+
+        timer=setTimeout(()=>{
+          finish(
+            reject,
+            new Error('Koneksi API database terlalu lama.')
+          );
+        },ARCHIVE_CONFIG.serverTimeoutMs);
+
+        document.head.appendChild(script);
+      });
+    }
+
+    async function serverCallThroughJsonp(functionName,...args){
+      let lastError=null;
+
+      for(let attempt=1;attempt<=ARCHIVE_CONFIG.apiRetries;attempt++){
+        try{
+          return await serverCallThroughJsonpOnce(functionName,...args);
+        }catch(error){
+          lastError=error;
+
+          if(attempt<ARCHIVE_CONFIG.apiRetries){
+            await wait(
+              ARCHIVE_CONFIG.apiRetryDelayMs*attempt
+            );
+          }
+        }
+      }
+
+      throw lastError||new Error('API database tidak merespons.');
+    }
+
+    function serverCallRaw(functionName,...args){
+      if(!isGoogleWebApp()){
+        return serverCallThroughJsonp(functionName,...args);
+      }
+
+      return new Promise((resolve,reject)=>{
+        let settled=false;
+
+        const timer=setTimeout(()=>{
+          if(settled)return;
+          settled=true;
+          reject(new Error('Koneksi database Google Apps Script terlalu lama.'));
+        },ARCHIVE_CONFIG.serverTimeoutMs);
+
+        const finish=(handler,value)=>{
+          if(settled)return;
+          settled=true;
+          clearTimeout(timer);
+          handler(value);
+        };
+
+        const runner=google.script.run
+          .withSuccessHandler(value=>finish(resolve,value))
+          .withFailureHandler(error=>finish(
+            reject,
+            new Error(
+              error?.message||
+              String(error)||
+              'Terjadi kesalahan pada database.'
+            )
+          ));
+
+        runner[functionName](...args);
+      });
+    }
+
+    function serverCall(functionName,...args){
+      const requestKey=
+        `${functionName}:${JSON.stringify(args)}`;
+
+      if(pendingServerCalls.has(requestKey)){
+        return pendingServerCalls.get(requestKey);
+      }
+
+      const request=serverCallRaw(functionName,...args)
+        .finally(()=>{
+          if(pendingServerCalls.get(requestKey)===request){
+            pendingServerCalls.delete(requestKey);
+          }
+        });
+
+      pendingServerCalls.set(requestKey,request);
+      return request;
+    }
+
+    function safeCssUrl(value=''){
+      return String(value).replace(/["\\\n\r]/g,'');
+    }
+
+    function setDarkWallpaper(){
+      document.body.style.backgroundImage=
+        'radial-gradient(circle at 50% 0,rgba(72,70,150,.10),transparent 34rem),linear-gradient(180deg,#070a18 0%,#040611 100%)';
+      document.body.style.backgroundSize='cover';
+      document.body.style.backgroundPosition='center top';
+      document.body.style.backgroundAttachment='fixed';
+      document.body.style.setProperty('--wallpaper-image','none');
+    }
+
+    function setWallpaperImage(source){
+      document.body.style.backgroundImage=
+        'radial-gradient(circle at 50% 0,rgba(72,70,150,.10),transparent 34rem),linear-gradient(180deg,#070a18 0%,#040611 100%)';
+      document.body.style.backgroundSize='cover';
+      document.body.style.backgroundPosition='center top';
+      document.body.style.backgroundAttachment='fixed';
+      document.body.style.setProperty('--wallpaper-image', `url("${source}")`);
+    }
+
+    async function loadWallpaperThroughProxy(clean){
+      if(!clean||wallpaperProxyRequestUrl===clean)return;
+      wallpaperProxyRequestUrl=clean;
+
+      try{
+        const response=await serverCall('getWallpaperDataUrl',clean);
+        if(appliedWallpaperUrl!==clean)return;
+        if(!response?.ok||!response.dataUrl){
+          throw new Error('Server tidak mengembalikan data gambar.');
+        }
+
+        const proxyImage=new Image();
+        proxyImage.onload=()=>{
+          if(appliedWallpaperUrl!==clean)return;
+          setWallpaperImage(response.dataUrl);
+        };
+        proxyImage.onerror=()=>{
+          if(appliedWallpaperUrl!==clean)return;
+          setDarkWallpaper();
+          showToast('Wallpaper gagal dimuat. Gunakan menu Tes File Wallpaper.','error');
+        };
+        proxyImage.src=response.dataUrl;
+      }catch(error){
+        if(appliedWallpaperUrl!==clean)return;
+        setDarkWallpaper();
+
+        if(error?.silentServerError||error?.message==='SERVER_MODE_UNAVAILABLE'){
+          console.info('Proxy wallpaper Apps Script dilewati pada mode HTML biasa.');
+          return;
+        }
+
+        console.error('Proxy wallpaper gagal:',error);
+        showToast('Wallpaper gagal dimuat.','error');
+      }finally{
+        if(wallpaperProxyRequestUrl===clean)wallpaperProxyRequestUrl='';
+      }
+    }
+
+    function applyWallpaper(url=''){
+      const clean=safeCssUrl(url);
+
+      if(clean===appliedWallpaperUrl)return;
+      appliedWallpaperUrl=clean;
+
+      if(!clean){
+        wallpaperProxyRequestUrl='';
+        setDarkWallpaper();
+        return;
+      }
+
+      // Coba link langsung terlebih dahulu.
+      const image=new Image();
+      image.onload=()=>{
+        if(appliedWallpaperUrl!==clean)return;
+        setWallpaperImage(clean);
+      };
+      image.onerror=()=>{
+        if(appliedWallpaperUrl!==clean)return;
+        console.warn('Hotlink langsung gagal, mencoba proxy Apps Script:',clean);
+        loadWallpaperThroughProxy(clean);
+      };
+
+      // Cache-bust agar URL yang sama tetap mengambil versi gambar terbaru.
+      const separator=clean.includes('?')?'&':'?';
+      image.src=`${clean}${separator}dashboard_refresh=${Date.now()}`;
+    }
+
+    function getWibTodayKey(){
+      const parts=new Intl.DateTimeFormat('en-CA',{
+        timeZone:ARCHIVE_CONFIG.timezone,
+        year:'numeric',
+        month:'2-digit',
+        day:'2-digit'
+      }).formatToParts(new Date());
+      const map=Object.fromEntries(parts.map(part=>[part.type,part.value]));
+      return `${map.year}-${map.month}-${map.day}`;
+    }
+
+    function shiftDateKey(dateKey,days){
+      const [year,month,day]=dateKey.split('-').map(Number);
+      const utcDate=new Date(Date.UTC(year,month-1,day));
+      utcDate.setUTCDate(utcDate.getUTCDate()+days);
+      return [
+        utcDate.getUTCFullYear(),
+        String(utcDate.getUTCMonth()+1).padStart(2,'0'),
+        String(utcDate.getUTCDate()).padStart(2,'0')
+      ].join('-');
+    }
+
+    function formatDateOption(dateKey){
+      const [year,month,day]=dateKey.split('-').map(Number);
+      const date=new Date(Date.UTC(year,month-1,day,12,0,0));
+      const dayName=new Intl.DateTimeFormat('id-ID',{
+        weekday:'long',
+        timeZone:'UTC'
+      }).format(date);
+      const fullDate=new Intl.DateTimeFormat('id-ID',{
+        day:'2-digit',
+        month:'long',
+        year:'numeric',
+        timeZone:'UTC'
+      }).format(date);
+      return {dayName,fullDate};
+    }
+
+    function getSevenDateOptions(){
+      const today=dashboardMeta.today||getWibTodayKey();
+      return Array.from({length:7},(_,index)=>shiftDateKey(today,-index));
+    }
+
+    function closeDateMenu(){
+      els.datePicker.classList.remove('open');
+      els.datePickerButton.setAttribute('aria-expanded','false');
+    }
+
+    function openDateMenu(){
+      renderDateMenu();
+      els.datePicker.classList.add('open');
+      els.datePickerButton.setAttribute('aria-expanded','true');
+    }
+
+    function toggleDateMenu(){
+      if(els.datePicker.classList.contains('open'))closeDateMenu();
+      else openDateMenu();
+    }
+
+    function renderDateMenu(){
+      const selected=els.dateFilter.value||dashboardMeta.today||getWibTodayKey();
+      const today=dashboardMeta.today||getWibTodayKey();
+      const available=new Set(dashboardMeta.availableDates||[]);
+
+      els.dateMenu.innerHTML=getSevenDateOptions().map(dateKey=>{
+        const info=formatDateOption(dateKey);
+        const isToday=dateKey===today;
+        const isActive=dateKey===selected;
+        const hasArchive=isToday||available.has(dateKey);
+        const badge=isToday?'HARI INI':(hasArchive?'TERSIMPAN':'BELUM ADA');
+
+        return `
+          <button class="date-option ${isActive?'active':''}" type="button" role="option"
+                  aria-selected="${isActive?'true':'false'}" data-date-value="${dateKey}">
+            <span class="date-option-main">
+              <span class="date-option-day">${escapeHtml(info.dayName)}</span>
+              <span class="date-option-date">${escapeHtml(info.fullDate)}</span>
+            </span>
+            <span class="date-option-badge">${badge}</span>
+          </button>`;
+      }).join('');
+    }
+
+    function showNoResultForDate(dateKey){
+      const info=formatDateOption(dateKey);
+
+      currentDataMode='snapshot-empty';
+      currentSnapshotDate=dateKey;
+      allResults=[];
+      lastDataSignature='';
+      confirmedEmptyCycles=0;
+
+      updateCounts();
+      showState(
+        'Belum ada hasil result di tanggal ini',
+        `${info.dayName}, ${info.fullDate}`
+      );
+    }
+
+    function showHistoryPending(dateKey){
+      const info=formatDateOption(dateKey);
+
+      currentDataMode='snapshot-pending';
+      currentSnapshotDate=dateKey;
+      allResults=[];
+      lastDataSignature='';
+      confirmedEmptyCycles=0;
+
+      updateCounts();
+      showState(
+        'Menyiapkan history hasil',
+        `${info.dayName}, ${info.fullDate}`
+      );
+    }
+
+    function applyStoredSnapshotResponse(
+      response,
+      dateKey,
+      {fromCache=false}={}
+    ){
+      if(
+        !response?.found ||
+        normalizeSnapshotDateKey(response.dateKey)!==dateKey
+      ){
+        return false;
+      }
+
+      const parsed=parseStoredCells(response.cells||[]);
+
+      if(!parsed.length){
+        return false;
+      }
+
+      currentDataMode=fromCache?'snapshot-cache':'snapshot';
+      currentSnapshotDate=dateKey;
+      allResults=parsed;
+      lastDataSignature=dataSignature(parsed);
+      confirmedEmptyCycles=0;
+
+      applyWallpaper(
+        response.wallpaper||
+        dashboardMeta.wallpaper||
+        ''
+      );
+
+      updateLastUpdateText(new Date());
+      renderResults();
+
+      if(!fromCache){
+        saveSnapshotCache(response);
+      }
+
+      return true;
+    }
+
+    function showNoResultToday(){
+      currentDataMode='live';
+      currentSnapshotDate='';
+      allResults=[];
+      lastDataSignature='';
+      confirmedEmptyCycles=0;
+
+      updateCounts();
+      showState(
+        'Belum ada hasil result hari ini',
+        'Hasil akan tampil otomatis setelah data prize sudah lengkap.'
+      );
+    }
+
+    function resetDateSelectionToToday(){
+      const today=dashboardMeta.today||getWibTodayKey();
+
+      dateSelectionVersion+=1;
+      els.dateFilter.value=today;
+      els.dateDisplay.textContent=prettyDate(today);
+      currentDataMode='live';
+      currentSnapshotDate='';
+      closeDateMenu();
+      renderDateMenu();
+
+      return today;
+    }
+
+    async function selectDashboardDate(value,{silent=false}={}){
+      if(!value)return;
+
+      const selectionVersion=++dateSelectionVersion;
+      liveRequestVersion+=1;
+      snapshotRequestVersion+=1;
+      clearTimeout(historyRetryTimer);
+
+      const today=dashboardMeta.today||getWibTodayKey();
+      const isToday=value===today;
+
+      els.dateFilter.value=value;
+      els.dateDisplay.textContent=prettyDate(value);
+      closeDateMenu();
+      renderDateMenu();
+
+      if(isToday){
+        showNoResultToday();
+        applyWallpaper(dashboardMeta.wallpaper||'');
+      }else{
+        const cached=readSnapshotCache(value);
+
+        if(!cached||!applyStoredSnapshotResponse(
+          cached,
+          value,
+          {fromCache:true}
+        )){
+          showHistoryPending(value);
+        }
+      }
+
+      if(isToday){
+        if(dashboardMeta.todayLocked&&dashboardMeta.today){
+          await loadStoredSnapshot(today,{silent,selectionVersion});
+        }else{
+          currentDataMode='live';
+          currentSnapshotDate='';
+          await loadSheetData({silent:true});
+        }
+        return;
+      }
+
+      await loadStoredSnapshot(value,{silent,selectionVersion});
+    }
+
+    function selectedDateKey(){
+      return els.dateFilter.value||dashboardMeta.today||'';
+    }
+
+    function isViewingToday(){
+      const selected=els.dateFilter.value;
+      return !selected||!dashboardMeta.today||selected===dashboardMeta.today;
+    }
+
+    function updateDateLimits(meta={}){
+      const today=meta.today||getWibTodayKey();
+      // Maksimal tujuh pilihan: hari ini + enam hari sebelumnya.
+      els.dateFilter.max=today;
+      els.dateFilter.min=shiftDateKey(today,-6);
+      renderDateMenu();
+    }
+
+    async function loadStoredSnapshot(
+      dateKey,
+      {silent=true,selectionVersion=null}={}
+    ){
+      if(!dateKey)return false;
+
+      const requestVersion=++snapshotRequestVersion;
+      const cached=readSnapshotCache(dateKey);
+
+      try{
+        const response=await serverCall('getStoredSnapshot',dateKey);
+
+        // Abaikan respons lama apabila pengguna sudah memilih tanggal lain
+        // atau request yang lebih baru sudah berjalan.
+        if(
+          selectedDateKey()!==dateKey ||
+          requestVersion!==snapshotRequestVersion ||
+          (
+            selectionVersion!==null &&
+            selectionVersion!==dateSelectionVersion
+          )
+        ){
+          return false;
+        }
+
+        if(response?.found){
+          if(applyStoredSnapshotResponse(response,dateKey)){
+            return true;
+          }
+
+          // Record ada, tetapi belum memiliki hasil lengkap.
+          // Cache yang sebelumnya valid tetap lebih aman daripada
+          // mengosongkan layar akibat pembacaan parsial sesaat.
+          if(cached&&applyStoredSnapshotResponse(
+            cached,
+            dateKey,
+            {fromCache:true}
+          )){
+            return true;
+          }
+
+          showNoResultForDate(dateKey);
+          return true;
+        }
+
+        // Ketika backend sesaat membaca "tidak ditemukan", jangan hapus
+        // history valid yang sudah pernah tersimpan di browser.
+        if(cached&&applyStoredSnapshotResponse(
+          cached,
+          dateKey,
+          {fromCache:true}
+        )){
+          return true;
+        }
+
+        showNoResultForDate(dateKey);
+        return false;
+      }catch(error){
+        if(
+          selectedDateKey()!==dateKey ||
+          requestVersion!==snapshotRequestVersion
+        ){
+          return false;
+        }
+
+        console.error('Gagal membaca database arsip:',error);
+
+        // Pertahankan hasil yang sudah tampil.
+        if(
+          currentSnapshotDate===dateKey &&
+          allResults.length
+        ){
+          if(!silent){
+            showToast(
+              'Koneksi history terputus sesaat. Data terakhir tetap ditampilkan.',
+              'error'
+            );
+          }
+          return true;
+        }
+
+        // Gunakan cache browser bila API sedang tidak stabil.
+        if(cached&&applyStoredSnapshotResponse(
+          cached,
+          dateKey,
+          {fromCache:true}
+        )){
+          if(!silent){
+            showToast(
+              'History ditampilkan dari cadangan browser.',
+              'error'
+            );
+          }
+          return true;
+        }
+
+        // Error koneksi tidak boleh dianggap sebagai history kosong.
+        showHistoryPending(dateKey);
+
+        clearTimeout(historyRetryTimer);
+        historyRetryTimer=setTimeout(()=>{
+          if(selectedDateKey()===dateKey){
+            loadStoredSnapshot(
+              dateKey,
+              {
+                silent:true,
+                selectionVersion:dateSelectionVersion
+              }
+            );
+          }
+        },2500);
+
+        if(!silent){
+          showToast(
+            'History sedang dicoba kembali.',
+            'error'
+          );
+        }
+
+        return false;
+      }
+    }
+
+    async function loadDashboardMeta({silent=true}={}){
+      try{
+        const meta=await serverCall('getDashboardMeta');
+        if(!meta?.ok)throw new Error(meta?.message||'Metadata dashboard tidak valid.');
+
+        saveMetaCache(meta);
+
+        dashboardMeta={
+          today:meta.today||'',
+          todayLocked:Boolean(meta.todayLocked),
+          availableDates:Array.isArray(meta.availableDates)?meta.availableDates:[],
+          oldestDate:meta.oldestDate||'',
+          wallpaper:meta.wallpaper||'',
+          wallpaperSource:meta.wallpaperSource||''
+        };
+
+        updateDateLimits(dashboardMeta);
+
+        if(!els.dateFilter.value&&dashboardMeta.today){
+          els.dateFilter.value=dashboardMeta.today;
+          els.dateDisplay.textContent=prettyDate(dashboardMeta.today);
+        }
+        renderDateMenu();
+
+        const selected=els.dateFilter.value;
+
+        // Wallpaper hari ini hanya dipakai saat membuka data hari ini.
+        // Saat melihat arsip, wallpaper yang tersimpan bersama tanggal tersebut
+        // tidak akan ditimpa oleh wallpaper terbaru.
+        if(!selected||!dashboardMeta.today||selected===dashboardMeta.today){
+          applyWallpaper(dashboardMeta.wallpaper);
+        }
+
+        if(selected&&dashboardMeta.today&&selected!==dashboardMeta.today){
+          if(
+            !String(currentDataMode).startsWith('snapshot') ||
+            currentSnapshotDate!==selected
+          ){
+            await loadStoredSnapshot(selected,{silent});
+          }
+          return;
+        }
+
+        if(dashboardMeta.todayLocked&&dashboardMeta.today){
+          if(currentDataMode!=='snapshot'||currentSnapshotDate!==dashboardMeta.today){
+            await loadStoredSnapshot(dashboardMeta.today,{silent});
+          }
+          return;
+        }
+
+        if(currentDataMode!=='live'){
+          currentDataMode='live';
+          currentSnapshotDate='';
+          await loadSheetData({silent:true});
+        }
+      }catch(error){
+        console.error('Gagal membaca metadata dashboard:',error);
+
+        // Saat API metadata gagal sesaat, pertahankan metadata terakhir.
+        // Gunakan cache hanya ketika metadata aktif belum tersedia.
+        if(!dashboardMeta.today){
+          const cachedMeta=readMetaCache();
+
+          if(cachedMeta?.today){
+            dashboardMeta={
+              today:cachedMeta.today||'',
+              todayLocked:Boolean(cachedMeta.todayLocked),
+              availableDates:Array.isArray(cachedMeta.availableDates)
+                ? cachedMeta.availableDates
+                : [],
+              oldestDate:cachedMeta.oldestDate||'',
+              wallpaper:cachedMeta.wallpaper||'',
+              wallpaperSource:cachedMeta.wallpaperSource||''
+            };
+
+            updateDateLimits(dashboardMeta);
+            renderDateMenu();
+          }
+        }
+      }
+    }
+
+    function formatWib(date=new Date()){
+      try{
+        return new Intl.DateTimeFormat('id-ID',{
+          timeZone:'Asia/Jakarta',
+          day:'2-digit',month:'2-digit',year:'numeric',
+          hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false
+        }).format(date).replace(/\./g,':')+' WIB';
+      }catch{return date.toLocaleString('id-ID');}
+    }
+
+    function updateLastUpdateText(date=new Date()){
+      if(els.lastUpdate)els.lastUpdate.textContent=formatWib(date);
+    }
+
+    function prettyDate(value){
+      if(!value)return 'Pilih tanggal';
+      const [year,month,day]=value.split('-');
+      const names=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+      return `${day}-${names[Number(month)-1]}-${year}`;
+    }
+
+    function updateCounts(){
+      const normal=allResults.filter(item=>!item.isHoki).length;
+      const hoki=allResults.filter(item=>item.isHoki).length;
+      els.totalCount.textContent=allResults.length;
+      els.normalCount.textContent=normal;
+      els.hokiCount.textContent=hoki;
+      els.normalTabCount.textContent=normal;
+      els.hokiTabCount.textContent=hoki;
+    }
+
+    function cardTemplate(item){
+      const isCopied=item.id===copiedMarketId&&Date.now()<copiedUntil;
+      const copyIcon=isCopied
+        ? '<path d="m5 12 4 4L19 6"></path>'
+        : '<rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>';
+
+      return `
+        <article class="card ${item.isMulti?'multi':''} ${isCopied?'copy-success':''}">
+          <h2 class="card-title">${escapeHtml(item.market)}</h2>
+          <div class="card-text">${(item.localizedLines||item.lines.map(localizeDateLanguage)).map(escapeHtml).join('\n')}</div>
+          <button class="copy-btn ${isCopied?'copied':''}" type="button" data-copy-id="${escapeHtml(item.id)}">
+            <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${copyIcon}</svg>
+            <span class="copy-label">${isCopied?'TERSALIN':'SALIN'}</span>
+          </button>
+        </article>`;
+    }
+
+    function filteredResults(){
+      const keyword=normalizeForSearch(els.search.value).toLowerCase();
+      const selectedDate=els.dateFilter.value;
+      let rows=allResults.filter(item=>activeTab==='hoki'?item.isHoki:!item.isHoki);
+      if(keyword)rows=rows.filter(item=>item.searchText.includes(keyword));
+      if(selectedDate)rows=rows.filter(item=>item.dateTokens.includes(selectedDate));
+      if(activeSort==='newest'){
+        // Default Terbaru mengikuti urutan resmi MARKET_RULES dari bawah ke atas.
+        rows.sort((a,b)=>b.index-a.index);
+      }else{
+        // Tombol Lama mengikuti urutan resmi MARKET_RULES dari atas ke bawah.
+        rows.sort((a,b)=>a.index-b.index);
+      }
+      return rows;
+    }
+
+    function renderResults({fresh=false}={}){
+      updateCounts();
+      if(!allResults.length){
+        showState('Belum ada data lengkap','Pasaran baru tampil setelah seluruh Result wajibnya terisi. Nilai 0000 tetap dianggap sebagai data lengkap.');
+        return;
+      }
+      const rows=filteredResults();
+      if(!rows.length){
+        showState('Data tidak ditemukan','Tidak ada data terisi pada pilihan pasaran, tanggal, atau pencarian tersebut.');
+        return;
+      }
+      els.grid.innerHTML=rows.map(cardTemplate).join('');
+      els.state.classList.add('hidden');
+      els.grid.classList.remove('hidden');
+
+      // Bila render ulang terjadi saat efek copy masih aktif,
+      // terapkan kembali hanya pada satu tombol yang sedang disalin.
+      if(copiedMarketId&&Date.now()<copiedUntil){
+        applyCopyVisual(copiedMarketId);
+      }else if(copiedMarketId){
+        copiedMarketId='';
+        copiedUntil=0;
+        resetAllCopyVisuals();
+      }
+    }
+
+    function dataSignature(rows){
+      return JSON.stringify(rows.map(item=>item.lines));
+    }
+
+    function applySheetResults(parsed,{silent=false}={}){
+      const trackedResults=applyMarketActivity(parsed);
+      const nextSignature=dataSignature(trackedResults);
+      const changed=nextSignature!==lastDataSignature;
+      confirmedEmptyCycles=0;
+      if(changed){
+        allResults=trackedResults;
+        lastDataSignature=nextSignature;
+        updateLastUpdateText(new Date());
+        renderResults({fresh:true});
+        if(!silent)showToast(`Berhasil memuat ${allResults.length} pasaran dengan prize lengkap`);
+      }else if(!allResults.length){
+        allResults=trackedResults;
+        updateLastUpdateText(new Date());
+        renderResults();
+      }
+    }
+
+    async function loadSheetData({silent=false}={}){
+      if(isLoading)return;
+
+      // Tanggal lama dan data hari ini yang sudah dikunci selalu dibaca dari database.
+      if(!isViewingToday())return;
+      if(dashboardMeta.todayLocked&&dashboardMeta.today){
+        await loadStoredSnapshot(dashboardMeta.today,{silent:true});
+        return;
+      }
+
+      const requestVersion=++liveRequestVersion;
+      const selectionVersion=dateSelectionVersion;
+
+      currentDataMode='live';
+      currentSnapshotDate='';
+      isLoading=true;
+
+      const attempts=[
+        {gid:CONFIG.gid,range:CONFIG.range},
+        {sheet:CONFIG.sheetName,range:CONFIG.range}
+      ];
+      let lastError=null;
+      let emptyCandidate=null;
+
+      try{
+        for(const attempt of attempts){
+          try{
+            const parsed=parseResponse(await requestGoogleSheet(attempt));
+
+            if(
+              requestVersion!==liveRequestVersion ||
+              selectionVersion!==dateSelectionVersion ||
+              !isViewingToday() ||
+              dashboardMeta.todayLocked
+            ){
+              return;
+            }
+
+            if(parsed.length){
+              applySheetResults(parsed,{silent});
+              return;
+            }
+            emptyCandidate=parsed;
+            if(!allResults.length){
+              if(
+                requestVersion===liveRequestVersion &&
+                selectionVersion===dateSelectionVersion &&
+                isViewingToday() &&
+                !dashboardMeta.todayLocked
+              ){
+                applySheetResults(parsed,{silent});
+              }
+              return;
+            }
+          }catch(error){
+            lastError=error;
+            console.warn('Jalur Google Sheets gagal:',error);
+          }
+        }
+
+        if(emptyCandidate&&allResults.length){
+          confirmedEmptyCycles+=1;
+          if(confirmedEmptyCycles>=2&&dashboardMeta.today){
+            const restored=await loadStoredSnapshot(dashboardMeta.today,{silent:true});
+            if(!restored){
+              allResults=[];
+              lastDataSignature='[]';
+              renderResults({fresh:true});
+            }
+          }
+          return;
+        }
+
+        throw lastError||new Error('Google Sheets tidak memberikan respons.');
+      }catch(error){
+        console.error(error);
+
+        if(
+          requestVersion===liveRequestVersion &&
+          selectionVersion===dateSelectionVersion &&
+          isViewingToday()
+        ){
+          if(!allResults.length){
+            showState(
+              'Google Sheets tidak dapat diakses',
+              'Pastikan akses Google Sheet adalah: Siapa saja yang memiliki link dapat melihat.'
+            );
+          }
+
+          if(!silent){
+            showToast(
+              error?.message||'Koneksi Google Sheets gagal.',
+              'error'
+            );
+          }
+        }
+      }finally{
+        isLoading=false;
+      }
+    }
+
+    async function copyText(text){
+      try{
+        if(navigator.clipboard&&window.isSecureContext){
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+
+        const area=document.createElement('textarea');
+        area.value=text;
+        area.setAttribute('readonly','');
+        area.style.position='fixed';
+        area.style.left='-9999px';
+        area.style.opacity='0';
+        document.body.appendChild(area);
+        area.select();
+        area.setSelectionRange(0,area.value.length);
+        const success=document.execCommand('copy');
+        area.remove();
+
+        if(!success)throw new Error('Perintah salin ditolak browser.');
+        return true;
+      }catch(error){
+        console.error('Gagal menyalin:',error);
+        return false;
+      }
+    }
+
+    function resetAllCopyVisuals(){
+      els.grid.querySelectorAll('.copy-btn').forEach(copyButton=>{
+        copyButton.classList.remove('copied');
+        copyButton.disabled=false;
+        delete copyButton.dataset.copying;
+
+        const label=copyButton.querySelector('.copy-label');
+        const icon=copyButton.querySelector('.copy-icon');
+        const card=copyButton.closest('.card');
+
+        if(card)card.classList.remove('copy-success');
+        if(label)label.textContent='SALIN';
+        if(icon){
+          icon.innerHTML='<rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>';
+        }
+      });
+    }
+
+    function findCopyButtonById(itemId){
+      return [...els.grid.querySelectorAll('[data-copy-id]')]
+        .find(copyButton=>copyButton.dataset.copyId===itemId)||null;
+    }
+
+    function applyCopyVisual(itemId){
+      const currentButton=findCopyButtonById(itemId);
+      if(!currentButton)return;
+
+      const card=currentButton.closest('.card');
+      const label=currentButton.querySelector('.copy-label');
+      const icon=currentButton.querySelector('.copy-icon');
+
+      currentButton.classList.add('copied');
+      if(card)card.classList.add('copy-success');
+      if(label)label.textContent='TERSALIN';
+      if(icon)icon.innerHTML='<path d="m5 12 4 4L19 6"></path>';
+    }
+
+    function showCopySuccess(button,item){
+      clearTimeout(copiedResetTimer);
+
+      // Bersihkan efek tombol sebelumnya terlebih dahulu. Versi lama
+      // menghentikan timer lama tanpa menghapus warna hijau tombol lama,
+      // sehingga beberapa tombol dapat tertinggal hijau.
+      resetAllCopyVisuals();
+
+      copiedEffectVersion+=1;
+      const effectVersion=copiedEffectVersion;
+
+      copiedMarketId=item.id;
+      copiedUntil=Date.now()+1500;
+
+      applyCopyVisual(item.id);
+      showToast(`Hasil ${item.market} berhasil disalin`);
+
+      copiedResetTimer=setTimeout(()=>{
+        if(effectVersion!==copiedEffectVersion)return;
+
+        copiedMarketId='';
+        copiedUntil=0;
+        resetAllCopyVisuals();
+      },1500);
+    }
+
+    els.grid.addEventListener('click',async event=>{
+      const button=event.target.closest('[data-copy-id]');
+      if(!button||button.dataset.copying==='true')return;
+
+      const item=allResults.find(row=>row.id===button.dataset.copyId);
+      if(!item)return;
+
+      button.dataset.copying='true';
+
+      const copiedLines=item.localizedLines||item.lines.map(localizeDateLanguage);
+      const success=await copyText(copiedLines.join('\n'));
+
+      // Tombol dapat terganti ketika data realtime dirender ulang,
+      // jadi status proses dibersihkan pada elemen lama maupun elemen terbaru.
+      delete button.dataset.copying;
+      const latestButton=findCopyButtonById(item.id);
+      if(latestButton)delete latestButton.dataset.copying;
+
+      if(success){
+        showCopySuccess(latestButton||button,item);
+      }else{
+        resetAllCopyVisuals();
+        showToast('Data gagal disalin. Izinkan akses clipboard browser.','error');
+      }
+    });
+
+    els.tabs.forEach(tab=>tab.addEventListener('click',()=>{
+      activeTab=tab.dataset.tab;
+      els.tabs.forEach(item=>item.classList.toggle('active',item===tab));
+      renderResults();
+    }));
+
+    els.search.addEventListener('input',renderResults);
+
+    els.refresh.addEventListener('click',async()=>{
+      updateLastUpdateText(new Date());
+      await loadDashboardMeta({silent:true});
+      await loadWallpaperDirectFromSheet();
+
+      if(!isViewingToday()){
+        await loadStoredSnapshot(selectedDateKey(),{silent:false});
+        return;
+      }
+
+      if(dashboardMeta.todayLocked&&dashboardMeta.today){
+        await loadStoredSnapshot(dashboardMeta.today,{silent:false});
+        return;
+      }
+
+      await loadSheetData({silent:false});
+    });
+
+    els.datePickerButton.addEventListener('click',event=>{
+      event.preventDefault();
+      event.stopPropagation();
+      toggleDateMenu();
+    });
+
+    els.dateMenu.addEventListener('click',async event=>{
+      const option=event.target.closest('[data-date-value]');
+      if(!option)return;
+      await selectDashboardDate(option.dataset.dateValue,{silent:false});
+    });
+
+    document.addEventListener('click',event=>{
+      if(!els.datePicker.contains(event.target))closeDateMenu();
+    });
+
+    document.addEventListener('keydown',event=>{
+      if(event.key==='Escape')closeDateMenu();
+    });
+
+    els.todayBtn.addEventListener('click',async()=>{
+      const today=dashboardMeta.today||getWibTodayKey();
+      await selectDashboardDate(today,{silent:false});
+    });
+    els.newest.addEventListener('click',()=>{
+      activeSort='newest';
+      els.newest.classList.add('active');
+      els.oldest.classList.remove('active');
+      renderResults();
+    });
+    els.oldest.addEventListener('click',()=>{
+      activeSort='oldest';
+      els.oldest.classList.add('active');
+      els.newest.classList.remove('active');
+      renderResults();
+    });
+
+    document.addEventListener('visibilitychange',()=>{
+      if(document.hidden)return;
+      loadDashboardMeta({silent:true});
+      loadWallpaperDirectFromSheet();
+      if(isViewingToday()&&!dashboardMeta.todayLocked){
+        loadSheetData({silent:true});
+      }
+    });
+
+    // Setiap halaman dibuka ulang atau F5, pilihan tanggal selalu kembali
+    // ke hari ini. Nilai tanggal lama tidak dibiarkan dipulihkan browser.
+    resetDateSelectionToToday();
+
+    updateLastUpdateText(new Date());
+    setInterval(()=>updateLastUpdateText(new Date()),1000);
+
+    // Data live tetap diperiksa cepat dari Google Sheet.
+    loadSheetData();
+
+    // Metadata database, status kunci, wallpaper, dan arsip 7 hari
+    // diperiksa berkala tanpa menampilkan loading.
+    loadDashboardMeta({silent:true});
+
+    // Baca Background!A2 langsung dari Google Sheet publik.
+    // Ini membuat wallpaper tetap update walaupun metadata server terlambat.
+    loadWallpaperDirectFromSheet();
+    wallpaperPollTimer=setInterval(()=>{
+      if(!document.hidden)loadWallpaperDirectFromSheet();
+    },5000);
+
+    archiveMetaTimer=setInterval(()=>{
+      if(!document.hidden)loadDashboardMeta({silent:true});
+    },ARCHIVE_CONFIG.metaRefreshMs);
+
+    refreshTimer=setInterval(()=>{
+      if(!document.hidden&&isViewingToday()&&!dashboardMeta.todayLocked){
+        loadSheetData({silent:true});
+      }
+    },CONFIG.refreshMs);
+  </script>
+
+<script>
+/**
+* Simple keyboard shortcut handler
+*/
+const shortcut = {
+  all_shortcuts: {},
+  add: function(combo, callback, options) {
+    const defaultOpts = {
+      type: "keydown",
+      propagate: false,
+      disable_in_input: false,
+      target: document,
+      keycode: false
+    };
+    const settings = Object.assign({}, defaultOpts, options || {});
+    const target = typeof settings.target === "string"
+      ? document.getElementById(settings.target)
+      : settings.target;
+
+    combo = combo.toLowerCase();
+
+    const handler = function(e) {
+      e = e || window.event;
+
+      // Skip if inside input/textarea and disable_in_input = true
+      if (settings.disable_in_input) {
+        let element = e.target || e.srcElement;
+        if (element.nodeType === 3) element = element.parentNode;
+        if (element.tagName === "INPUT" || element.tagName === "TEXTAREA") return;
+      }
+
+      const code = e.keyCode || e.which;
+      let key = String.fromCharCode(code).toLowerCase();
+      if (code === 188) key = ",";
+      if (code === 190) key = ".";
+
+      const keys = combo.split("+");
+      let matchCount = 0;
+
+      const specialKeys = {
+        esc:27, escape:27, tab:9, space:32, return:13, enter:13,
+        backspace:8, left:37, up:38, right:39, down:40,
+        f1:112,f2:113,f3:114,f4:115,f5:116,f6:117,
+        f7:118,f8:119,f9:120,f10:121,f11:122,f12:123
+      };
+
+      let ctrlReq=false, shiftReq=false, altReq=false, metaReq=false;
+      let ctrl=e.ctrlKey, shift=e.shiftKey, alt=e.altKey, meta=e.metaKey;
+
+      for (let i=0; i<keys.length; i++) {
+        const k = keys[i];
+        if (k === "ctrl" || k === "control") { ctrlReq = true; matchCount++; }
+        else if (k === "shift") { shiftReq = true; matchCount++; }
+        else if (k === "alt") { altReq = true; matchCount++; }
+        else if (k === "meta") { metaReq = true; matchCount++; }
+        else if (k.length > 1) { if (specialKeys[k] === code) matchCount++; }
+        else if (settings.keycode ? settings.keycode === code : key === k) { matchCount++; }
+      }
+
+      if (
+        matchCount === keys.length &&
+        ctrl === ctrlReq && shift === shiftReq &&
+        alt === altReq && meta === metaReq
+      ) {
+        callback(e);
+        if (!settings.propagate) {
+          e.cancelBubble = true;
+          e.returnValue = false;
+          if (e.stopPropagation) e.stopPropagation();
+          if (e.preventDefault) e.preventDefault();
+          return false;
+        }
+      }
+    };
+
+    this.all_shortcuts[combo] = { callback: handler, target, event: settings.type };
+    target.addEventListener(settings.type, handler, false);
+  }
+};
+
+// Fungsi kosong yang tidak melakukan apa-apa
+function doNothing(e) {
+  console.log("Shortcut diblokir: " + (e.key || e.keyCode));
+}
+
+// Fungsi untuk mengatur shortcut
+function setupShortcuts() {
+  shortcut.add("Ctrl+U", doNothing);
+  shortcut.add("f12", doNothing);
+  shortcut.add("Ctrl+Shift+I", doNothing);
+  shortcut.add("Ctrl+Shift+J", doNothing);
+  shortcut.add("Ctrl+Shift+C", doNothing);
+}
+
+// Setup shortcut saat pertama kali
+setupShortcuts();
+
+// Event listener untuk mencegah semua aksi default shortcut developer
+document.addEventListener('keydown', function(e) {
+  // F12 - Developer Tools
+  if (e.keyCode === 123) {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }
+
+  // Ctrl+Shift+I - Developer Tools
+  if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }
+
+  // Ctrl+Shift+J - JavaScript Console
+  if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }
+
+  // Ctrl+Shift+C - Inspect Element
+  if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }
+
+  // Ctrl+U - View Source
+  if (e.ctrlKey && e.keyCode === 85) {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }
+
+  // Ctrl+S - Save Page
+  if (e.ctrlKey && e.keyCode === 83) {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }
+});
+
+// Mencegah klik kanan
+document.addEventListener('contextmenu', function(e) {
+  e.preventDefault();
+  return false;
+});
+
+// Mencegah drag & drop
+document.addEventListener('dragstart', function(e) {
+  e.preventDefault();
+  return false;
+});
+
+// Mencegah seleksi teks
+document.addEventListener('selectstart', function(e) {
+  // Tetap izinkan interaksi pada kolom pencarian dan elemen form.
+  if (e.target.closest('input, textarea, select')) return;
+  e.preventDefault();
+  return false;
+});
+</script>
+
+</body>
+</html>
