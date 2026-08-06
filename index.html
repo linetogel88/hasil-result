@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -2271,7 +2272,7 @@
         localizedLines,
         expectedPrize:rule.prize,
         filledPrizeCount:resultCount,
-        isHoki:/\bHOKIDRAW\b/i.test(group.market),
+        isHoki:marketMatchKey(group.market).includes('HOKIDRAW'),
         isMulti:rule.prize>1,
         searchText:normalizeForSearch(
           group.lines.join(' ')+' '+localizedLines.join(' ')
@@ -2283,7 +2284,29 @@
     function parseExactLines(lines=[]){
       return groupExactSheetData(lines)
         .map((group,sourceIndex)=>{
-          const rule=MARKET_RULE_MAP.get(marketMatchKey(group.market));
+          const marketKey=marketMatchKey(group.market);
+          let rule=MARKET_RULE_MAP.get(marketKey);
+
+          /*
+            Semua pasaran dengan nama HOKIDRAW dibaca otomatis sebagai
+            kategori Hokidraw walaupun jam/nama variannya belum ada di
+            MARKET_RULES.
+
+            Contoh yang sekarang terbaca:
+            - HOKIDRAW 00:00
+            - HOKIDRAW 12:00
+            - HOKI DRAW 18:00
+
+            Hokidraw memakai satu Result wajib berisi angka.
+          */
+          if(!rule&&marketKey.includes('HOKIDRAW')){
+            rule={
+              name:group.market,
+              prize:1,
+              order:MARKET_RULES.length+sourceIndex
+            };
+          }
+
           if(!rule)return null;
           if(!hasCompletePrize(group.lines,rule.prize))return null;
           return parseExactGroup(group,sourceIndex,rule);
