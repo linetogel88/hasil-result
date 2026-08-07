@@ -958,6 +958,39 @@
       filter:drop-shadow(0 22px 30px rgba(0,0,0,.36));
     }
 
+    /*
+      Teks harus tetap tajam saat cursor berada tepat di area isi hasil.
+      Hover 3D pada card sebelumnya membuat browser merasterisasi teks
+      sehingga terlihat sedikit blur. Efek 3D hanya dimatikan ketika
+      pointer berada di area .card-text, fungsi lain tetap sama.
+    */
+    .card:has(.card-text:hover){
+      transform:none !important;
+      filter:none !important;
+    }
+
+    .card-text:hover{
+      text-rendering:geometricPrecision;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Setiap baris tetap satu baris visual seperti data aslinya. */
+    .card-line{
+      display:block;
+      min-height:1em;
+    }
+
+    /* Hanya baris Result dibuat lebih tebal agar angka hasil lebih jelas. */
+    .card-line.result-line{
+      color:#ffffff;
+      font-weight:900;
+      letter-spacing:.015em;
+      text-shadow:
+        0 1px 1px rgba(0,0,0,.72),
+        0 0 8px rgba(120,170,255,.10);
+    }
+
     @keyframes copyPop{
       0%{transform:scale(.97)}
       56%{transform:scale(1.025)}
@@ -1458,28 +1491,6 @@
       z-index:10;
     }
 
-  
-    /* ===== KURSOR WAJAH 36x36 ===== */
-    :root {
-      --kursor-wajah: url("data:image/png;base64,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") 17 1;
-    }
-
-    html,
-    body,
-    body * {
-      cursor: var(--kursor-wajah), auto !important;
-    }
-
-    a,
-    button,
-    input,
-    select,
-    textarea,
-    label,
-    [role="button"],
-    [onclick] {
-      cursor: var(--kursor-wajah), pointer !important;
-    }
   </style>
 </head>
 <body>
@@ -3219,6 +3230,18 @@
         : '<rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>';
       const badgeIcon=item.isMulti?'icon-trophy':'icon-crown';
 
+      const displayLines=
+        item.localizedLines||
+        item.lines.map(localizeDateLanguage);
+
+      const cardTextHtml=displayLines
+        .map(line=>{
+          const clean=String(line??'');
+          const isResult=/^\s*Result(?:\s*\d+)?\s*:/i.test(clean);
+          return `<span class="card-line ${isResult?'result-line':''}">${escapeHtml(clean)}</span>`;
+        })
+        .join('');
+
       return `
         <article class="card ${item.isMulti?'multi':''} ${isCopied?'copy-success':''}">
           <div class="card-ambient"></div>
@@ -3232,7 +3255,7 @@
           </div>
 
           <div class="card-glass">
-            <div class="card-text">${(item.localizedLines||item.lines.map(localizeDateLanguage)).map(escapeHtml).join('\n')}</div>
+            <div class="card-text">${cardTextHtml}</div>
           </div>
 
           <button class="copy-btn ${isCopied?'copied':''}" type="button" data-copy-id="${escapeHtml(item.id)}">
