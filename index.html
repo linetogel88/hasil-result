@@ -728,7 +728,7 @@
       grid-template-columns:repeat(3, minmax(0,1fr));
       gap:18px;
       align-items:stretch;
-      perspective:1400px;
+      perspective:none;
     }
 
     .card{
@@ -744,8 +744,15 @@
       padding:14px 16px 16px;
       display:flex;
       flex-direction:column;
-      transform-style:preserve-3d;
-      transition:transform .26s ease, filter .26s ease;
+
+      /*
+        Card dibuat statis.
+        Tidak ada transform 3D / naik / miring ketika cursor diarahkan.
+      */
+      transform:none;
+      transform-style:flat;
+      transition:filter .20s ease;
+
       isolation:isolate;
     }
     .card.multi{
@@ -758,8 +765,12 @@
       --body-grad-b:#090f2f;
     }
     .card:hover{
-      transform:translateY(-4px) rotateX(2deg);
-      filter:drop-shadow(0 22px 30px rgba(0,0,0,.36));
+      /*
+        Tidak bergerak saat hover.
+        Posisi, ukuran, dan kemiringan card tetap sama.
+      */
+      transform:none;
+      filter:none;
     }
 
     .card-frame-svg{
@@ -1385,7 +1396,8 @@
         padding:10px 12px 12px;
       }
       .card:hover{
-        transform:translateY(-3px) rotateX(1.5deg);
+        transform:none;
+        filter:none;
       }
       .card-titlebar{
         min-height:39px;
