@@ -370,22 +370,38 @@
       position:absolute;
       top:calc(100% + 12px);
       right:0;
-      width:292px;
-      padding:10px;
+      width:min(336px, calc(100vw - 28px));
+      padding:12px;
       display:none;
-      border-radius:18px;
+      border-radius:20px;
       background:
-        linear-gradient(180deg, rgba(255,255,255,.06), transparent 20%),
-        linear-gradient(180deg, rgba(7,14,34,.98), rgba(4,8,22,.98));
-      border:1px solid rgba(107,130,220,.28);
+        linear-gradient(150deg, rgba(255,255,255,.075), transparent 28%),
+        radial-gradient(120% 72% at 100% 0%, rgba(179,79,255,.18), transparent 52%),
+        radial-gradient(100% 72% at 0% 100%, rgba(55,184,255,.14), transparent 56%),
+        linear-gradient(180deg, rgba(9,17,42,.99), rgba(4,8,24,.995));
+      border:1px solid rgba(113,151,255,.36);
       box-shadow:
         0 30px 60px rgba(0,0,0,.56),
-        inset 0 1px 0 rgba(255,255,255,.08),
-        0 0 34px rgba(84,132,255,.14);
+        inset 0 1px 0 rgba(255,255,255,.10),
+        inset 0 -20px 34px rgba(0,0,0,.24),
+        0 0 36px rgba(84,132,255,.17),
+        0 0 18px rgba(199,84,255,.08);
       backdrop-filter:blur(18px);
       -webkit-backdrop-filter:blur(18px);
       overflow:hidden;
       z-index:1000;
+    }
+    .date-menu::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:inherit;
+      padding:1px;
+      background:linear-gradient(135deg,rgba(83,216,255,.58),transparent 32%,transparent 66%,rgba(218,85,255,.46));
+      -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor;
+      mask-composite:exclude;
+      pointer-events:none;
     }
     .date-picker.open .date-menu{
       display:block;
@@ -395,63 +411,179 @@
       from{opacity:0;transform:translateY(-8px) scale(.975)}
       to{opacity:1;transform:translateY(0) scale(1)}
     }
-    .date-option{
-      width:100%;
-      min-height:54px;
-      padding:10px 12px;
-      display:flex;
-      justify-content:space-between;
+
+    .calendar-header{
+      position:relative;
+      display:grid;
+      grid-template-columns:38px minmax(0,1fr) 38px;
       align-items:center;
-      gap:12px;
-      border-radius:14px;
-      border:1px solid transparent;
-      background:transparent;
-      text-align:left;
-      color:#d3ddfb;
-      transition:all .16s ease;
+      gap:8px;
+      min-height:42px;
+      margin-bottom:9px;
+      padding-bottom:9px;
+      border-bottom:1px solid rgba(113,145,224,.18);
     }
-    .date-option:hover{
-      background:linear-gradient(90deg, rgba(23,43,96,.70), rgba(18,31,74,.58));
-      border-color:rgba(103,148,255,.36);
-      box-shadow:0 0 16px rgba(83,168,255,.12);
-    }
-    .date-option.active{
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.05), transparent 42%),
-        linear-gradient(90deg, rgba(29,111,201,.76), rgba(61,34,150,.66));
-      border-color:rgba(94,192,255,.48);
-      color:#f5fbff;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.12),
-        0 0 20px rgba(83,216,255,.16);
-    }
-    .date-option-main{
-      display:flex; flex-direction:column; gap:3px; min-width:0;
-    }
-    .date-option-day{
-      font:800 14px/1 var(--font-ui);
-      color:#f3f7ff;
-    }
-    .date-option-date{
-      font:700 11px/1 var(--font-ui);
-      color:#95a6d0;
-      letter-spacing:.03em;
-    }
-    .date-option-badge{
-      min-width:68px; height:24px; padding:0 10px;
-      display:grid; place-items:center;
-      border-radius:999px;
-      background:rgba(255,255,255,.06);
-      color:#9cadd9;
-      font:900 10px/1 var(--font-display);
-      letter-spacing:.08em;
+    .calendar-title{
+      min-width:0;
+      text-align:center;
+      color:#f5f8ff;
+      font:900 14px/1 var(--font-display);
+      letter-spacing:.075em;
       text-transform:uppercase;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.12);
+      text-shadow:0 0 16px rgba(111,173,255,.24);
     }
-    .date-option.active .date-option-badge{
-      background:rgba(83,216,255,.18);
-      color:#effcff;
-      box-shadow:0 0 14px rgba(83,216,255,.18), inset 0 1px 0 rgba(255,255,255,.18);
+    .calendar-nav{
+      width:38px;
+      height:38px;
+      padding:0;
+      display:grid;
+      place-items:center;
+      border:0;
+      border-radius:11px;
+      color:#e7eeff;
+      background:
+        linear-gradient(180deg,rgba(255,255,255,.08),transparent 46%),
+        linear-gradient(180deg,rgba(24,36,80,.86),rgba(10,16,43,.94));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 8px 18px rgba(0,0,0,.22);
+      transition:color .16s ease,background .16s ease,box-shadow .16s ease,transform .16s ease;
+    }
+    .calendar-nav svg{width:17px;height:17px}
+    .calendar-nav:not(:disabled):hover{
+      color:#fff;
+      transform:translateY(-1px);
+      background:
+        linear-gradient(180deg,rgba(255,255,255,.14),transparent 44%),
+        linear-gradient(180deg,rgba(48,92,166,.88),rgba(46,29,111,.92));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 0 18px rgba(83,216,255,.14),0 8px 18px rgba(0,0,0,.24);
+    }
+    .calendar-nav:disabled{
+      opacity:.24;
+      cursor:not-allowed;
+      box-shadow:none;
+    }
+
+    .calendar-weekdays,
+    .calendar-days{
+      position:relative;
+      display:grid;
+      grid-template-columns:repeat(7,minmax(0,1fr));
+      gap:4px;
+    }
+    .calendar-weekdays{
+      margin-bottom:4px;
+    }
+    .calendar-weekday{
+      height:26px;
+      display:grid;
+      place-items:center;
+      color:#8fa2d1;
+      font:900 9px/1 var(--font-display);
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    .calendar-day{
+      position:relative;
+      width:100%;
+      aspect-ratio:1/1;
+      min-width:0;
+      padding:0;
+      display:grid;
+      place-items:center;
+      border:1px solid transparent;
+      border-radius:10px;
+      color:#dbe5ff;
+      background:rgba(255,255,255,.025);
+      font:800 12px/1 var(--font-ui);
+      font-variant-numeric:tabular-nums;
+      transition:transform .15s ease,color .15s ease,border-color .15s ease,background .15s ease,box-shadow .15s ease;
+    }
+    .calendar-day.outside-month:not(:disabled){
+      color:#8494bd;
+      background:rgba(255,255,255,.014);
+    }
+    .calendar-day:not(:disabled):hover{
+      transform:translateY(-1px);
+      color:#fff;
+      border-color:rgba(83,216,255,.52);
+      background:linear-gradient(145deg,rgba(42,134,216,.48),rgba(91,45,165,.44));
+      box-shadow:0 0 16px rgba(83,216,255,.14),inset 0 1px 0 rgba(255,255,255,.12);
+    }
+    .calendar-day.today:not(.active){
+      color:#8eeaff;
+      border-color:rgba(83,216,255,.46);
+      background:rgba(50,161,221,.14);
+      box-shadow:inset 0 0 12px rgba(83,216,255,.07);
+    }
+    .calendar-day.active{
+      color:#fff;
+      border-color:rgba(218,166,255,.82);
+      background:
+        linear-gradient(180deg,rgba(255,255,255,.16),transparent 43%),
+        linear-gradient(145deg,rgba(48,167,231,.90),rgba(117,55,207,.94));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.22),
+        0 0 18px rgba(83,216,255,.24),
+        0 0 24px rgba(194,81,255,.18);
+    }
+    .calendar-day:disabled{
+      color:#71809f;
+      opacity:.31;
+      cursor:not-allowed;
+      background:rgba(255,255,255,.018);
+      border-color:transparent;
+      box-shadow:none;
+    }
+    .calendar-day:disabled.outside-month{opacity:.18}
+    .calendar-day .archive-dot{
+      position:absolute;
+      left:50%;
+      bottom:4px;
+      width:4px;
+      height:4px;
+      margin-left:-2px;
+      border-radius:50%;
+      background:#5ff2bd;
+      box-shadow:0 0 8px rgba(95,242,189,.88);
+    }
+    .calendar-day.active .archive-dot{
+      background:#fff;
+      box-shadow:0 0 8px rgba(255,255,255,.88);
+    }
+
+    .calendar-footer{
+      position:relative;
+      margin-top:10px;
+      padding-top:10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border-top:1px solid rgba(113,145,224,.18);
+    }
+    .calendar-today{
+      min-height:34px;
+      padding:0 13px;
+      border:1px solid rgba(83,216,255,.28);
+      border-radius:10px;
+      color:#eafaff;
+      background:linear-gradient(145deg,rgba(32,125,199,.48),rgba(77,42,151,.46));
+      font:900 10px/1 var(--font-display);
+      letter-spacing:.075em;
+      text-transform:uppercase;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.10);
+      transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;
+    }
+    .calendar-today:hover{
+      transform:translateY(-1px);
+      border-color:rgba(83,216,255,.52);
+      box-shadow:0 0 16px rgba(83,216,255,.15),inset 0 1px 0 rgba(255,255,255,.14);
+    }
+    .calendar-limit{
+      color:#8395c2;
+      text-align:right;
+      font:800 9px/1.35 var(--font-display);
+      letter-spacing:.055em;
+      text-transform:uppercase;
     }
 
     .today-btn{
@@ -1307,27 +1439,32 @@
       }
       .date-menu{
         top:calc(100% + 9px);
-        width:250px;
-        padding:8px;
-        border-radius:15px;
+        width:min(314px, calc(100vw - 28px));
+        padding:10px;
+        border-radius:17px;
       }
-      .date-option{
-        min-height:45px;
-        padding:8px 10px;
-        border-radius:11px;
+      .calendar-header{
+        grid-template-columns:34px minmax(0,1fr) 34px;
+        min-height:38px;
+        margin-bottom:7px;
+        padding-bottom:7px;
       }
-      .date-option-day{
-        font-size:12px;
+      .calendar-nav{
+        width:34px;
+        height:34px;
+        border-radius:10px;
       }
-      .date-option-date{
-        font-size:10px;
+      .calendar-nav svg{
+        width:15px;
+        height:15px;
       }
-      .date-option-badge{
-        min-width:58px;
-        height:21px;
-        padding:0 8px;
-        font-size:8px;
-      }
+      .calendar-title{font-size:12px}
+      .calendar-weekday{height:23px;font-size:8px}
+      .calendar-day{font-size:11px;border-radius:9px}
+      .calendar-day .archive-dot{bottom:3px}
+      .calendar-footer{margin-top:8px;padding-top:8px}
+      .calendar-today{min-height:31px;padding:0 11px;font-size:9px}
+      .calendar-limit{font-size:8px}
       .today-btn{
         min-width:122px;
         padding:0 17px;
@@ -1484,6 +1621,12 @@
     @media (min-width:761px) and (max-width:1180px){
       .command-grid{
         grid-template-columns:1fr;
+      }
+    }
+    @media (min-width:761px) and (max-width:980px){
+      .date-menu{
+        left:0;
+        right:auto;
       }
     }
 
@@ -1702,13 +1845,13 @@
         <div class="top-right">
           <div class="date-actions">
             <div class="date-picker" id="datePicker">
-              <button class="date-control" id="datePickerButton" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <button class="date-control" id="datePickerButton" type="button" aria-haspopup="dialog" aria-controls="dateMenu" aria-expanded="false">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M8 2v4M16 2v4M3 10h18"></path></svg>
                 <span id="dateDisplay">Pilih tanggal</span>
                 <svg class="date-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 10 5 5 5-5"></path></svg>
               </button>
               <input id="dateFilter" type="hidden">
-              <div class="date-menu" id="dateMenu" role="listbox" aria-label="Select date"></div>
+              <div class="date-menu" id="dateMenu" role="dialog" aria-label="Pilih tanggal dalam tujuh hari terakhir"></div>
             </div>
 
             <button class="today-btn" id="todayBtn" type="button">◉ HARI INI</button>
@@ -1901,6 +2044,7 @@
     let currentSnapshotDate = '';
     let appliedWallpaperUrl = null;
     let dateSelectionVersion = 0;
+    let calendarViewMonth = '';
 
     // Safeguard late live/history responses.
     let liveRequestVersion = 0;
@@ -2798,9 +2942,86 @@
       return {dayName,fullDate};
     }
 
-    function getSevenDateOptions(){
+    function dashboardDateRange(){
       const today=dashboardMeta.today||getWibTodayKey();
-      return Array.from({length:7},(_,index)=>shiftDateKey(today,-index));
+      return {
+        today,
+        minDate:shiftDateKey(today,-6)
+      };
+    }
+
+    function isDashboardDateSelectable(dateKey=''){
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(dateKey))return false;
+      const {today,minDate}=dashboardDateRange();
+      return dateKey>=minDate&&dateKey<=today;
+    }
+
+    function calendarMonthKey(dateKey=''){
+      const fallback=dashboardMeta.today||getWibTodayKey();
+      const clean=/^\d{4}-\d{2}(?:-\d{2})?$/.test(dateKey)?dateKey:fallback;
+      return clean.slice(0,7);
+    }
+
+    function shiftCalendarMonth(monthKey,offset){
+      const [year,month]=calendarMonthKey(monthKey).split('-').map(Number);
+      const date=new Date(Date.UTC(year,month-1+offset,1));
+      return [
+        date.getUTCFullYear(),
+        String(date.getUTCMonth()+1).padStart(2,'0')
+      ].join('-');
+    }
+
+    function calendarMonthBounds(monthKey){
+      const normalized=calendarMonthKey(monthKey);
+      const firstDate=`${normalized}-01`;
+      const nextMonth=shiftCalendarMonth(normalized,1);
+      return {
+        firstDate,
+        lastDate:shiftDateKey(`${nextMonth}-01`,-1)
+      };
+    }
+
+    function calendarMonthHasSelectableDate(monthKey){
+      const {today,minDate}=dashboardDateRange();
+      const {firstDate,lastDate}=calendarMonthBounds(monthKey);
+      return firstDate<=today&&lastDate>=minDate;
+    }
+
+    function clampCalendarViewMonth(monthKey){
+      const normalized=calendarMonthKey(monthKey);
+      if(calendarMonthHasSelectableDate(normalized))return normalized;
+
+      const {today,minDate}=dashboardDateRange();
+      const minMonth=calendarMonthKey(minDate);
+      const maxMonth=calendarMonthKey(today);
+      if(normalized<minMonth)return minMonth;
+      return maxMonth;
+    }
+
+    function calendarMonthLabel(monthKey){
+      const [year,month]=calendarMonthKey(monthKey).split('-').map(Number);
+      return new Intl.DateTimeFormat('id-ID',{
+        month:'long',
+        year:'numeric',
+        timeZone:'UTC'
+      }).format(new Date(Date.UTC(year,month-1,1,12,0,0)));
+    }
+
+    function getCalendarCells(monthKey){
+      const normalized=calendarMonthKey(monthKey);
+      const firstDate=`${normalized}-01`;
+      const [year,month]=normalized.split('-').map(Number);
+      const leadingDays=new Date(Date.UTC(year,month-1,1)).getUTCDay();
+      const gridStart=shiftDateKey(firstDate,-leadingDays);
+
+      return Array.from({length:42},(_,index)=>{
+        const dateKey=shiftDateKey(gridStart,index);
+        return {
+          dateKey,
+          day:Number(dateKey.slice(8,10)),
+          outsideMonth:calendarMonthKey(dateKey)!==normalized
+        };
+      });
     }
 
     function closeDateMenu(){
@@ -2809,6 +3030,8 @@
     }
 
     function openDateMenu(){
+      const selected=els.dateFilter.value||dashboardMeta.today||getWibTodayKey();
+      calendarViewMonth=clampCalendarViewMonth(calendarMonthKey(selected));
       renderDateMenu();
       els.datePicker.classList.add('open');
       els.datePickerButton.setAttribute('aria-expanded','true');
@@ -2821,26 +3044,66 @@
 
     function renderDateMenu(){
       const selected=els.dateFilter.value||dashboardMeta.today||getWibTodayKey();
-      const today=dashboardMeta.today||getWibTodayKey();
+      const {today,minDate}=dashboardDateRange();
       const available=new Set(dashboardMeta.availableDates||[]);
+      const weekdays=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
 
-      els.dateMenu.innerHTML=getSevenDateOptions().map(dateKey=>{
-        const info=formatDateOption(dateKey);
-        const isToday=dateKey===today;
-        const isActive=dateKey===selected;
-        const hasArchive=isToday||available.has(dateKey);
-        const badge=isToday?'HARI INI':(hasArchive?'TERSIMPAN':'BELUM ADA');
+      calendarViewMonth=clampCalendarViewMonth(
+        calendarViewMonth||calendarMonthKey(selected)
+      );
+
+      const previousMonth=shiftCalendarMonth(calendarViewMonth,-1);
+      const nextMonth=shiftCalendarMonth(calendarViewMonth,1);
+      const canPrevious=calendarMonthHasSelectableDate(previousMonth);
+      const canNext=calendarMonthHasSelectableDate(nextMonth);
+
+      const dayButtons=getCalendarCells(calendarViewMonth).map(cell=>{
+        const selectable=isDashboardDateSelectable(cell.dateKey);
+        const isToday=cell.dateKey===today;
+        const isActive=cell.dateKey===selected;
+        const hasArchive=available.has(cell.dateKey);
+        const info=formatDateOption(cell.dateKey);
+        const disabledReason=cell.dateKey<minDate
+          ? 'Tanggal lebih dari 7 hari yang lalu'
+          : (cell.dateKey>today?'Tanggal mendatang belum dapat dipilih':'');
 
         return `
-          <button class="date-option ${isActive?'active':''}" type="button" role="option"
-                  aria-selected="${isActive?'true':'false'}" data-date-value="${dateKey}">
-            <span class="date-option-main">
-              <span class="date-option-day">${escapeHtml(info.dayName)}</span>
-              <span class="date-option-date">${escapeHtml(info.fullDate)}</span>
-            </span>
-            <span class="date-option-badge">${badge}</span>
+          <button
+            class="calendar-day ${cell.outsideMonth?'outside-month':''} ${isToday?'today':''} ${isActive?'active':''}"
+            type="button"
+            role="gridcell"
+            data-date-value="${cell.dateKey}"
+            aria-label="${escapeHtml(`${info.dayName}, ${info.fullDate}${disabledReason?`. ${disabledReason}`:''}`)}"
+            aria-selected="${isActive?'true':'false'}"
+            ${selectable?'':`disabled aria-disabled="true" title="${escapeHtml(disabledReason)}"`}
+          >
+            <span>${cell.day}</span>
+            ${hasArchive&&selectable?'<i class="archive-dot" aria-hidden="true"></i>':''}
           </button>`;
       }).join('');
+
+      els.dateMenu.innerHTML=`
+        <div class="calendar-header">
+          <button class="calendar-nav" type="button" data-calendar-nav="-1"
+                  aria-label="Bulan sebelumnya" ${canPrevious?'':'disabled'}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+          </button>
+          <div class="calendar-title" aria-live="polite">${escapeHtml(calendarMonthLabel(calendarViewMonth))}</div>
+          <button class="calendar-nav" type="button" data-calendar-nav="1"
+                  aria-label="Bulan berikutnya" ${canNext?'':'disabled'}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+          </button>
+        </div>
+        <div class="calendar-weekdays" aria-hidden="true">
+          ${weekdays.map(day=>`<span class="calendar-weekday">${day}</span>`).join('')}
+        </div>
+        <div class="calendar-days" role="grid" aria-label="Kalender ${escapeHtml(calendarMonthLabel(calendarViewMonth))}">
+          ${dayButtons}
+        </div>
+        <div class="calendar-footer">
+          <button class="calendar-today" type="button" data-calendar-today>Hari Ini</button>
+          <span class="calendar-limit">${escapeHtml(prettyDate(minDate))} – ${escapeHtml(prettyDate(today))}<br>7 hari terakhir</span>
+        </div>`;
     }
 
     function showNoResultForDate(dateKey){
@@ -2935,6 +3198,7 @@
       dateSelectionVersion+=1;
       els.dateFilter.value=today;
       els.dateDisplay.textContent=prettyDate(today);
+      calendarViewMonth=calendarMonthKey(today);
       currentDataMode='live';
       currentSnapshotDate='';
       closeDateMenu();
@@ -2946,6 +3210,13 @@
     async function selectDashboardDate(value,{silent=false}={}){
       if(!value)return;
 
+      if(!isDashboardDateSelectable(value)){
+        showToast('Tanggal hanya dapat dipilih untuk 7 hari terakhir.','error');
+        calendarViewMonth=clampCalendarViewMonth(calendarMonthKey(value));
+        renderDateMenu();
+        return false;
+      }
+
       const selectionVersion=++dateSelectionVersion;
       liveRequestVersion+=1;
       snapshotRequestVersion+=1;
@@ -2956,6 +3227,7 @@
 
       els.dateFilter.value=value;
       els.dateDisplay.textContent=prettyDate(value);
+      calendarViewMonth=calendarMonthKey(value);
       closeDateMenu();
       renderDateMenu();
 
@@ -2982,10 +3254,11 @@
           currentSnapshotDate='';
           await loadSheetData({silent:true});
         }
-        return;
+        return true;
       }
 
       await loadStoredSnapshot(value,{silent,selectionVersion});
+      return true;
     }
 
     function selectedDateKey(){
@@ -3001,6 +3274,18 @@
       const today=meta.today||getWibTodayKey();
       els.dateFilter.max=today;
       els.dateFilter.min=shiftDateKey(today,-6);
+
+      if(
+        els.dateFilter.value&&
+        !isDashboardDateSelectable(els.dateFilter.value)
+      ){
+        els.dateFilter.value=today;
+        els.dateDisplay.textContent=prettyDate(today);
+      }
+
+      calendarViewMonth=clampCalendarViewMonth(
+        calendarMonthKey(els.dateFilter.value||today)
+      );
       renderDateMenu();
     }
 
@@ -3785,8 +4070,29 @@
     });
 
     els.dateMenu.addEventListener('click',async event=>{
+      const navigation=event.target.closest('[data-calendar-nav]');
+      if(navigation){
+        if(navigation.disabled)return;
+        const nextMonth=shiftCalendarMonth(
+          calendarViewMonth,
+          Number(navigation.dataset.calendarNav)||0
+        );
+        if(calendarMonthHasSelectableDate(nextMonth)){
+          calendarViewMonth=nextMonth;
+          renderDateMenu();
+        }
+        return;
+      }
+
+      const calendarToday=event.target.closest('[data-calendar-today]');
+      if(calendarToday){
+        const today=dashboardMeta.today||getWibTodayKey();
+        await selectDashboardDate(today,{silent:false});
+        return;
+      }
+
       const option=event.target.closest('[data-date-value]');
-      if(!option)return;
+      if(!option||option.disabled)return;
       await selectDashboardDate(option.dataset.dateValue,{silent:false});
     });
 
