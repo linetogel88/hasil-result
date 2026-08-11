@@ -1,36 +1,47 @@
+
 <!doctype html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#05070f">
+  <meta name="theme-color" content="#050714">
   <title>Hasil Result</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2305070f'/%3E%3Cpath d='M17 19h30v26H17z' rx='6' fill='%23102045' stroke='%235aa9ff' stroke-width='3'/%3E%3Cpath d='M23 27h18M23 34h13M23 41h16' stroke='%23f3c846' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Assumption from brief: mockup font unspecified; using Orbitron + Exo 2 -->
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800;900&family=Orbitron:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23050914'/%3E%3Cpath d='M10 42L20 14h24l10 28H10z' fill='none' stroke='%23ff53b5' stroke-width='3'/%3E%3Cpath d='M16 20h32' stroke='%2353d8ff' stroke-width='3'/%3E%3Ccircle cx='18' cy='33' r='3' fill='%23ffce45'/%3E%3Ccircle cx='46' cy='33' r='3' fill='%23ffce45'/%3E%3C/svg%3E">
   <style>
     :root{
-      --bg:#04060f;
-      --bg-2:#070b1a;
+      --bg:#040511;
+      --bg-2:#060a1c;
+      --bg-3:#0b1030;
+      --panel:#09142e;
+      --panel-2:#0d1a39;
+      --panel-3:#121034;
+      --metal-1:#0b1230;
+      --metal-2:#161239;
+      --metal-3:#1f1743;
+      --text:#f0f4ff;
+      --muted:#8ea0ca;
+      --line-blue:#53d8ff;
+      --line-cyan:#5dafff;
+      --line-purple:#9e62ff;
+      --line-magenta:#ff53b5;
+      --line-gold:#ffce45;
+      --green:#4dffb6;
+      --danger:#ff4775;
       --wallpaper-image:none;
-      --wallpaper-blur:2px;
-      --panel:rgba(10,18,42,.78);
-      --panel-purple:rgba(22,18,58,.78);
-      --border:rgba(99,140,235,.14);
-      --border-strong:rgba(105,166,255,.42);
-      --text:#eef2ff;
-      --muted:#7d8db5;
-      --blue:#4d9fff;
-      --cyan:#2dd4ff;
-      --green:#34ffb0;
-      --yellow:#fcd34d;
-      --purple:#b16cff;
-      --pink:#ff5c8a;
-      --danger:#ff4d6d;
-      --mono:"Consolas","Cascadia Mono","Courier New",monospace;
-      --sans:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
-      --glow-blue:0 0 22px rgba(77,159,255,.35);
-      --glow-cyan:0 0 22px rgba(45,212,255,.35);
-      --glow-purple:0 0 22px rgba(177,108,255,.35);
-      --glow-green:0 0 22px rgba(52,255,176,.30);
+      --wallpaper-blur:1.6px;
+      --hero-height:132px;
+      --command-height:68px;
+      --card-radius:18px;
+      --chrome-stroke:rgba(110,148,255,.20);
+      --chrome-inner:rgba(255,255,255,.04);
+      --copy-glass:rgba(255,255,255,.03);
+      --font-ui:"Exo 2",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      --font-display:"Orbitron","Exo 2",sans-serif;
+      --font-mono:"Consolas","Cascadia Mono","SFMono-Regular",ui-monospace,monospace;
     }
 
     *{box-sizing:border-box}
@@ -39,811 +50,1700 @@
       margin:0;
       min-height:100vh;
       color:var(--text);
-      font-family:var(--sans);
-      background-color:#04060f;
-      background-image:
-        radial-gradient(circle at 50% 0,rgba(112,80,255,.10),transparent 34rem),
-        linear-gradient(180deg,#070a18 0%,#040611 100%);
-      background-size:cover;
-      background-position:center top;
-      background-attachment:fixed;
+      font-family:var(--font-ui);
+      background:
+        radial-gradient(1100px 560px at 50% -2%, rgba(111,85,255,.18), transparent 62%),
+        radial-gradient(900px 480px at 50% 118%, rgba(185,56,255,.12), transparent 58%),
+        linear-gradient(180deg,#02040d 0%, #030511 34%, #050717 100%);
       overflow-x:hidden;
     }
-
-    /* Atmospheric glow orbs */
     body::before{
       content:"";
       position:fixed;
-      inset:-18px;
-      pointer-events:none;
-      background-image:
-        linear-gradient(rgba(6,10,22,.34),rgba(6,10,22,.34)),
+      inset:-22px;
+      background:
+        linear-gradient(rgba(6,9,22,.16),rgba(6,9,22,.22)),
         var(--wallpaper-image),
-        radial-gradient(600px circle at 15% 12%,rgba(77,159,255,.10),transparent 60%),
-        radial-gradient(700px circle at 85% 8%,rgba(177,108,255,.10),transparent 60%),
-        radial-gradient(800px circle at 50% 95%,rgba(45,212,255,.06),transparent 60%);
+        radial-gradient(40% 45% at 50% 100%, rgba(176,68,255,.12), transparent 68%),
+        radial-gradient(26% 24% at 16% 24%, rgba(65,125,255,.16), transparent 72%),
+        radial-gradient(28% 28% at 84% 26%, rgba(255,78,179,.16), transparent 72%);
       background-size:cover,cover,auto,auto,auto;
-      background-position:center top,center top,15% 12%,85% 8%,50% 95%;
+      background-position:center top,center top,50% 100%,16% 24%,84% 26%;
       background-repeat:no-repeat;
-      filter:blur(var(--wallpaper-blur));
+      filter:blur(var(--wallpaper-blur)) saturate(112%);
       transform:scale(1.04);
+      pointer-events:none;
       z-index:0;
     }
-
-    /* Vignette + grain overlay */
     body::after{
       content:"";
       position:fixed;
       inset:0;
       pointer-events:none;
       background:
-        linear-gradient(180deg,rgba(2,4,12,.45),transparent 12%,transparent 85%,rgba(2,4,12,.65)),
-        radial-gradient(circle at 50% 50%,transparent 40%,rgba(2,3,10,.35) 100%);
+        linear-gradient(180deg, rgba(2,4,12,.60), rgba(2,4,12,.18) 12%, rgba(2,4,12,.18) 76%, rgba(2,4,12,.74)),
+        radial-gradient(circle at 50% 56%, transparent 36%, rgba(3,4,12,.36) 78%, rgba(1,2,8,.75) 100%);
       z-index:0;
     }
 
-    button,input{font:inherit}
+    a{color:inherit}
+    button,input,select{font:inherit}
     button{cursor:pointer}
+    ::selection{background:rgba(91,167,255,.30);color:#fff}
 
     .app{
       position:relative;
       z-index:1;
-      width:min(1308px,calc(100% - 26px));
-      margin:14px auto 34px;
+      width:min(1680px, calc(100% - 34px));
+      margin:18px auto 42px;
+      padding-inline:8px;
     }
 
-    /* ===== TOPBAR ===== */
-    .topbar{
-      position:relative;
-      z-index:50;
-      min-height:49px;
-      padding:8px 14px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      border:1px solid rgba(99,140,235,.18);
-      border-radius:14px;
-      background:linear-gradient(180deg,rgba(8,14,32,.85),rgba(6,10,24,.92));
-      box-shadow:
-        0 18px 40px rgba(0,0,0,.45),
-        0 0 0 1px rgba(255,255,255,.02) inset,
-        0 0 30px rgba(77,159,255,.08) inset;
-      backdrop-filter:blur(20px) saturate(140%);
-      -webkit-backdrop-filter:blur(20px) saturate(140%);
-      overflow:visible;
-    }
-
-    .topbar::before{
-      content:"";
+    .ui-defs{
       position:absolute;
-      inset:0;
-      border-radius:inherit;
-      background:linear-gradient(120deg,transparent 30%,rgba(77,159,255,.06) 50%,transparent 70%);
+      width:0;height:0;
+      overflow:hidden;
       pointer-events:none;
     }
 
-    .top-left,.top-right,.stats,.date-actions,.sort-actions{
+    .shell{
+      position:relative;
+      isolation:isolate;
+    }
+
+    .frame-svg{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      display:block;
+      pointer-events:none;
+      overflow:visible;
+    }
+
+    /* ===== Header ===== */
+    .topbar{
+      position:relative;
+      min-height:var(--hero-height);
+      padding:18px 28px 18px 28px;
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      align-items:center;
+      gap:18px;
+    }
+
+    .topbar .frame-shadow{
+      position:absolute;
+      inset:22px 48px -18px 48px;
+      border-radius:42px;
+      background:
+        radial-gradient(66% 76% at 50% 0%, rgba(165,106,255,.22), transparent 65%),
+        radial-gradient(22% 42% at 10% 50%, rgba(84,175,255,.18), transparent 68%),
+        radial-gradient(22% 42% at 90% 50%, rgba(255,76,182,.18), transparent 68%);
+      filter:blur(22px);
+      opacity:.95;
+      z-index:-1;
+    }
+
+    .topbar-content,
+    .command-content{
+      position:relative;
+      z-index:2;
+      display:contents;
+    }
+
+    .top-left{
       display:flex;
       align-items:center;
+      gap:18px;
+      min-width:0;
+      padding-left:8px;
     }
-    .top-left{gap:11px;min-width:0}
-    .top-right{gap:9px;justify-content:flex-end;flex-wrap:wrap}
-    .date-actions{gap:9px}
 
     .status-pill{
       position:relative;
-      height:25px;
-      padding:0 11px;
-      display:inline-flex;
+      isolation:isolate;
+      min-width:136px;
+      height:54px;
+      display:flex;
       align-items:center;
-      gap:7px;
-      border:1px solid rgba(255,94,109,.35);
-      border-radius:999px;
-      background:linear-gradient(180deg,rgba(120,28,46,.35),rgba(80,18,32,.45));
-      color:#ff8a94;
-      font-size:10px;
-      font-weight:900;
-      letter-spacing:.18em;
+      justify-content:center;
+      gap:10px;
+      padding:0 24px;
+      color:#fff2f7;
+      font:900 28px/1 var(--font-display);
+      letter-spacing:.09em;
       text-transform:uppercase;
-      white-space:nowrap;
-      box-shadow:0 0 16px rgba(255,77,109,.18),0 0 0 1px rgba(255,77,109,.08) inset;
+      text-shadow:0 0 20px rgba(255,78,155,.55), 0 0 10px rgba(255,78,155,.32);
+      clip-path:polygon(8% 0, 92% 0, 100% 50%, 92% 100%, 8% 100%, 0 50%);
+      background:
+        linear-gradient(180deg, rgba(255,120,180,.14), rgba(255,44,108,.12)),
+        linear-gradient(180deg, rgba(76,11,37,.86), rgba(35,7,18,.90));
+      border:1px solid rgba(255,84,160,.34);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.20),
+        inset 0 -10px 18px rgba(0,0,0,.30),
+        0 0 22px rgba(255,68,150,.22),
+        0 12px 28px rgba(0,0,0,.36);
+      overflow:hidden;
+      flex:0 0 auto;
     }
-    .status-dot{
-      width:6px;height:6px;border-radius:50%;
-      background:var(--danger);
-      box-shadow:0 0 10px var(--danger),0 0 16px rgba(255,77,109,.5);
+    .status-pill::before{
+      content:"";
+      position:absolute;
+      inset:2px;
+      clip-path:inherit;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.14), transparent 44%),
+        linear-gradient(90deg, rgba(255,82,164,.18), transparent 38%, transparent 62%, rgba(255,82,164,.12));
+      mix-blend-mode:screen;
+      pointer-events:none;
+    }
+    .status-pill .status-dot{
+      width:12px;height:12px;border-radius:50%;
+      background:#ff799f;
+      box-shadow:0 0 10px #ff648f, 0 0 24px rgba(255,87,145,.75);
       animation:pulseDot 1.6s ease-in-out infinite;
+      flex:0 0 auto;
     }
     @keyframes pulseDot{
       0%,100%{transform:scale(1);opacity:1}
-      50%{transform:scale(1.4);opacity:.7}
+      50%{transform:scale(1.28);opacity:.72}
     }
 
     .title{
       margin:0;
-      font-size:15px;
-      font-weight:900;
-      letter-spacing:.27em;
       white-space:nowrap;
-      background:linear-gradient(180deg,#ffffff 0%,#a9c4ff 100%);
-      -webkit-background-clip:text;
-      background-clip:text;
-      -webkit-text-fill-color:transparent;
-      filter:drop-shadow(0 0 14px rgba(77,159,255,.35));
+      font:900 clamp(28px,2.8vw,58px)/1 var(--font-display);
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:#eff4ff;
+      text-shadow:
+        0 2px 0 rgba(255,255,255,.10),
+        0 0 18px rgba(132,170,255,.42),
+        0 0 38px rgba(132,88,255,.22);
+      transform:translateY(2px);
     }
 
     .stats{
-      gap:11px;
-      height:28px;
-      padding:0 12px;
-      border-radius:9px;
-      background:linear-gradient(180deg,rgba(18,28,58,.55),rgba(12,20,44,.6));
-      border:1px solid rgba(99,140,235,.10);
-      color:#8495bd;
-      font-size:10px;
-      font-weight:800;
-      white-space:nowrap;
-      box-shadow:0 0 0 1px rgba(255,255,255,.02) inset;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      min-height:54px;
+      padding:0 16px;
+      border-radius:18px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.05), transparent 34%),
+        linear-gradient(180deg, rgba(11,24,55,.88), rgba(7,15,36,.94));
+      border:1px solid rgba(101,134,222,.24);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.08),
+        inset 0 -12px 18px rgba(0,0,0,.28),
+        0 12px 24px rgba(0,0,0,.30),
+        0 0 18px rgba(79,148,255,.08);
+      flex:0 0 auto;
     }
-    .stat{display:flex;align-items:center;gap:5px}
+    .stat{
+      display:flex;
+      align-items:center;
+      gap:7px;
+      color:#dfe7ff;
+      font:800 17px/1 var(--font-display);
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
     .stat i{
-      width:5px;height:5px;border-radius:50%;display:block;
-      box-shadow:0 0 8px currentColor,0 0 14px currentColor;
+      width:10px;height:10px;display:block;border-radius:50%;
+      box-shadow:0 0 10px currentColor, 0 0 18px currentColor;
+      background:currentColor;
+      flex:0 0 auto;
     }
-    .stat.total i{color:#7d92c8;background:currentColor}
-    .stat.normal i{color:#4d9fff;background:currentColor}
-    .stat.hoki i{color:#34ffb0;background:currentColor}
-    .stat b{color:#a9b8da;font-weight:900}
-
-    /* ===== DATE PICKER ===== */
-    .date-control,.today-btn,.refresh-btn,.sort-btn,.tab-btn,.copy-btn,.search-wrap{
-      border:1px solid var(--border);
-      background:rgba(8,16,38,.85);
-      color:#dce6ff;
-      transition:all .22s ease;
+    .stat.total i{color:#48bbff}
+    .stat.normal i{color:#50f0b7}
+    .stat.hoki i{color:#c26cff}
+    .stat b{
+      display:inline-grid;
+      place-items:center;
+      min-width:22px;height:22px;
+      padding:0 6px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      color:#f7fbff;
+      font-size:14px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.18);
     }
 
-    .date-picker{position:relative;z-index:35}
+    .top-right{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:14px;
+      min-width:0;
+      padding-right:6px;
+      flex-wrap:wrap;
+    }
+
+    .date-actions{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      flex-wrap:nowrap;
+    }
+
+    .date-picker{
+      position:relative;
+      z-index:50;
+      width:min(260px,100%);
+      flex:0 0 auto;
+    }
+
+    .date-control,
+    .today-btn,
+    .refresh-btn,
+    .sort-btn,
+    .tab-btn,
+    .copy-btn,
+    .search-wrap{
+      border:0;
+      outline:0;
+      color:#ecf0ff;
+      background:transparent;
+    }
 
     .date-control{
       position:relative;
-      height:33px;
-      min-width:145px;
-      padding:0 10px;
+      width:100%;
+      height:58px;
+      padding:0 18px;
       display:flex;
       align-items:center;
-      justify-content:flex-start;
-      gap:8px;
-      border-radius:9px;
-      color:#dce5fa;
-      font-size:11px;
-      font-weight:800;
-      white-space:nowrap;
-      overflow:hidden;
-      cursor:pointer;
+      gap:12px;
+      border-radius:16px;
+      font:800 18px/1 var(--font-display);
+      letter-spacing:.04em;
+      color:#f0f5ff;
+      text-shadow:0 0 12px rgba(95,157,255,.18);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.05), transparent 36%),
+        linear-gradient(180deg, rgba(8,18,45,.90), rgba(7,13,34,.96));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.08),
+        inset 0 -12px 18px rgba(0,0,0,.32),
+        0 12px 26px rgba(0,0,0,.34);
+    }
+    .date-control::before{
+      content:"";
+      position:absolute; inset:1px;
+      border-radius:15px;
+      border:1px solid rgba(84,120,220,.20);
+      pointer-events:none;
     }
     .date-control:hover{
-      border-color:rgba(80,175,255,.35);
-      box-shadow:0 0 14px rgba(77,159,255,.15);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.10),
+        inset 0 -12px 18px rgba(0,0,0,.32),
+        0 12px 26px rgba(0,0,0,.34),
+        0 0 18px rgba(83,216,255,.12);
     }
     .date-control > svg:first-child{
-      width:14px;height:14px;color:#7894c7;flex:0 0 auto;
+      width:20px;height:20px; color:#f2f6ff; flex:0 0 auto;
+      filter:drop-shadow(0 0 8px rgba(92,173,255,.35));
     }
-    .date-control #dateDisplay{
-      flex:1;
-      text-align:left;
-      overflow:hidden;
-      text-overflow:ellipsis;
+    #dateDisplay{
+      flex:1; min-width:0; text-align:left;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
     .date-chevron{
-      width:13px!important;
-      height:13px!important;
-      color:#6f86b4!important;
-      transition:transform .18s ease;
-      flex:0 0 auto;
+      width:18px;height:18px; flex:0 0 auto; color:#96a7d8;
+      transition:transform .20s ease;
     }
     .date-picker.open .date-chevron{transform:rotate(180deg)}
     .date-picker.open .date-control{
-      border-color:rgba(80,175,255,.55);
-      background:rgba(12,29,64,.96);
-      box-shadow:0 0 0 3px rgba(54,148,255,.10),0 0 22px rgba(77,159,255,.20);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.10),
+        inset 0 -12px 18px rgba(0,0,0,.32),
+        0 12px 26px rgba(0,0,0,.34),
+        0 0 28px rgba(83,216,255,.18);
     }
 
     .date-menu{
       position:absolute;
-      top:calc(100% + 7px);
+      top:calc(100% + 12px);
       right:0;
-      width:238px;
-      padding:7px;
+      width:292px;
+      padding:10px;
       display:none;
-      border:1px solid rgba(88,137,226,.30);
-      border-radius:13px;
-      background:linear-gradient(180deg,rgba(6,12,30,.98),rgba(4,8,22,.98));
+      border-radius:18px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.06), transparent 20%),
+        linear-gradient(180deg, rgba(7,14,34,.98), rgba(4,8,22,.98));
+      border:1px solid rgba(107,130,220,.28);
       box-shadow:
-        0 22px 50px rgba(0,0,0,.55),
-        0 0 0 1px rgba(255,255,255,.02) inset,
-        0 0 30px rgba(77,159,255,.12);
-      backdrop-filter:blur(22px) saturate(140%);
-      -webkit-backdrop-filter:blur(22px) saturate(140%);
+        0 30px 60px rgba(0,0,0,.56),
+        inset 0 1px 0 rgba(255,255,255,.08),
+        0 0 34px rgba(84,132,255,.14);
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
       overflow:hidden;
       z-index:1000;
     }
     .date-picker.open .date-menu{
       display:block;
-      animation:dateMenuIn .18s cubic-bezier(.4,1.4,.5,1);
+      animation:menuIn .18s cubic-bezier(.3,1.35,.5,1) forwards;
     }
-    @keyframes dateMenuIn{
-      from{opacity:0;transform:translateY(-6px) scale(.97)}
+    @keyframes menuIn{
+      from{opacity:0;transform:translateY(-8px) scale(.975)}
       to{opacity:1;transform:translateY(0) scale(1)}
     }
-
     .date-option{
       width:100%;
-      min-height:40px;
-      padding:7px 10px;
+      min-height:54px;
+      padding:10px 12px;
       display:flex;
-      align-items:center;
       justify-content:space-between;
-      gap:10px;
+      align-items:center;
+      gap:12px;
+      border-radius:14px;
       border:1px solid transparent;
-      border-radius:9px;
-      color:#c8d5f0;
       background:transparent;
       text-align:left;
-      cursor:pointer;
-      transition:all .15s ease;
+      color:#d3ddfb;
+      transition:all .16s ease;
     }
     .date-option:hover{
-      border-color:rgba(79,145,255,.30);
-      background:linear-gradient(90deg,rgba(24,46,91,.65),rgba(20,38,76,.55));
-      box-shadow:0 0 14px rgba(77,159,255,.10);
+      background:linear-gradient(90deg, rgba(23,43,96,.70), rgba(18,31,74,.58));
+      border-color:rgba(103,148,255,.36);
+      box-shadow:0 0 16px rgba(83,168,255,.12);
     }
     .date-option.active{
-      border-color:rgba(52,190,255,.45);
-      background:linear-gradient(90deg,rgba(27,102,173,.55),rgba(22,50,103,.55));
-      color:#f5f9ff;
-      box-shadow:0 0 18px rgba(45,212,255,.20),0 0 0 1px rgba(45,212,255,.15) inset;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.05), transparent 42%),
+        linear-gradient(90deg, rgba(29,111,201,.76), rgba(61,34,150,.66));
+      border-color:rgba(94,192,255,.48);
+      color:#f5fbff;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.12),
+        0 0 20px rgba(83,216,255,.16);
     }
     .date-option-main{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-      min-width:0;
+      display:flex; flex-direction:column; gap:3px; min-width:0;
     }
     .date-option-day{
-      color:#eef4ff;
-      font-size:11px;
-      font-weight:900;
+      font:800 14px/1 var(--font-ui);
+      color:#f3f7ff;
     }
     .date-option-date{
-      color:#7f91b9;
-      font-size:9px;
-      font-weight:700;
+      font:700 11px/1 var(--font-ui);
+      color:#95a6d0;
+      letter-spacing:.03em;
     }
     .date-option-badge{
-      min-width:45px;
-      height:20px;
-      padding:0 7px;
-      display:grid;
-      place-items:center;
+      min-width:68px; height:24px; padding:0 10px;
+      display:grid; place-items:center;
       border-radius:999px;
       background:rgba(255,255,255,.06);
-      color:#8498c2;
-      font-size:8px;
-      font-weight:900;
-      white-space:nowrap;
+      color:#9cadd9;
+      font:900 10px/1 var(--font-display);
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.12);
     }
     .date-option.active .date-option-badge{
-      background:rgba(53,201,255,.18);
-      color:#67d8ff;
-      box-shadow:0 0 10px rgba(45,212,255,.25);
+      background:rgba(83,216,255,.18);
+      color:#effcff;
+      box-shadow:0 0 14px rgba(83,216,255,.18), inset 0 1px 0 rgba(255,255,255,.18);
     }
 
     .today-btn{
-      height:33px;
-      padding:0 13px;
-      border-radius:9px;
-      border-color:rgba(48,193,255,.50);
-      background:linear-gradient(180deg,rgba(31,180,242,.95),rgba(27,139,219,.95));
-      color:#f6fbff;
-      font-size:10px;
-      font-weight:900;
-      white-space:nowrap;
+      position:relative;
+      height:58px;
+      min-width:148px;
+      padding:0 22px;
+      border-radius:16px;
+      font:900 18px/1 var(--font-display);
+      letter-spacing:.04em;
+      color:#effcff;
+      text-transform:uppercase;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.02) 34%),
+        linear-gradient(180deg, #39b8ff 0%, #0093ff 54%, #0f79ff 100%);
       box-shadow:
-        0 0 18px rgba(38,178,242,.30),
-        0 0 0 1px rgba(120,220,255,.20) inset,
-        0 4px 14px rgba(0,0,0,.30);
-      text-shadow:0 1px 2px rgba(0,0,0,.30);
+        inset 0 1px 0 rgba(255,255,255,.55),
+        inset 0 -14px 22px rgba(0,0,0,.22),
+        0 0 28px rgba(31,173,255,.34),
+        0 15px 28px rgba(0,0,0,.34);
+      clip-path:polygon(10% 0,90% 0,100% 18%,100% 82%,90% 100%,10% 100%,0 82%,0 18%);
+      text-shadow:0 0 12px rgba(255,255,255,.30);
+      flex:0 0 auto;
     }
     .today-btn:hover{
-      box-shadow:
-        0 0 26px rgba(38,178,242,.50),
-        0 0 0 1px rgba(120,220,255,.30) inset,
-        0 6px 18px rgba(0,0,0,.35);
       transform:translateY(-1px);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.58),
+        inset 0 -14px 22px rgba(0,0,0,.22),
+        0 0 34px rgba(31,173,255,.44),
+        0 15px 28px rgba(0,0,0,.34);
     }
     .today-btn:active{transform:translateY(0)}
 
-    .updated{text-align:left;line-height:1.05;min-width:110px}
+    .updated{
+      min-width:160px;
+      text-align:left;
+      padding:0 4px;
+    }
     .updated small{
       display:block;
-      margin-bottom:4px;
-      color:#7485aa;
-      font-size:8px;
-      font-weight:900;
+      margin-bottom:5px;
+      color:#c9d4f6;
+      opacity:.84;
+      font:900 12px/1 var(--font-display);
       letter-spacing:.12em;
       text-transform:uppercase;
     }
     .updated strong{
-      font-size:10px;color:#c9d6f1;white-space:nowrap;
-      font-family:var(--mono);
-      letter-spacing:.02em;
+      display:block;
+      color:#ffffff;
+      font:800 14px/1.2 var(--font-mono);
+      text-shadow:0 0 10px rgba(110,160,255,.18);
+      white-space:nowrap;
     }
 
     .refresh-btn{
-      width:33px;height:33px;padding:0;
-      display:grid;place-items:center;
-      border-radius:9px;
-      color:#6f8ab9;
+      width:58px;height:58px;
+      display:grid; place-items:center;
+      border-radius:16px;
+      color:#dce5ff;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.06), transparent 36%),
+        linear-gradient(180deg, rgba(19,23,62,.94), rgba(7,12,34,.98));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.08),
+        inset 0 -14px 18px rgba(0,0,0,.28),
+        0 12px 26px rgba(0,0,0,.34),
+        0 0 20px rgba(170,77,255,.14);
+      clip-path:polygon(18% 0,82% 0,100% 18%,100% 82%,82% 100%,18% 100%,0 82%,0 18%);
     }
     .refresh-btn:hover{
-      color:#9ec0ff;
-      border-color:rgba(80,175,255,.40);
-      box-shadow:0 0 16px rgba(77,159,255,.20);
+      color:#fff;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.12),
+        inset 0 -14px 18px rgba(0,0,0,.28),
+        0 12px 26px rgba(0,0,0,.34),
+        0 0 24px rgba(170,77,255,.22);
     }
-    .refresh-btn:hover svg{animation:spin 1.4s linear infinite}
-    .refresh-btn svg{width:15px;height:15px;transition:color .2s ease}
+    .refresh-btn:hover svg{animation:spin 1.3s linear infinite}
+    .refresh-btn svg{
+      width:22px;height:22px;
+      filter:drop-shadow(0 0 10px rgba(194,108,255,.32));
+    }
     @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 
-    /* ===== CONTROL ROW ===== */
-    .control-row{
+    /* ===== Integrated command shell ===== */
+    .command-shell{
       position:relative;
-      z-index:1;
-      margin-top:14px;
+      min-height:112px;
+      margin-top:16px;
+      padding:14px 24px 14px 24px;
+    }
+
+    .command-grid{
+      position:relative;
+      z-index:2;
       display:grid;
-      grid-template-columns:minmax(0,1fr) auto;
-      gap:10px;
+      grid-template-columns:minmax(0,1.18fr) minmax(340px,.92fr) auto;
+      grid-template-areas:"search tabs sort";
+      align-items:center;
+      gap:18px;
+      min-height:84px;
+      padding-inline:6px;
     }
 
     .search-wrap{
+      grid-area:search;
       position:relative;
-      height:42px;
-      padding:0 14px;
+      height:60px;
       display:flex;
       align-items:center;
-      gap:10px;
-      border-radius:11px;
-      background:linear-gradient(180deg,rgba(8,18,42,.92),rgba(6,14,32,.92));
+      gap:12px;
+      padding:0 18px 0 18px;
+      border-radius:18px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.06), transparent 34%),
+        linear-gradient(180deg, rgba(9,15,42,.94), rgba(5,10,29,.98));
       box-shadow:
-        0 10px 24px rgba(0,0,0,.30),
-        0 0 0 1px rgba(255,255,255,.02) inset;
+        inset 0 1px 0 rgba(255,255,255,.08),
+        inset 0 -12px 18px rgba(0,0,0,.30),
+        0 14px 28px rgba(0,0,0,.34);
+      clip-path:polygon(3% 0, 97% 0, 100% 24%, 100% 76%, 97% 100%, 3% 100%, 0 76%, 0 24%);
     }
-    .search-wrap:focus-within{
-      border-color:rgba(80,175,255,.45);
-      box-shadow:
-        0 10px 24px rgba(0,0,0,.30),
-        0 0 0 3px rgba(54,148,255,.10),
-        0 0 24px rgba(77,159,255,.18);
+    .search-wrap::before{
+      content:"";
+      position:absolute; inset:2px;
+      clip-path:inherit;
+      border:1px solid rgba(184,76,255,.35);
+      background:
+        linear-gradient(90deg, rgba(255,74,184,.10), transparent 28%, transparent 68%, rgba(83,216,255,.10)),
+        radial-gradient(180px 70px at 90% 50%, rgba(83,216,255,.12), transparent 72%);
+      pointer-events:none;
     }
-    .search-wrap svg{width:17px;height:17px;color:#7189bb;flex:0 0 auto;transition:color .2s ease}
-    .search-wrap:focus-within svg{color:#4d9fff;filter:drop-shadow(0 0 6px rgba(77,159,255,.5))}
+    .search-wrap:focus-within::before{
+      border-color:rgba(83,216,255,.52);
+      box-shadow:0 0 22px rgba(83,216,255,.16), inset 0 0 22px rgba(184,76,255,.08);
+    }
+    .search-wrap svg{
+      width:22px;height:22px; flex:0 0 auto;
+      color:#f6fbff;
+      filter:drop-shadow(0 0 10px rgba(83,216,255,.28));
+    }
     .search-wrap input{
       width:100%;
-      border:0;
-      outline:0;
-      background:transparent;
-      color:#edf3ff;
-      font-size:13px;
+      border:0; outline:0; background:transparent;
+      color:#eef4ff;
+      font:700 20px/1 var(--font-ui);
+      letter-spacing:.01em;
     }
-    .search-wrap input::placeholder{color:#65779e}
-
-    .sort-actions{gap:7px}
-    .sort-btn{
-      min-width:77px;
-      height:42px;
-      padding:0 12px;
-      border-radius:11px;
-      font-size:10px;
-      font-weight:900;
-      color:#64789f;
-    }
-    .sort-btn:hover{
-      color:#9ec0ff;
-      border-color:rgba(80,175,255,.30);
-    }
-    .sort-btn.active{
-      color:#bcd7ff;
-      border-color:rgba(84,153,255,.42);
-      background:linear-gradient(180deg,rgba(14,32,70,.95),rgba(10,24,54,.95));
-      box-shadow:0 0 18px rgba(77,159,255,.18),0 0 0 1px rgba(120,180,255,.10) inset;
+    .search-wrap input::placeholder{
+      color:#98a8d7;
     }
 
-    /* ===== TABS ===== */
     .tabs{
+      grid-area:tabs;
       position:relative;
-      z-index:1;
-      margin-top:14px;
-      padding:4px;
+      min-height:60px;
+      padding:0;
       display:grid;
       grid-template-columns:1fr 1fr;
-      gap:4px;
-      border:1px solid rgba(80,112,188,.18);
-      border-radius:11px;
-      background:linear-gradient(180deg,rgba(5,11,27,.92),rgba(4,9,21,.92));
-      box-shadow:0 12px 26px rgba(0,0,0,.30),0 0 0 1px rgba(255,255,255,.02) inset;
+      gap:0;
+      border:0;
+      background:transparent;
+      min-width:0;
     }
+    .tabs::before{
+      content:"";
+      position:absolute; inset:0;
+      border-radius:18px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.05), transparent 34%),
+        linear-gradient(180deg, rgba(10,16,42,.94), rgba(6,11,28,.98));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.08),
+        inset 0 -12px 18px rgba(0,0,0,.30),
+        0 14px 28px rgba(0,0,0,.34);
+      clip-path:polygon(3% 0, 97% 0, 100% 24%, 100% 76%, 97% 100%, 3% 100%, 0 76%, 0 24%);
+      z-index:-1;
+    }
+
     .tab-btn{
-      height:36px;
-      padding:0 12px;
-      border-radius:8px;
-      border-color:transparent;
-      color:#556789;
-      font-size:11px;
-      font-weight:900;
+      position:relative;
       display:flex;
       align-items:center;
       justify-content:center;
-      gap:8px;
-      transition:all .22s ease;
+      gap:10px;
+      min-height:60px;
+      padding:0 20px;
+      color:#cfd7fb;
+      font:900 20px/1 var(--font-ui);
+      white-space:nowrap;
+      background:transparent;
+      clip-path:polygon(7% 0, 93% 0, 100% 22%, 100% 78%, 93% 100%, 7% 100%, 0 78%, 0 22%);
+      transition:transform .18s ease, filter .18s ease;
     }
-    .tab-btn:hover{color:#8aa3d0}
-    .tab-btn.active{
-      color:#e1e9ff;
-      border-color:rgba(90,137,225,.30);
-      background:linear-gradient(180deg,rgba(22,38,76,.92),rgba(16,28,58,.92));
-      box-shadow:0 0 18px rgba(77,159,255,.18),0 0 0 1px rgba(120,180,255,.10) inset;
-    }
-    .tab-count{
-      min-width:18px;
-      height:16px;
-      padding:0 5px;
+    .tab-btn .tab-count{
+      min-width:24px;height:24px; padding:0 7px;
+      display:grid; place-items:center;
       border-radius:999px;
-      display:grid;
-      place-items:center;
-      background:rgba(255,255,255,.07);
-      color:#8498c4;
-      font-size:8px;
+      background:rgba(255,255,255,.08);
+      color:#eef4ff;
+      font:900 12px/1 var(--font-display);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
     }
-    .tab-count.hoki{
-      background:rgba(49,213,138,.15);
-      color:#50e4a1;
-      box-shadow:0 0 10px rgba(52,255,176,.20);
+    .tab-btn.active{
+      color:#ffffff;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.12), transparent 42%),
+        linear-gradient(180deg, rgba(122,91,255,.94), rgba(72,44,140,.88));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.18),
+        inset 0 -12px 18px rgba(0,0,0,.20),
+        0 0 20px rgba(172,116,255,.22);
+    }
+    .tab-btn.active .tab-count{
+      background:rgba(255,255,255,.14);
+    }
+    .tab-btn .tab-count.hoki{
+      background:rgba(70,255,183,.14);
+      color:#dffff4;
+      box-shadow:0 0 14px rgba(70,255,183,.12), inset 0 1px 0 rgba(255,255,255,.16);
+    }
+    .tab-btn:not(.active):hover{
+      transform:translateY(-1px);
+      filter:drop-shadow(0 0 10px rgba(83,216,255,.08));
     }
 
-    /* ===== GRID & CARDS ===== */
+    .sort-actions{
+      grid-area:sort;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+
+    .sort-btn{
+      position:relative;
+      min-width:134px;
+      height:58px;
+      padding:0 20px;
+      color:#d7defb;
+      font:900 18px/1 var(--font-ui);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.04), transparent 34%),
+        linear-gradient(180deg, rgba(10,16,42,.94), rgba(6,11,28,.98));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.08),
+        inset 0 -12px 18px rgba(0,0,0,.30),
+        0 14px 28px rgba(0,0,0,.34);
+      clip-path:polygon(12% 0, 88% 0, 100% 22%, 100% 78%, 88% 100%, 12% 100%, 0 78%, 0 22%);
+      white-space:nowrap;
+      transition:transform .16s ease, box-shadow .16s ease, color .16s ease;
+    }
+    .sort-btn.active{
+      color:#fff;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.12), transparent 43%),
+        linear-gradient(180deg, rgba(126,91,255,.94), rgba(76,42,154,.90));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.18),
+        inset 0 -12px 18px rgba(0,0,0,.22),
+        0 0 18px rgba(165,88,255,.20),
+        0 14px 28px rgba(0,0,0,.34);
+    }
+    .sort-btn:hover{
+      transform:translateY(-1px);
+    }
+
+    /* ===== Grid ===== */
     .grid{
-      margin-top:14px;
+      margin-top:18px;
       display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:14px;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:18px;
       align-items:stretch;
+      perspective:none;
     }
 
     .card{
+      --accent:#ffce45;
+      --accent-rgb:255,206,69;
+      --line-2:#fff6b8;
+      --frame-1:#1a1436;
+      --frame-2:#0e1433;
+      --body-grad-a:#151b3f;
+      --body-grad-b:#09112a;
       position:relative;
-      min-height:182px;
-      padding:13px 13px 12px;
+      min-height:268px;
+      padding:14px 16px 16px;
       display:flex;
       flex-direction:column;
-      border:1px solid rgba(69,124,218,.20);
-      border-radius:14px;
-      background:linear-gradient(180deg,rgba(12,26,58,.92),rgba(8,18,42,.92));
-      box-shadow:
-        0 16px 32px rgba(0,0,0,.40),
-        0 0 0 1px rgba(255,255,255,.02) inset,
-        0 0 30px rgba(77,159,255,.04) inset;
-      overflow:hidden;
-      transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;
+
+      /*
+        Card dibuat statis.
+        Tidak ada transform 3D / naik / miring ketika cursor diarahkan.
+      */
+      transform:none;
+      transform-style:flat;
+      transition:filter .20s ease;
+
+      isolation:isolate;
     }
-    .card::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:radial-gradient(400px circle at 50% -20%,rgba(77,159,255,.10),transparent 60%);
-      pointer-events:none;
-      opacity:.8;
-      transition:opacity .3s ease;
+    .card.multi{
+      --accent:#cf6bff;
+      --accent-rgb:207,107,255;
+      --line-2:#f1b6ff;
+      --frame-1:#231354;
+      --frame-2:#0c1233;
+      --body-grad-a:#18124a;
+      --body-grad-b:#090f2f;
     }
     .card:hover{
-      transform:translateY(-3px);
-      border-color:rgba(77,159,255,.42);
-      box-shadow:
-        0 22px 40px rgba(0,0,0,.50),
-        0 0 0 1px rgba(120,180,255,.06) inset,
-        0 0 35px rgba(77,159,255,.18) inset;
+      /*
+        Tidak bergerak saat hover.
+        Posisi, ukuran, dan kemiringan card tetap sama.
+      */
+      transform:none;
+      filter:none;
     }
-    .card:hover::before{opacity:1.4}
 
-    .card.multi{
-      border-color:rgba(145,96,239,.22);
-      background:linear-gradient(180deg,rgba(22,20,64,.94),rgba(16,14,46,.94));
+    .card-frame-svg{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      overflow:visible;
+      pointer-events:none;
+      z-index:0;
     }
-    .card.multi::before{
-      background:radial-gradient(400px circle at 50% -20%,rgba(177,108,255,.12),transparent 60%);
+
+    .card-ambient{
+      position:absolute;
+      inset:8% 4% 2% 4%;
+      border-radius:38px;
+      background:
+        radial-gradient(34% 20% at 50% 0%, rgba(var(--accent-rgb),.22), transparent 70%),
+        radial-gradient(58% 70% at 50% 90%, rgba(87,132,255,.10), transparent 66%);
+      filter:blur(18px);
+      opacity:.88;
+      pointer-events:none;
+      z-index:-1;
     }
-    .card.multi:hover{
-      border-color:rgba(177,108,255,.45);
+
+    .card-titlebar{
+      position:relative;
+      z-index:2;
+      min-height:46px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:0 56px 0 26px;
+      margin:0 0 12px;
+      clip-path:polygon(4% 0, 96% 0, 100% 24%, 100% 76%, 96% 100%, 4% 100%, 0 76%, 0 24%);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.09), transparent 40%),
+        linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.02)),
+        linear-gradient(180deg, rgba(21,28,66,.68), rgba(13,18,46,.88));
       box-shadow:
-        0 22px 40px rgba(0,0,0,.50),
-        0 0 0 1px rgba(200,150,255,.06) inset,
-        0 0 35px rgba(177,108,255,.18) inset;
+        inset 0 1px 0 rgba(255,255,255,.08),
+        inset 0 -10px 16px rgba(0,0,0,.30);
     }
 
     .card-title{
-      position:relative;
-      margin:0 0 11px;
+      margin:0;
+      color:var(--accent);
       text-align:center;
-      color:var(--yellow);
-      font-family:var(--mono);
-      font-size:12px;
-      font-weight:900;
-      letter-spacing:.20em;
-      line-height:1.2;
-      text-shadow:0 0 14px rgba(252,211,77,.40),0 1px 2px rgba(0,0,0,.50);
+      font:900 17px/1 var(--font-display);
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      text-shadow:
+        0 0 18px rgba(var(--accent-rgb), .32),
+        0 1px 0 rgba(255,255,255,.10);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      width:100%;
     }
-    .card-title::after{
+
+    .card-badge{
+      position:absolute;
+      top:-1px;
+      right:14px;
+      width:42px;
+      height:42px;
+      display:grid;
+      place-items:center;
+      color:var(--accent);
+      z-index:3;
+      filter:drop-shadow(0 0 12px rgba(var(--accent-rgb), .38));
+    }
+    .card-badge svg{
+      width:18px;height:18px;
+      position:relative;
+      z-index:2;
+    }
+    .card-badge::before{
       content:"";
       position:absolute;
-      left:50%;bottom:-7px;
-      width:100px;height:1px;
-      transform:translateX(-50%);
-      background:linear-gradient(90deg,transparent,rgba(252,211,77,.55),transparent);
+      inset:0;
+      clip-path:polygon(20% 0, 100% 0, 100% 80%, 80% 100%, 0 100%, 0 18%);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.18), transparent 38%),
+        linear-gradient(180deg, rgba(var(--accent-rgb),.28), rgba(17,16,39,.94));
+      border:1px solid rgba(var(--accent-rgb),.54);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.18),
+        inset 0 -10px 14px rgba(0,0,0,.28),
+        0 0 18px rgba(var(--accent-rgb),.24);
     }
-    .card.multi .card-title{
-      color:var(--purple);
-      text-shadow:0 0 14px rgba(177,108,255,.45),0 1px 2px rgba(0,0,0,.50);
+
+    .card-glass{
+      position:relative;
+      z-index:2;
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      min-height:0;
+      margin:0 10px 0;
+      padding:16px 18px 0;
+      border-radius:16px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.04), transparent 22%),
+        radial-gradient(120% 80% at 50% -14%, rgba(var(--accent-rgb),.08), transparent 44%),
+        linear-gradient(180deg, rgba(12,21,49,.92), rgba(7,13,31,.98));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.06),
+        inset 0 -10px 16px rgba(0,0,0,.34);
+      overflow:hidden;
     }
-    .card.multi .card-title::after{
-      background:linear-gradient(90deg,transparent,rgba(177,108,255,.55),transparent);
+    .card-glass::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(130deg, rgba(255,255,255,.08), transparent 26%, transparent 72%, rgba(255,255,255,.03)),
+        linear-gradient(90deg, transparent 0, rgba(var(--accent-rgb),.05) 18%, transparent 38%, transparent 62%, rgba(80,155,255,.05) 86%, transparent 100%);
+      mix-blend-mode:screen;
+      pointer-events:none;
     }
 
     .card-text{
       position:relative;
+      z-index:2;
       flex:1;
+      min-height:0;
       white-space:pre-wrap;
       word-break:break-word;
-      color:#f5f6fb;
-      font-family:var(--mono);
-      font-size:11.6px;
-      font-weight:700;
-      line-height:1.5;
-      text-shadow:0 1px 2px rgba(0,0,0,.40);
+      color:#f0f4ff;
+      font:700 12.5px/1.52 var(--font-mono);
+      text-shadow:0 1px 2px rgba(0,0,0,.46);
+      overflow-wrap:anywhere;
     }
 
     .copy-btn{
-      width:100%;
-      height:31px;
-      margin-top:12px;
-      padding:0 12px;
-      border-radius:9px;
+      position:relative;
+      z-index:2;
+      width:calc(100% - 20px);
+      height:44px;
+      margin:14px auto 0;
       display:flex;
       align-items:center;
       justify-content:center;
-      gap:7px;
-      color:#7791bd;
-      font-size:9px;
-      font-weight:900;
-      letter-spacing:.13em;
+      gap:10px;
+      border-radius:12px;
+      clip-path:polygon(4% 0, 96% 0, 100% 30%, 100% 70%, 96% 100%, 4% 100%, 0 70%, 0 30%);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.10), transparent 42%),
+        linear-gradient(180deg, rgba(31,38,82,.90), rgba(16,20,48,.96));
+      color:#eef2ff;
+      font:900 15px/1 var(--font-display);
+      letter-spacing:.10em;
       text-transform:uppercase;
-      background:linear-gradient(180deg,rgba(20,42,86,.80),rgba(14,30,64,.80));
-      transition:all .22s ease;
-    }
-    .card.multi .copy-btn{
-      background:linear-gradient(180deg,rgba(42,32,94,.80),rgba(30,22,68,.80));
-      color:#9b87d2;
-    }
-    .copy-btn:hover{
-      color:#bcd7ff;
-      border-color:rgba(80,175,255,.40);
-      box-shadow:0 0 16px rgba(77,159,255,.18);
-    }
-    .card.multi .copy-btn:hover{
-      color:#d8c0ff;
-      border-color:rgba(177,108,255,.45);
-      box-shadow:0 0 16px rgba(177,108,255,.22);
-    }
-    .copy-btn svg{width:12px;height:12px;transition:transform .2s ease}
-    .copy-btn:active{transform:scale(.985)}
-
-    .copy-btn.copied{
-      color:#dffff0;
-      border-color:rgba(62,226,144,.55);
-      background:linear-gradient(135deg,rgba(26,153,94,.95),rgba(20,111,82,.95));
       box-shadow:
-        0 0 0 3px rgba(58,224,145,.10),
-        0 0 26px rgba(48,216,136,.35),
-        0 0 0 1px rgba(120,255,180,.20) inset;
-      animation:copyButtonPop .42s ease;
+        inset 0 1px 0 rgba(255,255,255,.14),
+        inset 0 -12px 16px rgba(0,0,0,.28),
+        0 10px 18px rgba(0,0,0,.24);
+      transition:transform .16s ease, box-shadow .16s ease;
     }
-    .copy-btn.copied svg{transform:scale(1.15)}
-
-    /* Paksa semua jenis kartu memakai efek hijau yang sama.
-       Sebelumnya aturan .card.multi .copy-btn memiliki specificity lebih tinggi,
-       sehingga tombol 3-prize tetap terlihat ungu walau statusnya TERSALIN. */
+    .copy-btn::before{
+      content:"";
+      position:absolute; inset:1px;
+      clip-path:inherit;
+      border:1px solid rgba(121,144,218,.22);
+      pointer-events:none;
+    }
+    .card.multi .copy-btn::before{ border-color:rgba(197,119,255,.22); }
+    .copy-btn:hover{
+      transform:translateY(-1px);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.14),
+        inset 0 -12px 16px rgba(0,0,0,.28),
+        0 10px 18px rgba(0,0,0,.24),
+        0 0 18px rgba(var(--accent-rgb), .14);
+    }
+    .copy-btn svg{
+      width:15px;height:15px;
+      flex:0 0 auto;
+    }
     .copy-btn.copied,
     .copy-btn.copied:hover,
     .card.multi .copy-btn.copied,
     .card.multi .copy-btn.copied:hover{
-      color:#dffff0;
-      border-color:rgba(62,226,144,.62);
-      background:linear-gradient(135deg,rgba(26,153,94,.98),rgba(20,111,82,.98));
+      color:#eafff5;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.16), transparent 42%),
+        linear-gradient(180deg, rgba(34,170,107,.96), rgba(15,107,70,.98));
       box-shadow:
-        0 0 0 3px rgba(58,224,145,.12),
-        0 0 28px rgba(48,216,136,.42),
-        0 0 0 1px rgba(120,255,180,.24) inset;
+        inset 0 1px 0 rgba(255,255,255,.20),
+        inset 0 -12px 16px rgba(0,0,0,.24),
+        0 0 26px rgba(57,230,145,.32),
+        0 10px 18px rgba(0,0,0,.24);
     }
-
     .card.copy-success{
-      border-color:rgba(62,226,144,.50);
-      box-shadow:
-        0 16px 32px rgba(0,0,0,.40),
-        0 0 0 2px rgba(55,220,139,.10),
-        0 0 32px rgba(47,213,134,.25);
-      animation:copyCardPulse .55s ease;
+      filter:drop-shadow(0 22px 30px rgba(0,0,0,.36));
     }
 
-    @keyframes copyButtonPop{
-      0%{transform:scale(.96)}
-      55%{transform:scale(1.03)}
+    /*
+      Teks harus tetap tajam saat cursor berada tepat di area isi hasil.
+      Hover 3D pada card sebelumnya membuat browser merasterisasi teks
+      sehingga terlihat sedikit blur. Efek 3D hanya dimatikan ketika
+      pointer berada di area .card-text, fungsi lain tetap sama.
+    */
+    .card:has(.card-text:hover){
+      transform:none !important;
+      filter:none !important;
+    }
+
+    .card-text:hover{
+      text-rendering:geometricPrecision;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Setiap baris tetap satu baris visual seperti data aslinya. */
+    .card-line{
+      display:block;
+      min-height:1em;
+    }
+
+    /* Hanya baris Result dibuat lebih tebal agar angka hasil lebih jelas. */
+    .card-line.result-line{
+      color:#ffffff;
+      font-weight:900;
+      letter-spacing:.015em;
+      text-shadow:
+        0 1px 1px rgba(0,0,0,.72),
+        0 0 8px rgba(120,170,255,.10);
+    }
+
+    @keyframes copyPop{
+      0%{transform:scale(.97)}
+      56%{transform:scale(1.025)}
       100%{transform:scale(1)}
     }
-    @keyframes copyCardPulse{
-      0%{transform:translateY(0)}
-      45%{transform:translateY(-3px)}
-      100%{transform:translateY(0)}
+    .copy-btn.copied{
+      animation:copyPop .34s ease;
     }
 
-    /* ===== STATE ===== */
+    /* ===== state and toast ===== */
     .state{
-      margin-top:14px;
-      min-height:260px;
-      padding:30px;
+      margin-top:18px;
+      min-height:280px;
       display:grid;
       place-items:center;
       text-align:center;
-      border:1px dashed rgba(88,132,219,.25);
-      border-radius:14px;
-      background:linear-gradient(180deg,rgba(6,14,35,.85),rgba(4,10,26,.85));
-      color:#8294bb;
-      box-shadow:0 14px 30px rgba(0,0,0,.30),0 0 30px rgba(77,159,255,.04) inset;
+      padding:26px;
+      border-radius:22px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.04), transparent 24%),
+        linear-gradient(180deg, rgba(9,16,39,.92), rgba(4,8,22,.96));
+      border:1px solid rgba(101,128,220,.22);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.08),
+        0 20px 38px rgba(0,0,0,.34),
+        0 0 26px rgba(84,122,255,.08);
     }
     .state h3{
-      margin:0 0 8px;
-      color:#e9efff;
-      font-size:17px;
-      text-shadow:0 0 18px rgba(77,159,255,.30);
+      margin:0 0 10px;
+      color:#ffffff;
+      font:900 29px/1 var(--font-display);
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      text-shadow:0 0 18px rgba(95,158,255,.22);
     }
-    .state p{margin:0;line-height:1.6;font-size:12px}
+    .state p{
+      margin:0;
+      color:#c9d4f5;
+      font:600 16px/1.65 var(--font-ui);
+      max-width:68ch;
+    }
 
-    /* ===== TOAST ===== */
     .toast{
       position:fixed;
-      left:50%;bottom:22px;
-      z-index:99;
-      transform:translate(-50%,20px);
+      left:50%;
+      bottom:26px;
+      transform:translate(-50%,24px);
       opacity:0;
       pointer-events:none;
-      padding:12px 18px;
-      border-radius:11px;
-      color:#06140d;
-      background:linear-gradient(135deg,#67edaa,#a1ffd0);
+      z-index:500;
+      min-width:240px;
+      max-width:min(92vw, 620px);
+      padding:14px 18px;
+      border-radius:16px;
+      font:900 14px/1.4 var(--font-ui);
+      color:#061610;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.34), rgba(255,255,255,.06) 34%),
+        linear-gradient(180deg, #94ffd2 0%, #59e9ae 50%, #2dcf8a 100%);
       box-shadow:
-        0 16px 40px rgba(0,0,0,.45),
-        0 0 30px rgba(103,237,170,.40),
-        0 0 0 1px rgba(255,255,255,.20) inset;
-      font-size:12px;
-      font-weight:900;
-      transition:all .26s cubic-bezier(.4,1.4,.5,1);
+        inset 0 1px 0 rgba(255,255,255,.52),
+        0 16px 38px rgba(0,0,0,.44),
+        0 0 26px rgba(80,255,183,.26);
+      transition:opacity .22s ease, transform .22s ease;
+      text-align:center;
     }
-    .toast.show{opacity:1;transform:translate(-50%,0)}
+    .toast.show{
+      opacity:1;
+      transform:translate(-50%,0);
+    }
     .toast.error{
-      color:#26080c;
-      background:linear-gradient(135deg,#ff8d99,#ffd0d5);
+      color:#2a0710;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.34), rgba(255,255,255,.08) 34%),
+        linear-gradient(180deg, #ffc3cf 0%, #ff8ea5 48%, #ff5f7f 100%);
       box-shadow:
-        0 16px 40px rgba(0,0,0,.45),
-        0 0 30px rgba(255,141,153,.40),
-        0 0 0 1px rgba(255,255,255,.20) inset;
+        inset 0 1px 0 rgba(255,255,255,.52),
+        0 16px 38px rgba(0,0,0,.44),
+        0 0 26px rgba(255,103,143,.24);
     }
+
     .hidden{display:none!important}
 
-    /* ===== RESPONSIVE ===== */
-    @media(max-width:1000px){
-      .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .topbar{align-items:flex-start}
-      .top-right{flex-wrap:wrap}
+    /* ===== ambient ornaments ===== */
+    .topbar .edge-flares,
+    .command-shell .edge-flares{
+      position:absolute;
+      inset:-6px 0 auto;
+      height:20px;
+      pointer-events:none;
+      z-index:1;
     }
-    @media(max-width:760px){
-      .app{width:min(100% - 16px,1294px);margin:8px auto 24px}
-      .topbar{flex-direction:column;align-items:stretch}
-      .top-left,.top-right{justify-content:flex-start;flex-wrap:wrap}
-      .control-row{grid-template-columns:1fr}
-      .sort-actions{display:grid;grid-template-columns:1fr 1fr}
-      .sort-btn{width:100%}
-      .grid{grid-template-columns:1fr}
-      .title{font-size:13px}
-      .updated{min-width:auto}
+    .edge-flares::before,
+    .edge-flares::after{
+      content:"";
+      position:absolute;
+      top:0;
+      width:180px;
+      height:100%;
+      filter:blur(10px);
+      opacity:.85;
     }
-    @media(max-width:480px){
-      .stats{width:100%;justify-content:center}
-      .date-actions{flex-wrap:wrap}
-      .date-picker{flex:1}
-      .date-control{width:100%;min-width:0}
-      .date-menu{left:0;right:auto;width:min(260px,calc(100vw - 32px))}
-      .tabs{grid-template-columns:1fr}
-      .card-text{font-size:11px}
+    .edge-flares::before{
+      left:11%;
+      background:linear-gradient(90deg, transparent, rgba(83,216,255,.44), transparent);
+    }
+    .edge-flares::after{
+      right:11%;
+      background:linear-gradient(90deg, transparent, rgba(255,84,184,.36), transparent);
     }
 
-    /* Scrollbar styling */
-    ::-webkit-scrollbar{width:10px;height:10px}
-    ::-webkit-scrollbar-track{background:#04060f}
+    .chrome-hairline{
+      position:absolute;
+      left:8%;
+      right:8%;
+      top:6px;
+      height:3px;
+      background:linear-gradient(90deg, transparent, rgba(92,163,255,.42) 18%, rgba(250,78,193,.50) 50%, rgba(92,163,255,.42) 82%, transparent);
+      filter:blur(.2px) drop-shadow(0 0 8px rgba(168,98,255,.44));
+      opacity:.95;
+      pointer-events:none;
+      z-index:1;
+    }
+
+    /* ===== scroll ===== */
+    ::-webkit-scrollbar{width:11px;height:11px}
+    ::-webkit-scrollbar-track{background:#070813}
     ::-webkit-scrollbar-thumb{
-      background:linear-gradient(180deg,rgba(77,159,255,.35),rgba(177,108,255,.35));
-      border-radius:10px;
-      border:2px solid #04060f;
-    }
-    ::-webkit-scrollbar-thumb:hover{
-      background:linear-gradient(180deg,rgba(77,159,255,.55),rgba(177,108,255,.55));
+      background:linear-gradient(180deg, rgba(86,163,255,.52), rgba(185,88,255,.52));
+      border-radius:999px;
+      border:2px solid #070813;
     }
 
-    /* Selection */
-    ::selection{background:rgba(77,159,255,.30);color:#fff}
+    /* ===== responsiveness ===== */
+    @media (max-width:1440px){
+      .app{width:min(100%, calc(100% - 18px));}
+      .title{font-size:clamp(26px,2.5vw,48px)}
+      .stats{gap:9px}
+      .stat{font-size:15px}
+      .command-grid{
+        grid-template-columns:minmax(0,1fr) minmax(290px,.82fr) auto;
+        gap:14px;
+      }
+      .sort-btn{min-width:122px}
+    }
+    @media (max-width:1180px){
+      .topbar{
+        grid-template-columns:1fr;
+        gap:16px;
+        padding-top:18px;
+        padding-bottom:20px;
+      }
+      .top-right{justify-content:flex-start}
+      .command-grid{
+        grid-template-columns:1fr;
+        grid-template-areas:
+          "search"
+          "tabs"
+          "sort";
+        align-items:stretch;
+      }
+      .sort-actions{justify-content:flex-start; flex-wrap:wrap}
+      .grid{grid-template-columns:repeat(2, minmax(0,1fr))}
+      .command-shell{padding-bottom:18px}
+    }
+    @media (max-width:760px){
+      .app{margin:10px auto 30px;width:min(100%, calc(100% - 10px));padding-inline:0}
+      .topbar{padding:14px 14px 16px}
+      .top-left{flex-wrap:wrap;gap:12px}
+      .top-right{gap:10px}
+      .date-actions{flex-wrap:wrap}
+      .date-picker{width:100%;max-width:none}
+      .updated{min-width:0}
+      .command-shell{padding:12px 12px 14px}
+      .command-grid{padding-inline:0; gap:12px}
+      .grid{grid-template-columns:1fr}
+      .search-wrap input{font-size:16px}
+      .tab-btn{font-size:17px}
+      .sort-btn{font-size:16px}
+      .status-pill{min-width:116px;height:46px;font-size:22px}
+      .today-btn,.date-control,.refresh-btn{height:52px}
+      .stats{padding:0 12px; min-height:48px; flex-wrap:wrap}
+      .stat{font-size:14px}
+    }
+
+
+    /* ===== COMPACT SIZE OVERRIDE =====
+       Seluruh tampilan diperkecil secara proporsional tanpa mengubah
+       struktur HTML, desain SVG 3D, sumber data, maupun fungsi JavaScript.
+    */
+    @media (min-width:761px){
+      :root{
+        --hero-height:108px;
+        --command-height:56px;
+        --card-radius:15px;
+      }
+
+      .app{
+        width:min(1500px, calc(100% - 30px));
+        margin:12px auto 30px;
+        padding-inline:5px;
+      }
+
+      .topbar{
+        min-height:var(--hero-height);
+        padding:12px 20px;
+        gap:14px;
+      }
+      .topbar .frame-shadow{
+        inset:18px 40px -14px;
+        border-radius:34px;
+        filter:blur(18px);
+      }
+      .top-left{
+        gap:13px;
+        padding-left:5px;
+      }
+      .status-pill{
+        min-width:108px;
+        height:44px;
+        gap:8px;
+        padding:0 18px;
+        font-size:21px;
+      }
+      .status-pill .status-dot{
+        width:9px;
+        height:9px;
+      }
+      .title{
+        font-size:clamp(24px,2.25vw,44px);
+        letter-spacing:.075em;
+      }
+      .stats{
+        gap:8px;
+        min-height:44px;
+        padding:0 12px;
+        border-radius:14px;
+      }
+      .stat{
+        gap:5px;
+        font-size:13px;
+      }
+      .stat i{
+        width:8px;
+        height:8px;
+      }
+      .stat b{
+        min-width:19px;
+        height:19px;
+        padding:0 5px;
+        font-size:11px;
+      }
+      .top-right{
+        gap:10px;
+        padding-right:4px;
+      }
+      .date-actions{
+        gap:9px;
+      }
+      .date-picker{
+        width:min(218px,100%);
+      }
+      .date-control,
+      .today-btn,
+      .refresh-btn{
+        height:48px;
+      }
+      .date-control{
+        padding:0 14px;
+        gap:9px;
+        border-radius:13px;
+        font-size:14px;
+      }
+      .date-control::before{
+        border-radius:12px;
+      }
+      .date-control > svg:first-child{
+        width:17px;
+        height:17px;
+      }
+      .date-chevron{
+        width:15px;
+        height:15px;
+      }
+      .date-menu{
+        top:calc(100% + 9px);
+        width:250px;
+        padding:8px;
+        border-radius:15px;
+      }
+      .date-option{
+        min-height:45px;
+        padding:8px 10px;
+        border-radius:11px;
+      }
+      .date-option-day{
+        font-size:12px;
+      }
+      .date-option-date{
+        font-size:10px;
+      }
+      .date-option-badge{
+        min-width:58px;
+        height:21px;
+        padding:0 8px;
+        font-size:8px;
+      }
+      .today-btn{
+        min-width:122px;
+        padding:0 17px;
+        border-radius:13px;
+        font-size:14px;
+      }
+      .updated{
+        min-width:136px;
+        padding:0 2px;
+      }
+      .updated small{
+        margin-bottom:4px;
+        font-size:9px;
+      }
+      .updated strong{
+        font-size:11px;
+      }
+      .refresh-btn{
+        width:48px;
+        border-radius:13px;
+      }
+      .refresh-btn svg{
+        width:18px;
+        height:18px;
+      }
+
+      .command-shell{
+        min-height:92px;
+        margin-top:10px;
+        padding:10px 18px;
+      }
+      .command-grid{
+        grid-template-columns:minmax(0,1.18fr) minmax(290px,.92fr) auto;
+        gap:12px;
+        min-height:68px;
+        padding-inline:4px;
+      }
+      .search-wrap{
+        height:49px;
+        gap:9px;
+        padding:0 14px;
+        border-radius:14px;
+      }
+      .search-wrap svg{
+        width:18px;
+        height:18px;
+      }
+      .search-wrap input{
+        font-size:16px;
+      }
+      .tabs{
+        min-height:49px;
+      }
+      .tabs::before{
+        border-radius:14px;
+      }
+      .tab-btn{
+        min-height:49px;
+        gap:8px;
+        padding:0 15px;
+        font-size:15px;
+      }
+      .tab-btn .tab-count{
+        min-width:20px;
+        height:20px;
+        padding:0 6px;
+        font-size:9px;
+      }
+      .sort-actions{
+        gap:8px;
+      }
+      .sort-btn{
+        min-width:108px;
+        height:48px;
+        padding:0 15px;
+        font-size:14px;
+      }
+
+      .grid{
+        margin-top:12px;
+        gap:13px;
+      }
+      .card{
+        min-height:222px;
+        padding:10px 12px 12px;
+      }
+      .card:hover{
+        transform:none;
+        filter:none;
+      }
+      .card-titlebar{
+        min-height:39px;
+        padding:0 48px 0 21px;
+        margin-bottom:9px;
+      }
+      .card-title{
+        font-size:14px;
+        letter-spacing:.14em;
+      }
+      .card-badge{
+        right:11px;
+        width:35px;
+        height:35px;
+      }
+      .card-badge svg{
+        width:15px;
+        height:15px;
+      }
+      .card-glass{
+        margin:0 8px;
+        padding:12px 14px 0;
+        border-radius:13px;
+      }
+      .card-text{
+        font-size:10.5px;
+        line-height:1.46;
+      }
+      .copy-btn{
+        width:calc(100% - 16px);
+        height:37px;
+        margin-top:10px;
+        gap:8px;
+        border-radius:10px;
+        font-size:12px;
+      }
+      .copy-btn svg{
+        width:13px;
+        height:13px;
+      }
+
+      .state{
+        margin-top:12px;
+        min-height:220px;
+        padding:21px;
+        border-radius:18px;
+      }
+      .state h3{
+        margin-bottom:8px;
+        font-size:23px;
+      }
+      .state p{
+        font-size:13px;
+      }
+      .toast{
+        bottom:20px;
+        min-width:210px;
+        padding:11px 15px;
+        border-radius:13px;
+        font-size:12px;
+      }
+    }
+
+    /* Menjaga susunan tablet tetap responsif setelah diperkecil. */
+    @media (min-width:761px) and (max-width:1180px){
+      .command-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+  
+
+    /* ===== FIX LAPISAN DROPDOWN TANGGAL =====
+       Dropdown sebelumnya berada di dalam stacking context header,
+       sehingga command bar yang ditulis setelah header menutupinya.
+       Urutan lapisan ini hanya memperbaiki posisi tampilannya dan tidak
+       mengubah struktur, desain, data, ataupun fungsi JavaScript.
+    */
+    .topbar{
+      z-index:1000;
+      overflow:visible;
+    }
+    .topbar .topbar-content,
+    .topbar .top-right,
+    .topbar .date-actions{
+      overflow:visible;
+    }
+    .date-picker{
+      z-index:1100;
+    }
+    .date-picker.open{
+      z-index:1200;
+    }
+    .date-menu{
+      z-index:1300;
+    }
+    .command-shell{
+      z-index:100;
+    }
+    #stateBox,
+    #resultGrid{
+      position:relative;
+      z-index:10;
+    }
+
   </style>
 </head>
 <body>
-  <main class="app">
-    <header class="topbar">
-      <div class="top-left">
-        <div class="status-pill"><span class="status-dot"></span>AKTIF</div>
-        <h1 class="title">HASIL RESULT</h1>
-        <div class="stats">
-          <div class="stat total"><i></i>TOTAL <b id="totalCount">0</b></div>
-          <div class="stat normal"><i></i>BIASA <b id="normalCount">0</b></div>
-          <div class="stat hoki"><i></i>HOKIDRAW <b id="hokiCount">0</b></div>
-        </div>
-      </div>
+  <!-- Shared SVG definitions for glow, bevel, and badge icons -->
+  <svg class="ui-defs" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="gradMetalBlue" x1="0" x2="1" y1="0" y2="1">
+        <stop offset="0%" stop-color="#0a1636"/>
+        <stop offset="24%" stop-color="#18245a"/>
+        <stop offset="52%" stop-color="#120f35"/>
+        <stop offset="78%" stop-color="#1a285b"/>
+        <stop offset="100%" stop-color="#0a1430"/>
+      </linearGradient>
+      <linearGradient id="gradMetalPurple" x1="0" x2="1" y1="0" y2="1">
+        <stop offset="0%" stop-color="#11153a"/>
+        <stop offset="28%" stop-color="#27174d"/>
+        <stop offset="56%" stop-color="#0f173e"/>
+        <stop offset="100%" stop-color="#1a1041"/>
+      </linearGradient>
+      <linearGradient id="gradPanelDark" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#14204a"/>
+        <stop offset="100%" stop-color="#070d25"/>
+      </linearGradient>
+      <linearGradient id="gradCyanEdge" x1="0" x2="1">
+        <stop offset="0%" stop-color="rgba(0,0,0,0)"/>
+        <stop offset="50%" stop-color="#58ddff"/>
+        <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+      </linearGradient>
+      <linearGradient id="gradBlueMagenta" x1="0" x2="1">
+        <stop offset="0%" stop-color="#4cb8ff"/>
+        <stop offset="45%" stop-color="#8b75ff"/>
+        <stop offset="100%" stop-color="#ff53b6"/>
+      </linearGradient>
+      <linearGradient id="gradGoldStroke" x1="0" x2="1">
+        <stop offset="0%" stop-color="#ffcf4c"/>
+        <stop offset="40%" stop-color="#fff3b8"/>
+        <stop offset="100%" stop-color="#d79f1f"/>
+      </linearGradient>
+      <linearGradient id="gradPurpleStroke" x1="0" x2="1">
+        <stop offset="0%" stop-color="#bc6eff"/>
+        <stop offset="42%" stop-color="#ffd0ff"/>
+        <stop offset="100%" stop-color="#883dff"/>
+      </linearGradient>
+      <linearGradient id="gradGlassTop" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="rgba(255,255,255,.22)"/>
+        <stop offset="32%" stop-color="rgba(255,255,255,.06)"/>
+        <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+      </linearGradient>
+      <radialGradient id="gradBlueGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#53d8ff" stop-opacity=".9"/>
+        <stop offset="100%" stop-color="#53d8ff" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="gradMagentaGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#ff53b5" stop-opacity=".88"/>
+        <stop offset="100%" stop-color="#ff53b5" stop-opacity="0"/>
+      </radialGradient>
+      <filter id="fxOuterGlowBlue" color-interpolation-filters="sRGB" x="-40%" y="-80%" width="180%" height="260%" filterUnits="objectBoundingBox">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="3.8" result="blur"/>
+        <feColorMatrix in="blur" type="matrix"
+          values="1 0 0 0 0
+                  0 1 0 0 0
+                  0 0 1 0 0
+                  0 0 0 1.35 0" result="glow"/>
+        <feMerge>
+          <feMergeNode in="glow"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      <filter id="fxOuterGlowMagenta" color-interpolation-filters="sRGB" x="-40%" y="-80%" width="180%" height="260%" filterUnits="objectBoundingBox">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="4.2" result="blur"/>
+        <feColorMatrix in="blur" type="matrix"
+          values="1 0 0 0 0
+                  0 1 0 0 0
+                  0 0 1 0 0
+                  0 0 0 1.25 0" result="glow"/>
+        <feMerge>
+          <feMergeNode in="glow"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      <filter id="fxPanelShadow" color-interpolation-filters="sRGB" x="-20%" y="-20%" width="140%" height="160%" filterUnits="objectBoundingBox">
+        <feOffset dx="0" dy="10" in="SourceAlpha" result="off"/>
+        <feGaussianBlur in="off" stdDeviation="10" result="blur"/>
+        <feColorMatrix in="blur" type="matrix"
+          values="1 0 0 0 0
+                  0 1 0 0 0
+                  0 0 1 0 0
+                  0 0 0 .45 0" result="shadow"/>
+        <feMerge>
+          <feMergeNode in="shadow"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      <filter id="fxInnerRim" color-interpolation-filters="sRGB" x="-20%" y="-20%" width="140%" height="160%" filterUnits="objectBoundingBox">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="2.2" result="blurAlpha"/>
+        <feOffset in="blurAlpha" dx="0" dy="1" result="off1"/>
+        <feComposite in="off1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="innerShadow"/>
+        <feColorMatrix in="innerShadow" type="matrix"
+          values="1 0 0 0 0
+                  0 1 0 0 0
+                  0 0 1 0 0
+                  0 0 0 .45 0" result="innerShadowColor"/>
+        <feMerge>
+          <feMergeNode in="SourceGraphic"/>
+          <feMergeNode in="innerShadowColor"/>
+        </feMerge>
+      </filter>
+      <filter id="fxGoldGlow" color-interpolation-filters="sRGB" x="-40%" y="-40%" width="180%" height="180%" filterUnits="objectBoundingBox">
+        <feDropShadow dx="0" dy="0" stdDeviation="4.5" flood-color="#ffcf4c" flood-opacity=".36"/>
+      </filter>
+      <filter id="fxPurpleGlow" color-interpolation-filters="sRGB" x="-40%" y="-40%" width="180%" height="180%" filterUnits="objectBoundingBox">
+        <feDropShadow dx="0" dy="0" stdDeviation="4.8" flood-color="#be6bff" flood-opacity=".34"/>
+      </filter>
 
-      <div class="top-right">
-        <div class="date-actions">
-          <div class="date-picker" id="datePicker">
-            <button class="date-control" id="datePickerButton" type="button" aria-haspopup="listbox" aria-expanded="false">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M8 2v4M16 2v4M3 10h18"></path></svg>
-              <span id="dateDisplay">Pilih tanggal</span>
-              <svg class="date-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 10 5 5 5-5"></path></svg>
-            </button>
-            <input id="dateFilter" type="hidden">
-            <div class="date-menu" id="dateMenu" role="listbox" aria-label="Pilih data maksimal 7 hari"></div>
+      <symbol id="icon-crown" viewBox="0 0 24 24">
+        <path d="M4 18h16l-1.4-9.5-4.3 4.1L12 6 9.7 12.6 5.4 8.5 4 18Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M4 20h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="icon-trophy" viewBox="0 0 24 24">
+        <path d="M8 4h8v3.5a4 4 0 0 1-8 0V4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M8 6H5a2 2 0 0 0 2 5h1M16 6h3a2 2 0 0 1-2 5h-1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12 11v4m-3 4h6m-7 0h8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <main class="app">
+    <header class="topbar shell">
+      <div class="frame-shadow"></div>
+      <div class="chrome-hairline"></div>
+      <div class="edge-flares"></div>
+
+      <!-- Header frame built with layered inline SVG, per brief -->
+      <svg class="frame-svg" viewBox="0 0 1680 132" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <path id="headerOuterPath" d="M48 8 H645 L676 26 H949 L980 8 H1632 L1660 34 V98 L1632 124 H48 L20 98 V34 Z"/>
+          <path id="headerInnerPath" d="M62 20 H638 L670 38 H956 L988 20 H1618 L1644 46 V86 L1618 112 H62 L36 86 V46 Z"/>
+        </defs>
+
+        <use href="#headerOuterPath" fill="url(#gradMetalBlue)" filter="url(#fxPanelShadow)"/>
+        <use href="#headerOuterPath" fill="none" stroke="#2f4d9b" stroke-opacity=".35" stroke-width="2.2"/>
+        <use href="#headerInnerPath" fill="url(#gradMetalPurple)"/>
+        <use href="#headerInnerPath" fill="none" stroke="#4d72cf" stroke-opacity=".24" stroke-width="1.8"/>
+
+        <path d="M76 26 H615" stroke="#53d8ff" stroke-opacity=".20" stroke-width="2.5" filter="url(#fxOuterGlowBlue)"/>
+        <path d="M1005 26 H1572" stroke="#ff53b5" stroke-opacity=".18" stroke-width="2.5" filter="url(#fxOuterGlowMagenta)"/>
+        <path d="M626 18 H730" stroke="#8e78ff" stroke-opacity=".35" stroke-width="4" filter="url(#fxOuterGlowBlue)"/>
+        <path d="M949 18 H1057" stroke="#8e78ff" stroke-opacity=".35" stroke-width="4" filter="url(#fxOuterGlowMagenta)"/>
+        <path d="M186 8 H520" stroke="#62c0ff" stroke-opacity=".26" stroke-width="3" filter="url(#fxOuterGlowBlue)"/>
+        <path d="M1150 8 H1458" stroke="#ff6ccc" stroke-opacity=".28" stroke-width="3" filter="url(#fxOuterGlowMagenta)"/>
+
+        <path d="M38 33 L72 33 L90 14" stroke="#6acbff" stroke-opacity=".45" stroke-width="3.5" fill="none" filter="url(#fxOuterGlowBlue)"/>
+        <path d="M1642 32 H1608 L1590 14" stroke="#ff6dc9" stroke-opacity=".42" stroke-width="3.5" fill="none" filter="url(#fxOuterGlowMagenta)"/>
+        <path d="M54 114 H450" stroke="#3b84ff" stroke-opacity=".15" stroke-width="2.5"/>
+        <path d="M1230 114 H1626" stroke="#a064ff" stroke-opacity=".18" stroke-width="2.5"/>
+
+        <path d="M710 10 l18 10 h224 l18-10" fill="none" stroke="#6ca8ff" stroke-opacity=".26" stroke-width="2.4"/>
+        <path d="M713 14 h74 M893 14 h74" stroke="#ff62c2" stroke-opacity=".28" stroke-width="2.4"/>
+
+        <path d="M25 36 h15 M25 96 h15" stroke="#7cc8ff" stroke-opacity=".18" stroke-width="2.8"/>
+        <path d="M1640 36 h15 M1640 96 h15" stroke="#ff7cca" stroke-opacity=".16" stroke-width="2.8"/>
+
+        <rect x="145" y="116" width="1390" height="2" fill="url(#gradBlueMagenta)" opacity=".55"/>
+      </svg>
+
+      <div class="topbar-content">
+        <div class="top-left">
+          <div class="status-pill"><span class="status-dot"></span>AKTIF</div>
+          <h1 class="title">HASIL RESULT</h1>
+
+          <div class="stats">
+            <div class="stat total"><i></i>TOTAL <b id="totalCount">0</b></div>
+            <div class="stat normal"><i></i>BIASA <b id="normalCount">0</b></div>
+            <div class="stat hoki"><i></i>HOKIDRAW <b id="hokiCount">0</b></div>
           </div>
-          <button class="today-btn" id="todayBtn" type="button">◉ HARI INI</button>
         </div>
-        <div class="updated">
-          <small>DIPERBARUI</small>
-          <strong id="lastUpdate">-</strong>
+
+        <div class="top-right">
+          <div class="date-actions">
+            <div class="date-picker" id="datePicker">
+              <button class="date-control" id="datePickerButton" type="button" aria-haspopup="listbox" aria-expanded="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M8 2v4M16 2v4M3 10h18"></path></svg>
+                <span id="dateDisplay">Pilih tanggal</span>
+                <svg class="date-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 10 5 5 5-5"></path></svg>
+              </button>
+              <input id="dateFilter" type="hidden">
+              <div class="date-menu" id="dateMenu" role="listbox" aria-label="Select date"></div>
+            </div>
+
+            <button class="today-btn" id="todayBtn" type="button">◉ HARI INI</button>
+          </div>
+
         </div>
-        <button class="refresh-btn" id="refreshBtn" type="button" title="Muat ulang sekarang" aria-label="Muat ulang sekarang">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.64-6.36"></path><path d="M21 3v6h-6"></path></svg>
-        </button>
       </div>
     </header>
 
-    <section class="control-row">
-      <label class="search-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
-        <input id="searchInput" type="search" placeholder="Cari nama pasaran..." autocomplete="off">
-      </label>
-      <div class="sort-actions">
-        <button class="sort-btn active" id="newestBtn" type="button">↓ Terbaru</button>
-        <button class="sort-btn" id="oldestBtn" type="button">↑ Lama</button>
+    <section class="command-shell shell">
+      <div class="chrome-hairline"></div>
+      <div class="edge-flares"></div>
+
+      <!-- Integrated command/search bar frame -->
+      <svg class="frame-svg" viewBox="0 0 1680 112" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <path id="cmdOuter" d="M42 14 H836 L858 6 H1346 L1368 14 H1640 L1660 34 V78 L1640 98 H42 L20 78 V34 Z"/>
+          <path id="cmdInner" d="M58 24 H832 L854 16 H1350 L1372 24 H1624 L1642 42 V70 L1624 88 H58 L38 70 V42 Z"/>
+        </defs>
+        <use href="#cmdOuter" fill="url(#gradMetalBlue)" filter="url(#fxPanelShadow)"/>
+        <use href="#cmdOuter" fill="none" stroke="#355eba" stroke-opacity=".30" stroke-width="2"/>
+        <use href="#cmdInner" fill="url(#gradMetalPurple)"/>
+        <use href="#cmdInner" fill="none" stroke="#516dc7" stroke-opacity=".22" stroke-width="1.8"/>
+
+        <path d="M84 26 H580" stroke="#ff53b6" stroke-opacity=".28" stroke-width="2.6" filter="url(#fxOuterGlowMagenta)"/>
+        <path d="M1044 24 H1298" stroke="#53d8ff" stroke-opacity=".25" stroke-width="2.6" filter="url(#fxOuterGlowBlue)"/>
+        <path d="M1452 24 H1578" stroke="#8f76ff" stroke-opacity=".26" stroke-width="2.6" filter="url(#fxOuterGlowMagenta)"/>
+
+        <path d="M824 18 h40" stroke="#b973ff" stroke-opacity=".46" stroke-width="3.4" filter="url(#fxOuterGlowMagenta)"/>
+        <path d="M1350 18 h24" stroke="#53d8ff" stroke-opacity=".34" stroke-width="3.4" filter="url(#fxOuterGlowBlue)"/>
+        <rect x="102" y="92" width="1464" height="2" fill="url(#gradBlueMagenta)" opacity=".50"/>
+      </svg>
+
+      <div class="command-content">
+        <div class="command-grid">
+          <label class="search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+            <input id="searchInput" type="search" placeholder="Cari nama pasaran..." autocomplete="off">
+          </label>
+
+          <nav class="tabs" aria-label="Kategori pasaran">
+            <button class="tab-btn active" type="button" data-tab="normal">Pasaran Biasa <span class="tab-count" id="normalTabCount">0</span></button>
+            <button class="tab-btn" type="button" data-tab="hoki">Hokidraw <span class="tab-count hoki" id="hokiTabCount">0</span></button>
+          </nav>
+
+          <div class="sort-actions">
+            <button class="sort-btn active" id="newestBtn" type="button">Terbaru</button>
+            <button class="sort-btn" id="oldestBtn" type="button">Terlama</button>
+          </div>
+        </div>
       </div>
     </section>
 
-    <nav class="tabs" aria-label="Kategori pasaran">
-      <button class="tab-btn active" type="button" data-tab="normal">Pasaran Biasa <span class="tab-count" id="normalTabCount">0</span></button>
-      <button class="tab-btn" type="button" data-tab="hoki">Hokidraw <span class="tab-count hoki" id="hokiTabCount">0</span></button>
-    </nav>
-
     <section id="stateBox" class="state hidden"></section>
-
     <section id="resultGrid" class="grid hidden" aria-live="polite"></section>
   </main>
 
@@ -851,6 +1751,7 @@
 
   <script>
     const CONFIG = Object.freeze({
+      // Google Sheets endpoint to edit when moving to a different spreadsheet.
       spreadsheetId: '1xFp4rk_meBmOSeG36AHNW9ULzKqGDchX4Hb3XzVlUR0',
       gid: '4756916',
       sheetName: 'HASIL DRAW',
@@ -864,26 +1765,23 @@
       serverTimeoutMs:20000,
       timezone:'Asia/Jakarta',
 
-      // Retry membuat pembacaan history lebih stabil ketika Apps Script
-      // sedang sibuk, melakukan redirect, atau koneksi sesaat terputus.
+      // Retries make historical reads more stable when Apps Script is busy.
       apiRetries:3,
       apiRetryDelayMs:700,
 
-      // History LOCKED disimpan juga di browser sebagai cadangan lokal.
+      // Local browser cache for historical snapshots.
       snapshotCachePrefix:'hasil-result-history-cache-v4:',
       snapshotCacheMaxAgeMs:8*24*60*60*1000,
       metaCacheKey:'hasil-result-meta-cache-v4',
 
-      // Backend database untuk dashboard yang dibuka dari Vercel.
-      // Jangan memakai URL /dev; gunakan URL deployment yang berakhir /exec.
+      // Deployment URL for Apps Script Web App (use /exec, not /dev).
       webAppUrl:'https://script.google.com/macros/s/AKfycbz18iPjvQ7QPflBoIJfepYsF447GAUfB8oJxmXl3XhB8zn-ZL5lqtcKXtIDYoZpnkR2/exec'
     });
 
     /*
-      Urutan dan jumlah prize resmi.
-      Nama yang tampil di kartu TETAP diambil persis dari Google Sheet.
-      Daftar ini hanya dipakai untuk mencocokkan, mengurutkan, dan memeriksa
-      apakah semua prize wajib sudah terisi sebelum pasaran ditampilkan.
+      Prize order and count rules.
+      Display text is still taken exactly from Google Sheet rows.
+      This list is used only for matching, ordering, and completeness checks.
     */
     const MARKET_RULES = Object.freeze([
       {name:'TOTO MACAU PAGI', prize:1},
@@ -951,8 +1849,6 @@
       datePickerButton: document.getElementById('datePickerButton'),
       dateMenu: document.getElementById('dateMenu'),
       todayBtn: document.getElementById('todayBtn'),
-      lastUpdate: document.getElementById('lastUpdate'),
-      refresh: document.getElementById('refreshBtn'),
       newest: document.getElementById('newestBtn'),
       oldest: document.getElementById('oldestBtn'),
       totalCount: document.getElementById('totalCount'),
@@ -987,26 +1883,21 @@
     let appliedWallpaperUrl = null;
     let dateSelectionVersion = 0;
 
-    // Pengaman agar respons live/history yang terlambat tidak menimpa
-    // tanggal yang sedang dipilih pengguna.
+    // Safeguard late live/history responses.
     let liveRequestVersion = 0;
     let snapshotRequestVersion = 0;
     let historyRetryTimer = null;
 
-    // Mencegah request API yang sama berjalan bertumpuk.
+    // Prevent duplicate concurrent calls.
     const pendingServerCalls = new Map();
 
-    // Menyimpan status tombol yang terakhir berhasil disalin.
-    // Status ini tetap dipakai saat kartu dirender ulang oleh update realtime.
+    // Persist copy-button success state during rerenders.
     let copiedMarketId = '';
     let copiedUntil = 0;
     let copiedResetTimer = null;
     let copiedEffectVersion = 0;
 
-    // Menyimpan urutan pertama kali setiap pasaran muncul lengkap.
-    // Pasaran yang muncul lebih dulu akan tetap berada di atas.
-    // Pasaran baru berikutnya otomatis ditambahkan di bawah tanpa
-    // menggeser urutan pasaran yang sudah lebih dulu tampil.
+    // Preserve market order as they first become complete.
     const MARKET_ACTIVITY_KEY = 'hasil-result-market-first-seen-order-v2';
     let marketActivity = loadMarketActivity();
 
@@ -1037,8 +1928,6 @@
 
       const currentIds=new Set(rows.map(item=>item.id));
 
-      // Data yang sedang belum lengkap boleh menghilang sementara,
-      // tetapi urutan pertamanya tetap disimpan apabila muncul kembali.
       for(const [id,entry] of Object.entries(marketActivity)){
         if(!currentIds.has(id)){
           marketActivity[id]={...entry,present:false};
@@ -1199,7 +2088,6 @@
         const cached=JSON.parse(raw);
         const age=Date.now()-Number(cached?.savedAt||0);
 
-        // Cache metadata hanya sebagai fallback singkat.
         if(age<0||age>6*60*60*1000||!cached?.meta?.today){
           return null;
         }
@@ -1263,8 +2151,6 @@
       );
     }
 
-    // Pencocokan nama pasaran hanya dipakai untuk mencocokkan daftar aturan.
-    // Teks yang tampil di kartu tetap persis dari Google Sheet.
     function marketMatchKey(value=''){
       return normalizeForSearch(value).toUpperCase().replace(/[^A-Z0-9]/g,'');
     }
@@ -1337,8 +2223,8 @@
       for(const line of lines){
         if(isMarketHeader(line)){
           pushCurrent();
-          const market=marketNameFromHeader(line);
-          current=market?{market,lines:[line]}:null;
+          const name=marketNameFromHeader(line);
+          current=name?{market:name,lines:[line]}:null;
           continue;
         }
         if(current)current.lines.push(line);
@@ -1348,8 +2234,6 @@
     }
 
     function parsePrizeRow(line=''){
-      // Normalisasi hanya untuk pemeriksaan kelengkapan.
-      // Tulisan yang tampil tetap memakai teks asli Google Sheet.
       const normalized=String(line)
         .replace(/\u00a0/g,' ')
         .replace(/[\u200B-\u200D\uFEFF]/g,'')
@@ -1360,18 +2244,6 @@
       if(!match)return null;
 
       const value=String(match[2]??'').trim();
-
-      // Result wajib benar-benar diawali angka.
-      // Contoh valid:
-      // 0000
-      // 0312
-      // 0312 , SHIO : KAMBING
-      //
-      // Contoh tidak valid:
-      // kosong
-      // , SHIO : KAMBING
-      // SHIO : KAMBING
-      // -, _, atau tanda placeholder lain
       const numberMatch=value.match(/^([0-9]+)/);
       if(!numberMatch)return null;
 
@@ -1390,12 +2262,9 @@
       const filled=filledPrizeRows(lines);
 
       if(expectedPrize===1){
-        // Pasaran 1 prize wajib memiliki satu Result yang benar-benar berisi angka.
         return filled.some(item=>item.resultValue);
       }
 
-      // Pasaran 3 prize wajib memiliki Result 1, Result 2, dan Result 3,
-      // dan setiap Result wajib berisi angka. Nilai 0000 tetap valid.
       const numbered=new Map();
 
       for(const item of filled){
@@ -1448,9 +2317,8 @@
         localizedLines,
         expectedPrize:rule.prize,
         filledPrizeCount:resultCount,
-        isHoki:/\bHOKIDRAW\b/i.test(group.market),
+        isHoki:marketMatchKey(group.market).includes('HOKIDRAW'),
         isMulti:rule.prize>1,
-        // Pencarian mendukung tulisan asli Inggris dan tampilan Indonesia.
         searchText:normalizeForSearch(
           group.lines.join(' ')+' '+localizedLines.join(' ')
         ).toLowerCase(),
@@ -1461,11 +2329,30 @@
     function parseExactLines(lines=[]){
       return groupExactSheetData(lines)
         .map((group,sourceIndex)=>{
-          const rule=MARKET_RULE_MAP.get(marketMatchKey(group.market));
-          // Pasaran di luar daftar resmi tidak ditampilkan.
+          const marketKey=marketMatchKey(group.market);
+          let rule=MARKET_RULE_MAP.get(marketKey);
+
+          /*
+            Semua pasaran dengan nama HOKIDRAW dibaca otomatis sebagai
+            kategori Hokidraw walaupun jam/nama variannya belum ada di
+            MARKET_RULES.
+
+            Contoh yang sekarang terbaca:
+            - HOKIDRAW 00:00
+            - HOKIDRAW 12:00
+            - HOKI DRAW 18:00
+
+            Hokidraw memakai satu Result wajib berisi angka.
+          */
+          if(!rule&&marketKey.includes('HOKIDRAW')){
+            rule={
+              name:group.market,
+              prize:1,
+              order:MARKET_RULES.length+sourceIndex
+            };
+          }
+
           if(!rule)return null;
-          // Data hanya tampil setelah semua Result wajib sudah terisi.
-          // Nilai 0000 tetap dianggap valid.
           if(!hasCompletePrize(group.lines,rule.prize))return null;
           return parseExactGroup(group,sourceIndex,rule);
         })
@@ -1475,7 +2362,7 @@
 
     function parseResponse(response){
       if(!response||response.status==='error'){
-        const detail=response?.errors?.[0]?.detailed_message||response?.errors?.[0]?.message||'Respons Google Sheets tidak valid.';
+        const detail=response?.errors?.[0]?.detailed_message||response?.errors?.[0]?.message||'Google Sheets response is invalid.';
         throw new Error(detail);
       }
       const rows=response.table?.rows||[];
@@ -1488,10 +2375,6 @@
       const clean=String(value||'').trim();
       if(!clean)return [];
 
-      // Format database lama pernah menyimpan array dua dimensi.
-      // Saat array tersebut berubah menjadi string, semua sel tersambung koma.
-      // Pisahkan hanya sebelum penanda awal baris agar koma pada Result/SHIO
-      // tetap aman.
       if(
         clean.includes('Hasil Pengeluaran') &&
         clean.includes(',')
@@ -1525,7 +2408,6 @@
       const text=String(value).trim();
       if(!text)return result;
 
-      // Mendukung JSON yang masih tersimpan sebagai string.
       if(
         (text.startsWith('[')&&text.endsWith(']')) ||
         (text.startsWith('{')&&text.endsWith('}'))
@@ -1580,8 +2462,8 @@
         });
         script.src=`https://docs.google.com/spreadsheets/d/${encodeURIComponent(CONFIG.spreadsheetId)}/gviz/tq?${query.toString()}`;
         script.async=true;
-        script.onerror=()=>finish(reject,new Error('Permintaan ke Google Sheets gagal dimuat.'));
-        const timer=setTimeout(()=>finish(reject,new Error('Waktu koneksi ke Google Sheets habis.')),CONFIG.requestTimeoutMs);
+        script.onerror=()=>finish(reject,new Error('Request to Google Sheets failed to load.'));
+        const timer=setTimeout(()=>finish(reject,new Error('Connection to Google Sheets timed out.')),CONFIG.requestTimeoutMs);
         document.head.appendChild(script);
       });
     }
@@ -1595,7 +2477,6 @@
     }
 
     async function loadWallpaperDirectFromSheet(){
-      // Arsip tanggal lama dan hari yang sudah terkunci memakai wallpaper database.
       if(!isViewingToday()||dashboardMeta.todayLocked)return;
 
       try{
@@ -1606,7 +2487,7 @@
         const url=extractSingleCellValue(response);
         applyWallpaper(url);
       }catch(error){
-        console.warn('Wallpaper A2 tidak dapat dibaca langsung:',error);
+        console.warn('Wallpaper A2 cannot be read directly:',error);
       }
     }
 
@@ -1619,7 +2500,7 @@
         const baseUrl=String(ARCHIVE_CONFIG.webAppUrl||'').trim();
 
         if(!/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/i.test(baseUrl)){
-          reject(new Error('URL Web App database belum valid.'));
+          reject(new Error('Database Web App URL is invalid.'));
           return;
         }
 
@@ -1654,7 +2535,7 @@
           if(response&&response.ok===false){
             finish(
               reject,
-              new Error(response.message||'Database mengembalikan error.')
+              new Error(response.message||'Database returned an error.')
             );
             return;
           }
@@ -1686,14 +2567,14 @@
         script.onerror=()=>{
           finish(
             reject,
-            new Error('API database Google Apps Script gagal dimuat.')
+            new Error('Google Apps Script database API failed to load.')
           );
         };
 
         timer=setTimeout(()=>{
           finish(
             reject,
-            new Error('Koneksi API database terlalu lama.')
+            new Error('Database API connection took too long.')
           );
         },ARCHIVE_CONFIG.serverTimeoutMs);
 
@@ -1718,7 +2599,7 @@
         }
       }
 
-      throw lastError||new Error('API database tidak merespons.');
+      throw lastError||new Error('Database API did not respond.');
     }
 
     function serverCallRaw(functionName,...args){
@@ -1732,7 +2613,7 @@
         const timer=setTimeout(()=>{
           if(settled)return;
           settled=true;
-          reject(new Error('Koneksi database Google Apps Script terlalu lama.'));
+          reject(new Error('Apps Script database connection took too long.'));
         },ARCHIVE_CONFIG.serverTimeoutMs);
 
         const finish=(handler,value)=>{
@@ -1749,7 +2630,7 @@
             new Error(
               error?.message||
               String(error)||
-              'Terjadi kesalahan pada database.'
+              'A database error occurred.'
             )
           ));
 
@@ -1781,20 +2662,10 @@
     }
 
     function setDarkWallpaper(){
-      document.body.style.backgroundImage=
-        'radial-gradient(circle at 50% 0,rgba(72,70,150,.10),transparent 34rem),linear-gradient(180deg,#070a18 0%,#040611 100%)';
-      document.body.style.backgroundSize='cover';
-      document.body.style.backgroundPosition='center top';
-      document.body.style.backgroundAttachment='fixed';
       document.body.style.setProperty('--wallpaper-image','none');
     }
 
     function setWallpaperImage(source){
-      document.body.style.backgroundImage=
-        'radial-gradient(circle at 50% 0,rgba(72,70,150,.10),transparent 34rem),linear-gradient(180deg,#070a18 0%,#040611 100%)';
-      document.body.style.backgroundSize='cover';
-      document.body.style.backgroundPosition='center top';
-      document.body.style.backgroundAttachment='fixed';
       document.body.style.setProperty('--wallpaper-image', `url("${source}")`);
     }
 
@@ -1806,7 +2677,7 @@
         const response=await serverCall('getWallpaperDataUrl',clean);
         if(appliedWallpaperUrl!==clean)return;
         if(!response?.ok||!response.dataUrl){
-          throw new Error('Server tidak mengembalikan data gambar.');
+          throw new Error('Server did not return image data.');
         }
 
         const proxyImage=new Image();
@@ -1817,7 +2688,7 @@
         proxyImage.onerror=()=>{
           if(appliedWallpaperUrl!==clean)return;
           setDarkWallpaper();
-          showToast('Wallpaper gagal dimuat. Gunakan menu Tes File Wallpaper.','error');
+          showToast('Wallpaper failed to load.','error');
         };
         proxyImage.src=response.dataUrl;
       }catch(error){
@@ -1825,12 +2696,12 @@
         setDarkWallpaper();
 
         if(error?.silentServerError||error?.message==='SERVER_MODE_UNAVAILABLE'){
-          console.info('Proxy wallpaper Apps Script dilewati pada mode HTML biasa.');
+          console.info('Apps Script wallpaper proxy skipped in plain HTML mode.');
           return;
         }
 
-        console.error('Proxy wallpaper gagal:',error);
-        showToast('Wallpaper gagal dimuat.','error');
+        console.error('Wallpaper proxy failed:',error);
+        showToast('Wallpaper failed to load.','error');
       }finally{
         if(wallpaperProxyRequestUrl===clean)wallpaperProxyRequestUrl='';
       }
@@ -1848,7 +2719,6 @@
         return;
       }
 
-      // Coba link langsung terlebih dahulu.
       const image=new Image();
       image.onload=()=>{
         if(appliedWallpaperUrl!==clean)return;
@@ -1856,11 +2726,10 @@
       };
       image.onerror=()=>{
         if(appliedWallpaperUrl!==clean)return;
-        console.warn('Hotlink langsung gagal, mencoba proxy Apps Script:',clean);
+        console.warn('Direct hotlink failed, trying Apps Script proxy:',clean);
         loadWallpaperThroughProxy(clean);
       };
 
-      // Cache-bust agar URL yang sama tetap mengambil versi gambar terbaru.
       const separator=clean.includes('?')?'&':'?';
       image.src=`${clean}${separator}dashboard_refresh=${Date.now()}`;
     }
@@ -2104,7 +2973,6 @@
 
     function updateDateLimits(meta={}){
       const today=meta.today||getWibTodayKey();
-      // Maksimal tujuh pilihan: hari ini + enam hari sebelumnya.
       els.dateFilter.max=today;
       els.dateFilter.min=shiftDateKey(today,-6);
       renderDateMenu();
@@ -2122,8 +2990,6 @@
       try{
         const response=await serverCall('getStoredSnapshot',dateKey);
 
-        // Abaikan respons lama apabila pengguna sudah memilih tanggal lain
-        // atau request yang lebih baru sudah berjalan.
         if(
           selectedDateKey()!==dateKey ||
           requestVersion!==snapshotRequestVersion ||
@@ -2140,9 +3006,6 @@
             return true;
           }
 
-          // Record ada, tetapi belum memiliki hasil lengkap.
-          // Cache yang sebelumnya valid tetap lebih aman daripada
-          // mengosongkan layar akibat pembacaan parsial sesaat.
           if(cached&&applyStoredSnapshotResponse(
             cached,
             dateKey,
@@ -2155,8 +3018,6 @@
           return true;
         }
 
-        // Ketika backend sesaat membaca "tidak ditemukan", jangan hapus
-        // history valid yang sudah pernah tersimpan di browser.
         if(cached&&applyStoredSnapshotResponse(
           cached,
           dateKey,
@@ -2175,9 +3036,8 @@
           return false;
         }
 
-        console.error('Gagal membaca database arsip:',error);
+        console.error('Failed reading archive database:',error);
 
-        // Pertahankan hasil yang sudah tampil.
         if(
           currentSnapshotDate===dateKey &&
           allResults.length
@@ -2191,7 +3051,6 @@
           return true;
         }
 
-        // Gunakan cache browser bila API sedang tidak stabil.
         if(cached&&applyStoredSnapshotResponse(
           cached,
           dateKey,
@@ -2206,7 +3065,6 @@
           return true;
         }
 
-        // Error koneksi tidak boleh dianggap sebagai history kosong.
         showHistoryPending(dateKey);
 
         clearTimeout(historyRetryTimer);
@@ -2236,7 +3094,7 @@
     async function loadDashboardMeta({silent=true}={}){
       try{
         const meta=await serverCall('getDashboardMeta');
-        if(!meta?.ok)throw new Error(meta?.message||'Metadata dashboard tidak valid.');
+        if(!meta?.ok)throw new Error(meta?.message||'Dashboard metadata is invalid.');
 
         saveMetaCache(meta);
 
@@ -2259,9 +3117,6 @@
 
         const selected=els.dateFilter.value;
 
-        // Wallpaper hari ini hanya dipakai saat membuka data hari ini.
-        // Saat melihat arsip, wallpaper yang tersimpan bersama tanggal tersebut
-        // tidak akan ditimpa oleh wallpaper terbaru.
         if(!selected||!dashboardMeta.today||selected===dashboardMeta.today){
           applyWallpaper(dashboardMeta.wallpaper);
         }
@@ -2289,10 +3144,8 @@
           await loadSheetData({silent:true});
         }
       }catch(error){
-        console.error('Gagal membaca metadata dashboard:',error);
+        console.error('Failed reading dashboard metadata:',error);
 
-        // Saat API metadata gagal sesaat, pertahankan metadata terakhir.
-        // Gunakan cache hanya ketika metadata aktif belum tersedia.
         if(!dashboardMeta.today){
           const cachedMeta=readMetaCache();
 
@@ -2346,16 +3199,77 @@
       els.hokiTabCount.textContent=hoki;
     }
 
+    function buildCardFrame(item){
+      const glowFilter = item.isMulti ? 'url(#fxPurpleGlow)' : 'url(#fxGoldGlow)';
+      const strokeGradient = item.isMulti ? 'url(#gradPurpleStroke)' : 'url(#gradGoldStroke)';
+      const edgeColor = item.isMulti ? '#cc6aff' : '#ffce45';
+      const topColor = item.isMulti ? '#271559' : '#2d2148';
+
+      return `
+        <svg class="card-frame-svg" viewBox="0 0 520 306" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <path id="cardPath_${item.id}" d="M22 22 L360 22 L388 6 H474 L497 29 V72 L514 72 V118 L498 136 V276 L468 300 H42 L22 280 V22 Z"/>
+            <path id="cardInner_${item.id}" d="M32 34 H358 L387 18 H466 L485 38 V70 L500 70 V113 L484 130 V270 L462 290 H50 L32 272 V34 Z"/>
+            <path id="titleBar_${item.id}" d="M44 48 H364 L385 34 H426 L432 40 V78 L411 94 H63 L44 78 Z"/>
+          </defs>
+
+          <use href="#cardPath_${item.id}" fill="url(#gradMetalBlue)" filter="url(#fxPanelShadow)"/>
+          <use href="#cardPath_${item.id}" fill="none" stroke="${edgeColor}" stroke-opacity=".48" stroke-width="2.2" filter="${glowFilter}"/>
+          <use href="#cardPath_${item.id}" fill="none" stroke="#93b0ff" stroke-opacity=".10" stroke-width="4"/>
+          <use href="#cardInner_${item.id}" fill="${topColor}" fill-opacity=".58"/>
+          <use href="#cardInner_${item.id}" fill="none" stroke="${strokeGradient}" stroke-width="1.6" stroke-opacity=".9"/>
+
+          <use href="#titleBar_${item.id}" fill="#111731" fill-opacity=".82"/>
+          <use href="#titleBar_${item.id}" fill="none" stroke="${edgeColor}" stroke-opacity=".32" stroke-width="1.3"/>
+
+          <path d="M44 48 H364" stroke="${edgeColor}" stroke-opacity=".34" stroke-width="1.8"/>
+          <path d="M58 289 H454" stroke="${edgeColor}" stroke-opacity=".26" stroke-width="1.2"/>
+          <path d="M63 290 H456" stroke="#50a1ff" stroke-opacity=".10" stroke-width="1"/>
+
+          <path d="M402 22 H472 L492 42 V69 H402 Z" fill="#0b0e23" fill-opacity=".72"/>
+          <path d="M402 22 H472 L492 42 V69 H402 Z" fill="none" stroke="${edgeColor}" stroke-opacity=".50" stroke-width="1.8" filter="${glowFilter}"/>
+          <path d="M390 34 H430" stroke="${edgeColor}" stroke-opacity=".46" stroke-width="1.5"/>
+          <path d="M44 51 C92 22, 176 14, 340 26" stroke="rgba(255,255,255,.11)" stroke-width="2" fill="none"/>
+          <path d="M85 90 C160 126, 238 117, 309 93" stroke="rgba(90,150,255,.08)" stroke-width="34" fill="none" opacity=".8"/>
+        </svg>
+      `;
+    }
+
     function cardTemplate(item){
       const isCopied=item.id===copiedMarketId&&Date.now()<copiedUntil;
       const copyIcon=isCopied
         ? '<path d="m5 12 4 4L19 6"></path>'
         : '<rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>';
+      const badgeIcon=item.isMulti?'icon-trophy':'icon-crown';
+
+      const displayLines=
+        item.localizedLines||
+        item.lines.map(localizeDateLanguage);
+
+      const cardTextHtml=displayLines
+        .map(line=>{
+          const clean=String(line??'');
+          const isResult=/^\s*Result(?:\s*\d+)?\s*:/i.test(clean);
+          return `<span class="card-line ${isResult?'result-line':''}">${escapeHtml(clean)}</span>`;
+        })
+        .join('');
 
       return `
         <article class="card ${item.isMulti?'multi':''} ${isCopied?'copy-success':''}">
-          <h2 class="card-title">${escapeHtml(item.market)}</h2>
-          <div class="card-text">${(item.localizedLines||item.lines.map(localizeDateLanguage)).map(escapeHtml).join('\n')}</div>
+          <div class="card-ambient"></div>
+          ${buildCardFrame(item)}
+
+          <div class="card-titlebar">
+            <h2 class="card-title">${escapeHtml(item.market)}</h2>
+            <span class="card-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><use href="#${badgeIcon}"></use></svg>
+            </span>
+          </div>
+
+          <div class="card-glass">
+            <div class="card-text">${cardTextHtml}</div>
+          </div>
+
           <button class="copy-btn ${isCopied?'copied':''}" type="button" data-copy-id="${escapeHtml(item.id)}">
             <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${copyIcon}</svg>
             <span class="copy-label">${isCopied?'TERSALIN':'SALIN'}</span>
@@ -2370,10 +3284,8 @@
       if(keyword)rows=rows.filter(item=>item.searchText.includes(keyword));
       if(selectedDate)rows=rows.filter(item=>item.dateTokens.includes(selectedDate));
       if(activeSort==='newest'){
-        // Default Terbaru mengikuti urutan resmi MARKET_RULES dari bawah ke atas.
         rows.sort((a,b)=>b.index-a.index);
       }else{
-        // Tombol Lama mengikuti urutan resmi MARKET_RULES dari atas ke bawah.
         rows.sort((a,b)=>a.index-b.index);
       }
       return rows;
@@ -2394,8 +3306,6 @@
       els.state.classList.add('hidden');
       els.grid.classList.remove('hidden');
 
-      // Bila render ulang terjadi saat efek copy masih aktif,
-      // terapkan kembali hanya pada satu tombol yang sedang disalin.
       if(copiedMarketId&&Date.now()<copiedUntil){
         applyCopyVisual(copiedMarketId);
       }else if(copiedMarketId){
@@ -2430,7 +3340,6 @@
     async function loadSheetData({silent=false}={}){
       if(isLoading)return;
 
-      // Tanggal lama dan data hari ini yang sudah dikunci selalu dibaca dari database.
       if(!isViewingToday())return;
       if(dashboardMeta.todayLocked&&dashboardMeta.today){
         await loadStoredSnapshot(dashboardMeta.today,{silent:true});
@@ -2483,7 +3392,7 @@
             }
           }catch(error){
             lastError=error;
-            console.warn('Jalur Google Sheets gagal:',error);
+            console.warn('Google Sheets path failed:',error);
           }
         }
 
@@ -2500,7 +3409,7 @@
           return;
         }
 
-        throw lastError||new Error('Google Sheets tidak memberikan respons.');
+        throw lastError||new Error('Google Sheets did not provide a response.');
       }catch(error){
         console.error(error);
 
@@ -2547,10 +3456,10 @@
         const success=document.execCommand('copy');
         area.remove();
 
-        if(!success)throw new Error('Perintah salin ditolak browser.');
+        if(!success)throw new Error('Copy command was rejected by the browser.');
         return true;
       }catch(error){
-        console.error('Gagal menyalin:',error);
+        console.error('Failed to copy:',error);
         return false;
       }
     }
@@ -2595,9 +3504,6 @@
     function showCopySuccess(button,item){
       clearTimeout(copiedResetTimer);
 
-      // Bersihkan efek tombol sebelumnya terlebih dahulu. Versi lama
-      // menghentikan timer lama tanpa menghapus warna hijau tombol lama,
-      // sehingga beberapa tombol dapat tertinggal hijau.
       resetAllCopyVisuals();
 
       copiedEffectVersion+=1;
@@ -2630,8 +3536,6 @@
       const copiedLines=item.localizedLines||item.lines.map(localizeDateLanguage);
       const success=await copyText(copiedLines.join('\n'));
 
-      // Tombol dapat terganti ketika data realtime dirender ulang,
-      // jadi status proses dibersihkan pada elemen lama maupun elemen terbaru.
       delete button.dataset.copying;
       const latestButton=findCopyButtonById(item.id);
       if(latestButton)delete latestButton.dataset.copying;
@@ -2651,24 +3555,6 @@
     }));
 
     els.search.addEventListener('input',renderResults);
-
-    els.refresh.addEventListener('click',async()=>{
-      updateLastUpdateText(new Date());
-      await loadDashboardMeta({silent:true});
-      await loadWallpaperDirectFromSheet();
-
-      if(!isViewingToday()){
-        await loadStoredSnapshot(selectedDateKey(),{silent:false});
-        return;
-      }
-
-      if(dashboardMeta.todayLocked&&dashboardMeta.today){
-        await loadStoredSnapshot(dashboardMeta.today,{silent:false});
-        return;
-      }
-
-      await loadSheetData({silent:false});
-    });
 
     els.datePickerButton.addEventListener('click',event=>{
       event.preventDefault();
@@ -2698,12 +3584,14 @@
       activeSort='newest';
       els.newest.classList.add('active');
       els.oldest.classList.remove('active');
+      els.newest.textContent='Terbaru';
       renderResults();
     });
     els.oldest.addEventListener('click',()=>{
       activeSort='oldest';
       els.oldest.classList.add('active');
       els.newest.classList.remove('active');
+      els.oldest.textContent='Terlama';
       renderResults();
     });
 
@@ -2716,23 +3604,12 @@
       }
     });
 
-    // Setiap halaman dibuka ulang atau F5, pilihan tanggal selalu kembali
-    // ke hari ini. Nilai tanggal lama tidak dibiarkan dipulihkan browser.
     resetDateSelectionToToday();
 
-    updateLastUpdateText(new Date());
-    setInterval(()=>updateLastUpdateText(new Date()),1000);
-
-    // Data live tetap diperiksa cepat dari Google Sheet.
     loadSheetData();
-
-    // Metadata database, status kunci, wallpaper, dan arsip 7 hari
-    // diperiksa berkala tanpa menampilkan loading.
     loadDashboardMeta({silent:true});
-
-    // Baca Background!A2 langsung dari Google Sheet publik.
-    // Ini membuat wallpaper tetap update walaupun metadata server terlambat.
     loadWallpaperDirectFromSheet();
+
     wallpaperPollTimer=setInterval(()=>{
       if(!document.hidden)loadWallpaperDirectFromSheet();
     },5000);
@@ -2748,168 +3625,153 @@
     },CONFIG.refreshMs);
   </script>
 
-<script>
-/**
-* Simple keyboard shortcut handler
-*/
-const shortcut = {
-  all_shortcuts: {},
-  add: function(combo, callback, options) {
-    const defaultOpts = {
-      type: "keydown",
-      propagate: false,
-      disable_in_input: false,
-      target: document,
-      keycode: false
+  <script>
+    /**
+    * Keyboard shortcut guard.
+    * Kept from the original code base to preserve behavior.
+    */
+    const shortcut = {
+      all_shortcuts: {},
+      add: function(combo, callback, options) {
+        const defaultOpts = {
+          type: "keydown",
+          propagate: false,
+          disable_in_input: false,
+          target: document,
+          keycode: false
+        };
+        const settings = Object.assign({}, defaultOpts, options || {});
+        const target = typeof settings.target === "string"
+          ? document.getElementById(settings.target)
+          : settings.target;
+
+        combo = combo.toLowerCase();
+
+        const handler = function(e) {
+          e = e || window.event;
+
+          if (settings.disable_in_input) {
+            let element = e.target || e.srcElement;
+            if (element.nodeType === 3) element = element.parentNode;
+            if (element.tagName === "INPUT" || element.tagName === "TEXTAREA") return;
+          }
+
+          const code = e.keyCode || e.which;
+          let key = String.fromCharCode(code).toLowerCase();
+          if (code === 188) key = ",";
+          if (code === 190) key = ".";
+
+          const keys = combo.split("+");
+          let matchCount = 0;
+
+          const specialKeys = {
+            esc:27, escape:27, tab:9, space:32, return:13, enter:13,
+            backspace:8, left:37, up:38, right:39, down:40,
+            f1:112,f2:113,f3:114,f4:115,f5:116,f6:117,
+            f7:118,f8:119,f9:120,f10:121,f11:122,f12:123
+          };
+
+          let ctrlReq=false, shiftReq=false, altReq=false, metaReq=false;
+          let ctrl=e.ctrlKey, shift=e.shiftKey, alt=e.altKey, meta=e.metaKey;
+
+          for (let i=0; i<keys.length; i++) {
+            const k = keys[i];
+            if (k === "ctrl" || k === "control") { ctrlReq = true; matchCount++; }
+            else if (k === "shift") { shiftReq = true; matchCount++; }
+            else if (k === "alt") { altReq = true; matchCount++; }
+            else if (k === "meta") { metaReq = true; matchCount++; }
+            else if (k.length > 1) { if (specialKeys[k] === code) matchCount++; }
+            else if (settings.keycode ? settings.keycode === code : key === k) { matchCount++; }
+          }
+
+          if (
+            matchCount === keys.length &&
+            ctrl === ctrlReq && shift === shiftReq &&
+            alt === altReq && meta === metaReq
+          ) {
+            callback(e);
+            if (!settings.propagate) {
+              e.cancelBubble = true;
+              e.returnValue = false;
+              if (e.stopPropagation) e.stopPropagation();
+              if (e.preventDefault) e.preventDefault();
+              return false;
+            }
+          }
+        };
+
+        this.all_shortcuts[combo] = { callback: handler, target, event: settings.type };
+        target.addEventListener(settings.type, handler, false);
+      }
     };
-    const settings = Object.assign({}, defaultOpts, options || {});
-    const target = typeof settings.target === "string"
-      ? document.getElementById(settings.target)
-      : settings.target;
 
-    combo = combo.toLowerCase();
+    function doNothing(e) {
+      console.log("Shortcut blocked: " + (e.key || e.keyCode));
+    }
 
-    const handler = function(e) {
-      e = e || window.event;
+    function setupShortcuts() {
+      shortcut.add("Ctrl+U", doNothing);
+      shortcut.add("f12", doNothing);
+      shortcut.add("Ctrl+Shift+I", doNothing);
+      shortcut.add("Ctrl+Shift+J", doNothing);
+      shortcut.add("Ctrl+Shift+C", doNothing);
+    }
 
-      // Skip if inside input/textarea and disable_in_input = true
-      if (settings.disable_in_input) {
-        let element = e.target || e.srcElement;
-        if (element.nodeType === 3) element = element.parentNode;
-        if (element.tagName === "INPUT" || element.tagName === "TEXTAREA") return;
+    setupShortcuts();
+
+    document.addEventListener('keydown', function(e) {
+      if (e.keyCode === 123) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
       }
 
-      const code = e.keyCode || e.which;
-      let key = String.fromCharCode(code).toLowerCase();
-      if (code === 188) key = ",";
-      if (code === 190) key = ".";
-
-      const keys = combo.split("+");
-      let matchCount = 0;
-
-      const specialKeys = {
-        esc:27, escape:27, tab:9, space:32, return:13, enter:13,
-        backspace:8, left:37, up:38, right:39, down:40,
-        f1:112,f2:113,f3:114,f4:115,f5:116,f6:117,
-        f7:118,f8:119,f9:120,f10:121,f11:122,f12:123
-      };
-
-      let ctrlReq=false, shiftReq=false, altReq=false, metaReq=false;
-      let ctrl=e.ctrlKey, shift=e.shiftKey, alt=e.altKey, meta=e.metaKey;
-
-      for (let i=0; i<keys.length; i++) {
-        const k = keys[i];
-        if (k === "ctrl" || k === "control") { ctrlReq = true; matchCount++; }
-        else if (k === "shift") { shiftReq = true; matchCount++; }
-        else if (k === "alt") { altReq = true; matchCount++; }
-        else if (k === "meta") { metaReq = true; matchCount++; }
-        else if (k.length > 1) { if (specialKeys[k] === code) matchCount++; }
-        else if (settings.keycode ? settings.keycode === code : key === k) { matchCount++; }
+      if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
       }
 
-      if (
-        matchCount === keys.length &&
-        ctrl === ctrlReq && shift === shiftReq &&
-        alt === altReq && meta === metaReq
-      ) {
-        callback(e);
-        if (!settings.propagate) {
-          e.cancelBubble = true;
-          e.returnValue = false;
-          if (e.stopPropagation) e.stopPropagation();
-          if (e.preventDefault) e.preventDefault();
-          return false;
-        }
+      if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
       }
-    };
 
-    this.all_shortcuts[combo] = { callback: handler, target, event: settings.type };
-    target.addEventListener(settings.type, handler, false);
-  }
-};
+      if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
 
-// Fungsi kosong yang tidak melakukan apa-apa
-function doNothing(e) {
-  console.log("Shortcut diblokir: " + (e.key || e.keyCode));
-}
+      if (e.ctrlKey && e.keyCode === 85) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
 
-// Fungsi untuk mengatur shortcut
-function setupShortcuts() {
-  shortcut.add("Ctrl+U", doNothing);
-  shortcut.add("f12", doNothing);
-  shortcut.add("Ctrl+Shift+I", doNothing);
-  shortcut.add("Ctrl+Shift+J", doNothing);
-  shortcut.add("Ctrl+Shift+C", doNothing);
-}
+      if (e.ctrlKey && e.keyCode === 83) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    });
 
-// Setup shortcut saat pertama kali
-setupShortcuts();
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      return false;
+    });
 
-// Event listener untuk mencegah semua aksi default shortcut developer
-document.addEventListener('keydown', function(e) {
-  // F12 - Developer Tools
-  if (e.keyCode === 123) {
-    e.preventDefault();
-    e.stopPropagation();
-    return false;
-  }
+    document.addEventListener('dragstart', function(e) {
+      e.preventDefault();
+      return false;
+    });
 
-  // Ctrl+Shift+I - Developer Tools
-  if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
-    e.preventDefault();
-    e.stopPropagation();
-    return false;
-  }
-
-  // Ctrl+Shift+J - JavaScript Console
-  if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
-    e.preventDefault();
-    e.stopPropagation();
-    return false;
-  }
-
-  // Ctrl+Shift+C - Inspect Element
-  if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
-    e.preventDefault();
-    e.stopPropagation();
-    return false;
-  }
-
-  // Ctrl+U - View Source
-  if (e.ctrlKey && e.keyCode === 85) {
-    e.preventDefault();
-    e.stopPropagation();
-    return false;
-  }
-
-  // Ctrl+S - Save Page
-  if (e.ctrlKey && e.keyCode === 83) {
-    e.preventDefault();
-    e.stopPropagation();
-    return false;
-  }
-});
-
-// Mencegah klik kanan
-document.addEventListener('contextmenu', function(e) {
-  e.preventDefault();
-  return false;
-});
-
-// Mencegah drag & drop
-document.addEventListener('dragstart', function(e) {
-  e.preventDefault();
-  return false;
-});
-
-// Mencegah seleksi teks
-document.addEventListener('selectstart', function(e) {
-  // Tetap izinkan interaksi pada kolom pencarian dan elemen form.
-  if (e.target.closest('input, textarea, select')) return;
-  e.preventDefault();
-  return false;
-});
-</script>
-
+    document.addEventListener('selectstart', function(e) {
+      if (e.target.closest('input, textarea, select')) return;
+      e.preventDefault();
+      return false;
+    });
+  </script>
 </body>
 </html>
