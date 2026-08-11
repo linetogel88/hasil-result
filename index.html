@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -270,6 +269,7 @@
       background:rgba(255,255,255,.08);
       color:#f7fbff;
       font-size:14px;
+      font-variant-numeric:tabular-nums;
       box-shadow:inset 0 1px 0 rgba(255,255,255,.18);
     }
 
@@ -655,6 +655,7 @@
       background:rgba(255,255,255,.08);
       color:#eef4ff;
       font:900 12px/1 var(--font-display);
+      font-variant-numeric:tabular-nums;
       box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
     }
     .tab-btn.active{
@@ -729,6 +730,7 @@
       gap:18px;
       align-items:stretch;
       perspective:none;
+      overflow-anchor:none;
     }
 
     .card{
@@ -752,8 +754,25 @@
       transform:none;
       transform-style:flat;
       transition:filter .20s ease;
+      backface-visibility:hidden;
 
       isolation:isolate;
+    }
+
+    .card[data-grid-ghost="true"]{
+      margin:0;
+      pointer-events:none;
+      user-select:none;
+      contain:layout style;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .card,
+      .copy-btn,
+      .toast{
+        animation-duration:.01ms!important;
+        transition-duration:.01ms!important;
+      }
     }
     .card.multi{
       --accent:#cf6bff;
@@ -1468,7 +1487,7 @@
       }
     }
 
-  
+
 
     /* ===== FIX LAPISAN DROPDOWN TANGGAL =====
        Dropdown sebelumnya berada di dalam stacking context header,
@@ -1896,6 +1915,13 @@
     let copiedUntil = 0;
     let copiedResetTimer = null;
     let copiedEffectVersion = 0;
+
+    const GRID_MOTION = Object.freeze({
+      moveMs:380,
+      enterMs:300,
+      exitMs:220,
+      easing:'cubic-bezier(.22,.82,.24,1)'
+    });
 
     // Preserve market order as they first become complete.
     const MARKET_ACTIVITY_KEY = 'hasil-result-market-first-seen-order-v2';
@@ -3291,6 +3317,204 @@
       return rows;
     }
 
+    function gridMotionAllowed(){
+      return !(
+        typeof window.matchMedia==='function' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      );
+    }
+
+    function playGridMotion(element,keyframes,options){
+      if(!gridMotionAllowed()||typeof element.animate!=='function')return null;
+      const animation=element.animate(keyframes,{
+        fill:'both',
+        ...options
+      });
+      animation.finished.catch(()=>{});
+      return animation;
+    }
+
+    function cardRenderSignature(item){
+      return JSON.stringify([
+        item.market,
+        Boolean(item.isMulti),
+        item.localizedLines||item.lines.map(localizeDateLanguage)
+      ]);
+    }
+
+    function createCardNode(item){
+      const template=document.createElement('template');
+      template.innerHTML=cardTemplate(item).trim();
+      const card=template.content.firstElementChild;
+      card.dataset.cardId=item.id;
+      card.dataset.cardSignature=cardRenderSignature(item);
+      return card;
+    }
+
+    function syncCardNode(card,item){
+      const nextSignature=cardRenderSignature(item);
+      if(card.dataset.cardSignature===nextSignature)return false;
+
+      const copyButton=card.querySelector('.copy-btn');
+      const hadCopyFocus=Boolean(copyButton&&copyButton===document.activeElement);
+      const wasCopying=copyButton?.dataset.copying==='true';
+      const freshCard=createCardNode(item);
+
+      card.className=freshCard.className;
+      card.replaceChildren(...freshCard.childNodes);
+      card.dataset.cardId=item.id;
+      card.dataset.cardSignature=nextSignature;
+
+      const nextCopyButton=card.querySelector('.copy-btn');
+      if(wasCopying&&nextCopyButton)nextCopyButton.dataset.copying='true';
+      if(hadCopyFocus&&nextCopyButton){
+        requestAnimationFrame(()=>{
+          try{nextCopyButton.focus({preventScroll:true});}
+          catch{nextCopyButton.focus();}
+        });
+      }
+
+      return true;
+    }
+
+    function animateRemovedCard(card,rect){
+      if(!gridMotionAllowed()||rect.width<1||rect.height<1)return;
+
+      const ghost=card.cloneNode(true);
+      ghost.dataset.gridGhost='true';
+      ghost.setAttribute('aria-hidden','true');
+      Object.assign(ghost.style,{
+        position:'fixed',
+        left:`${rect.left}px`,
+        top:`${rect.top}px`,
+        width:`${rect.width}px`,
+        height:`${rect.height}px`,
+        minHeight:'0',
+        zIndex:'450',
+        pointerEvents:'none'
+      });
+      document.body.appendChild(ghost);
+
+      const animation=playGridMotion(
+        ghost,
+        [
+          {opacity:1,transform:'translate3d(0,0,0) scale(1)'},
+          {opacity:0,transform:'translate3d(0,8px,0) scale(.975)'}
+        ],
+        {duration:GRID_MOTION.exitMs,easing:'ease-out'}
+      );
+
+      if(animation){
+        animation.finished.finally(()=>ghost.remove());
+      }else{
+        ghost.remove();
+      }
+    }
+
+    function reconcileResultCards(rows,{fresh=false}={}){
+      document
+        .querySelectorAll('[data-grid-ghost="true"]')
+        .forEach(ghost=>ghost.remove());
+
+      const oldCards=[...els.grid.children]
+        .filter(card=>card.matches('.card[data-card-id]'));
+
+      oldCards.forEach(card=>{
+        if(typeof card.getAnimations==='function'){
+          card.getAnimations().forEach(animation=>animation.cancel());
+        }
+      });
+
+      const oldRects=new Map(
+        oldCards.map(card=>[card.dataset.cardId,card.getBoundingClientRect()])
+      );
+      const existingCards=new Map(
+        oldCards.map(card=>[card.dataset.cardId,card])
+      );
+      const nextIds=new Set(rows.map(item=>item.id));
+      const sharedCount=rows.reduce(
+        (count,item)=>count+(existingCards.has(item.id)?1:0),
+        0
+      );
+      const removedCards=sharedCount>0
+        ? oldCards
+            .filter(card=>!nextIds.has(card.dataset.cardId))
+            .map(card=>({
+              card:card.cloneNode(true),
+              rect:oldRects.get(card.dataset.cardId)
+            }))
+        : [];
+
+      const fragment=document.createDocumentFragment();
+      const newCards=[];
+      const updatedCards=[];
+      const reusedCards=[];
+
+      rows.forEach(item=>{
+        let card=existingCards.get(item.id);
+
+        if(card){
+          reusedCards.push(card);
+          if(syncCardNode(card,item))updatedCards.push(card);
+        }else{
+          card=createCardNode(item);
+          newCards.push(card);
+        }
+
+        fragment.appendChild(card);
+      });
+
+      els.grid.replaceChildren(fragment);
+      els.state.classList.add('hidden');
+      els.grid.classList.remove('hidden');
+
+      removedCards.forEach(({card,rect})=>animateRemovedCard(card,rect));
+
+      reusedCards.forEach(card=>{
+        const first=oldRects.get(card.dataset.cardId);
+        const last=card.getBoundingClientRect();
+        if(!first||first.width<1||last.width<1)return;
+
+        const deltaX=first.left-last.left;
+        const deltaY=first.top-last.top;
+        if(Math.abs(deltaX)<.5&&Math.abs(deltaY)<.5)return;
+
+        playGridMotion(
+          card,
+          [
+            {transform:`translate3d(${deltaX}px,${deltaY}px,0)`},
+            {transform:'translate3d(0,0,0)'}
+          ],
+          {duration:GRID_MOTION.moveMs,easing:GRID_MOTION.easing}
+        );
+      });
+
+      newCards.forEach((card,index)=>{
+        playGridMotion(
+          card,
+          [
+            {opacity:0,transform:'translate3d(0,10px,0) scale(.985)'},
+            {opacity:1,transform:'translate3d(0,0,0) scale(1)'}
+          ],
+          {
+            duration:GRID_MOTION.enterMs,
+            delay:Math.min(index*18,108),
+            easing:GRID_MOTION.easing
+          }
+        );
+      });
+
+      if(fresh){
+        updatedCards.forEach(card=>{
+          playGridMotion(
+            card,
+            [{opacity:.86},{opacity:1}],
+            {duration:260,easing:'ease-out'}
+          );
+        });
+      }
+    }
+
     function renderResults({fresh=false}={}){
       updateCounts();
       if(!allResults.length){
@@ -3302,9 +3526,7 @@
         showState('Data tidak ditemukan','Tidak ada data terisi pada pilihan pasaran, tanggal, atau pencarian tersebut.');
         return;
       }
-      els.grid.innerHTML=rows.map(cardTemplate).join('');
-      els.state.classList.add('hidden');
-      els.grid.classList.remove('hidden');
+      reconcileResultCards(rows,{fresh});
 
       if(copiedMarketId&&Date.now()<copiedUntil){
         applyCopyVisual(copiedMarketId);
