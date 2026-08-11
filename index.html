@@ -668,6 +668,14 @@
       width:22px;height:22px;
       filter:drop-shadow(0 0 10px rgba(194,108,255,.32));
     }
+    .refresh-btn.loading svg{
+      animation:spin .68s linear infinite;
+    }
+    .refresh-btn:disabled{
+      cursor:wait;
+      color:#8feeff;
+      opacity:.82;
+    }
     @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 
     /* ===== Integrated command shell ===== */
@@ -1232,6 +1240,330 @@
         inset 0 1px 0 rgba(255,255,255,.52),
         0 16px 38px rgba(0,0,0,.44),
         0 0 26px rgba(255,103,143,.24);
+    }
+
+    /* ===== Two-mode loading effects ===== */
+    .loading-overlay{
+      --loading-duration:1800ms;
+      --effect-a:#52d9ff;
+      --effect-b:#bd63ff;
+      position:fixed;
+      inset:0;
+      z-index:5000;
+      display:grid;
+      place-items:center;
+      padding:20px;
+      visibility:hidden;
+      opacity:0;
+      pointer-events:none;
+      background:
+        radial-gradient(80% 70% at 50% 42%,rgba(17,31,78,.56),transparent 72%),
+        rgba(2,5,18,.84);
+      transition:opacity .20s ease,visibility .20s ease;
+      isolation:isolate;
+    }
+    .loading-overlay.show{
+      visibility:visible;
+      opacity:1;
+      pointer-events:auto;
+    }
+    .loading-overlay.mode-date{
+      --effect-a:#55dfff;
+      --effect-b:#d067ff;
+    }
+    .loading-overlay.mode-refresh{
+      --effect-a:#55f2c0;
+      --effect-b:#44bfff;
+    }
+    .loading-grid{
+      position:absolute;
+      inset:0;
+      opacity:.24;
+      background-image:
+        linear-gradient(rgba(92,139,255,.12) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(92,139,255,.12) 1px,transparent 1px);
+      background-size:38px 38px;
+      mask-image:radial-gradient(circle at center,#000 0,transparent 70%);
+      animation:loadingGridDrift 8s linear infinite;
+      pointer-events:none;
+    }
+    .loading-panel{
+      position:relative;
+      width:min(390px,calc(100vw - 32px));
+      min-height:330px;
+      padding:28px 28px 24px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      border:1px solid rgba(119,150,240,.30);
+      border-radius:26px;
+      background:
+        linear-gradient(145deg,rgba(255,255,255,.085),transparent 28%),
+        radial-gradient(90% 56% at 50% 0%,rgba(98,100,255,.18),transparent 64%),
+        linear-gradient(180deg,rgba(10,18,48,.985),rgba(4,8,25,.995));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.11),
+        inset 0 -26px 38px rgba(0,0,0,.28),
+        0 34px 80px rgba(0,0,0,.58),
+        0 0 44px color-mix(in srgb,var(--effect-a) 16%,transparent);
+      transform:translateY(12px) scale(.965);
+      transition:transform .24s cubic-bezier(.2,.85,.3,1);
+    }
+    .loading-overlay.show .loading-panel{
+      transform:translateY(0) scale(1);
+    }
+    .loading-panel::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:inherit;
+      padding:1px;
+      background:linear-gradient(135deg,var(--effect-a),transparent 30%,transparent 68%,var(--effect-b));
+      -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor;
+      mask-composite:exclude;
+      opacity:.72;
+      pointer-events:none;
+    }
+    .loading-panel::after{
+      content:"";
+      position:absolute;
+      left:8%;
+      right:8%;
+      top:0;
+      height:2px;
+      background:linear-gradient(90deg,transparent,var(--effect-a),var(--effect-b),transparent);
+      box-shadow:0 0 18px var(--effect-a);
+      opacity:.76;
+    }
+
+    .date-loading-visual,
+    .refresh-loading-visual{
+      position:relative;
+      width:132px;
+      height:132px;
+      margin-bottom:18px;
+      flex:0 0 auto;
+    }
+    .date-loading-visual,
+    .refresh-loading-visual{display:none}
+    .loading-overlay.mode-date .date-loading-visual{display:block}
+    .loading-overlay.mode-refresh .refresh-loading-visual{display:block}
+
+    .date-orbit{
+      position:absolute;
+      border-radius:50%;
+      border:1px solid rgba(114,169,255,.22);
+    }
+    .date-orbit::before,
+    .date-orbit::after{
+      content:"";
+      position:absolute;
+      width:7px;
+      height:7px;
+      border-radius:50%;
+      background:var(--effect-a);
+      box-shadow:0 0 12px var(--effect-a);
+    }
+    .orbit-one{
+      inset:1px;
+      border-top-color:var(--effect-a);
+      border-right-color:rgba(208,103,255,.62);
+      animation:dateOrbit 1.8s linear infinite;
+    }
+    .orbit-one::before{left:12px;top:17px}
+    .orbit-one::after{right:8px;bottom:27px;background:var(--effect-b);box-shadow:0 0 12px var(--effect-b)}
+    .orbit-two{
+      inset:13px;
+      border-bottom-color:var(--effect-b);
+      border-left-color:rgba(85,223,255,.56);
+      animation:dateOrbitReverse 1.35s linear infinite;
+    }
+    .orbit-two::before{right:5px;top:26px;width:5px;height:5px}
+    .orbit-two::after{display:none}
+    .date-core{
+      position:absolute;
+      inset:32px 35px 27px;
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      grid-template-rows:repeat(2,1fr);
+      gap:5px;
+      padding:24px 10px 10px;
+      border:1px solid color-mix(in srgb,var(--effect-a) 62%,white 10%);
+      border-radius:12px;
+      background:
+        linear-gradient(180deg,rgba(255,255,255,.12),transparent 28%),
+        linear-gradient(145deg,rgba(35,95,162,.88),rgba(77,34,139,.92));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 0 24px rgba(84,189,255,.25);
+      animation:calendarFloat 1.6s ease-in-out infinite;
+    }
+    .date-core::before{
+      content:"";
+      position:absolute;
+      left:0;right:0;top:15px;
+      height:1px;
+      background:rgba(255,255,255,.28);
+    }
+    .date-core i{
+      position:absolute;
+      top:-5px;
+      width:4px;
+      height:12px;
+      border-radius:4px;
+      background:#e9f9ff;
+      box-shadow:0 0 8px var(--effect-a);
+    }
+    .date-core i:nth-child(1){left:15px}
+    .date-core i:nth-child(2){left:50%;margin-left:-2px}
+    .date-core i:nth-child(3){right:15px}
+    .date-core span{
+      border-radius:3px;
+      background:rgba(235,246,255,.78);
+      box-shadow:0 0 7px rgba(126,211,255,.22);
+      animation:dateCellPulse 1.2s ease-in-out infinite;
+    }
+    .date-core span:nth-of-type(2){animation-delay:.14s}
+    .date-core span:nth-of-type(3){animation-delay:.28s}
+    .date-core span:nth-of-type(4){animation-delay:.42s;background:#e9b8ff}
+
+    .refresh-ring{
+      position:absolute;
+      border-radius:50%;
+      border:2px solid transparent;
+    }
+    .ring-one{
+      inset:5px;
+      border-top-color:var(--effect-a);
+      border-right-color:rgba(68,191,255,.58);
+      border-bottom-color:rgba(85,242,192,.16);
+      animation:refreshOrbit .92s linear infinite;
+      filter:drop-shadow(0 0 7px rgba(85,242,192,.32));
+    }
+    .ring-two{
+      inset:21px;
+      border-left-color:var(--effect-b);
+      border-bottom-color:rgba(85,242,192,.52);
+      animation:refreshOrbitReverse .68s linear infinite;
+    }
+    .refresh-loading-visual svg{
+      position:absolute;
+      inset:41px;
+      width:50px;
+      height:50px;
+      color:#e9fffa;
+      filter:drop-shadow(0 0 12px var(--effect-a));
+      animation:refreshIconPulse 1s ease-in-out infinite;
+    }
+    .refresh-scan{
+      position:absolute;
+      left:5px;
+      right:5px;
+      top:50%;
+      height:2px;
+      background:linear-gradient(90deg,transparent,var(--effect-a),#fff,var(--effect-b),transparent);
+      box-shadow:0 0 13px var(--effect-a);
+      animation:refreshScan 1.1s ease-in-out infinite;
+      z-index:2;
+    }
+
+    .loading-copy{
+      position:relative;
+      z-index:2;
+      width:100%;
+      text-align:center;
+    }
+    .loading-eyebrow{
+      display:block;
+      margin-bottom:8px;
+      color:var(--effect-a);
+      font:900 10px/1 var(--font-display);
+      letter-spacing:.22em;
+      text-transform:uppercase;
+      text-shadow:0 0 12px color-mix(in srgb,var(--effect-a) 56%,transparent);
+    }
+    .loading-title{
+      display:block;
+      color:#f7f9ff;
+      font:900 21px/1.15 var(--font-display);
+      letter-spacing:.075em;
+      text-transform:uppercase;
+      text-shadow:0 0 20px rgba(114,171,255,.22);
+    }
+    .loading-subtitle{
+      display:block;
+      min-height:18px;
+      margin-top:9px;
+      color:#9eafd8;
+      font:700 12px/1.45 var(--font-ui);
+    }
+    .loading-progress{
+      position:relative;
+      z-index:2;
+      width:100%;
+      height:5px;
+      margin-top:22px;
+      overflow:hidden;
+      border-radius:99px;
+      background:rgba(255,255,255,.065);
+      box-shadow:inset 0 1px 2px rgba(0,0,0,.42);
+    }
+    .loading-progress i{
+      display:block;
+      width:100%;
+      height:100%;
+      border-radius:inherit;
+      background:linear-gradient(90deg,var(--effect-a),var(--effect-b),#fff);
+      box-shadow:0 0 12px var(--effect-a);
+      transform-origin:left center;
+      animation:loadingProgress var(--loading-duration) cubic-bezier(.2,.75,.25,1) forwards;
+    }
+    .loading-pulses{
+      position:relative;
+      z-index:2;
+      display:flex;
+      gap:6px;
+      margin-top:14px;
+    }
+    .loading-pulses i{
+      width:5px;
+      height:5px;
+      border-radius:50%;
+      background:var(--effect-a);
+      box-shadow:0 0 8px var(--effect-a);
+      animation:loadingDot .9s ease-in-out infinite;
+    }
+    .loading-pulses i:nth-child(2){animation-delay:.15s;background:var(--effect-b);box-shadow:0 0 8px var(--effect-b)}
+    .loading-pulses i:nth-child(3){animation-delay:.30s}
+
+    @keyframes loadingGridDrift{to{transform:translate3d(38px,38px,0)}}
+    @keyframes loadingProgress{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+    @keyframes loadingDot{0%,100%{opacity:.28;transform:scale(.72)}50%{opacity:1;transform:scale(1.12)}}
+    @keyframes dateOrbit{to{transform:rotate(360deg)}}
+    @keyframes dateOrbitReverse{to{transform:rotate(-360deg)}}
+    @keyframes calendarFloat{0%,100%{transform:translateY(1px)}50%{transform:translateY(-4px)}}
+    @keyframes dateCellPulse{0%,100%{opacity:.38}50%{opacity:1}}
+    @keyframes refreshOrbit{to{transform:rotate(360deg)}}
+    @keyframes refreshOrbitReverse{to{transform:rotate(-360deg)}}
+    @keyframes refreshIconPulse{0%,100%{transform:scale(.94);opacity:.76}50%{transform:scale(1.05);opacity:1}}
+    @keyframes refreshScan{0%,100%{transform:translateY(-43px);opacity:.12}50%{transform:translateY(43px);opacity:1}}
+
+    @media (max-width:520px){
+      .loading-panel{
+        min-height:300px;
+        padding:24px 20px 21px;
+        border-radius:22px;
+      }
+      .date-loading-visual,
+      .refresh-loading-visual{
+        width:118px;
+        height:118px;
+        margin-bottom:14px;
+        transform:scale(.90);
+      }
+      .loading-title{font-size:18px}
+      .loading-subtitle{font-size:11px}
     }
 
     .hidden{display:none!important}
@@ -1855,6 +2187,9 @@
             </div>
 
             <button class="today-btn" id="todayBtn" type="button">◉ HARI INI</button>
+            <button class="refresh-btn" id="refreshBtn" type="button" aria-label="Refresh data dashboard" title="Refresh data dashboard">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" aria-hidden="true"><path d="M20 6v5h-5"></path><path d="M4 18v-5h5"></path><path d="M6.1 9a7 7 0 0 1 11.4-2.6L20 9M4 15l2.5 2.6A7 7 0 0 0 17.9 15"></path></svg>
+            </button>
           </div>
 
         </div>
@@ -1910,6 +2245,36 @@
   </main>
 
   <div class="toast" id="toast"></div>
+
+  <div class="loading-overlay" id="loadingOverlay" aria-hidden="true">
+    <div class="loading-grid" aria-hidden="true"></div>
+    <div class="loading-panel" role="status" aria-live="polite">
+      <div class="date-loading-visual" aria-hidden="true">
+        <div class="date-orbit orbit-one"></div>
+        <div class="date-orbit orbit-two"></div>
+        <div class="date-core">
+          <i></i><i></i><i></i>
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <div class="refresh-loading-visual" aria-hidden="true">
+        <div class="refresh-ring ring-one"></div>
+        <div class="refresh-ring ring-two"></div>
+        <div class="refresh-scan"></div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 6v5h-5"></path><path d="M4 18v-5h5"></path><path d="M6.1 9a7 7 0 0 1 11.4-2.6L20 9M4 15l2.5 2.6A7 7 0 0 0 17.9 15"></path></svg>
+      </div>
+
+      <div class="loading-copy">
+        <span class="loading-eyebrow" id="loadingEyebrow">SINKRONISASI</span>
+        <strong class="loading-title" id="loadingTitle">MEMUAT DATA</strong>
+        <small class="loading-subtitle" id="loadingSubtitle">Mohon tunggu sebentar</small>
+      </div>
+
+      <div class="loading-progress" aria-hidden="true"><i></i></div>
+      <div class="loading-pulses" aria-hidden="true"><i></i><i></i><i></i></div>
+    </div>
+  </div>
 
   <script>
     const CONFIG = Object.freeze({
@@ -2011,6 +2376,7 @@
       datePickerButton: document.getElementById('datePickerButton'),
       dateMenu: document.getElementById('dateMenu'),
       todayBtn: document.getElementById('todayBtn'),
+      refreshBtn: document.getElementById('refreshBtn'),
       newest: document.getElementById('newestBtn'),
       oldest: document.getElementById('oldestBtn'),
       totalCount: document.getElementById('totalCount'),
@@ -2019,6 +2385,10 @@
       normalTabCount: document.getElementById('normalTabCount'),
       hokiTabCount: document.getElementById('hokiTabCount'),
       toast: document.getElementById('toast'),
+      loadingOverlay: document.getElementById('loadingOverlay'),
+      loadingEyebrow: document.getElementById('loadingEyebrow'),
+      loadingTitle: document.getElementById('loadingTitle'),
+      loadingSubtitle: document.getElementById('loadingSubtitle'),
       tabs: [...document.querySelectorAll('[data-tab]')]
     };
 
@@ -2045,6 +2415,9 @@
     let appliedWallpaperUrl = null;
     let dateSelectionVersion = 0;
     let calendarViewMonth = '';
+    let loadingEffectTimer = null;
+    let loadingEffectVersion = 0;
+    let manualRefreshRunning = false;
 
     // Safeguard late live/history responses.
     let liveRequestVersion = 0;
@@ -2065,6 +2438,21 @@
       enterMs:300,
       exitMs:220,
       easing:'cubic-bezier(.22,.82,.24,1)'
+    });
+
+    const LOADING_EFFECTS = Object.freeze({
+      date:Object.freeze({
+        duration:1800,
+        eyebrow:'PERPINDAHAN TANGGAL',
+        title:'MEMBUKA ARSIP HASIL',
+        subtitle:'Menyiapkan data berdasarkan tanggal pilihan'
+      }),
+      refresh:Object.freeze({
+        duration:1400,
+        eyebrow:'LIVE DATA SCAN',
+        title:'MEMINDAI DATA TERBARU',
+        subtitle:'Menyinkronkan hasil terbaru dari dashboard'
+      })
     });
 
     // Preserve market order as they first become complete.
@@ -2357,6 +2745,40 @@
       els.toast.textContent=message;
       els.toast.className=`toast ${type==='error'?'error':''} show`;
       toastTimer=setTimeout(()=>els.toast.classList.remove('show'),2200);
+    }
+
+    function hideLoadingEffect(version=loadingEffectVersion){
+      if(version!==loadingEffectVersion)return;
+      clearTimeout(loadingEffectTimer);
+      els.loadingOverlay.classList.remove('show');
+      els.loadingOverlay.setAttribute('aria-hidden','true');
+      document.body.removeAttribute('aria-busy');
+    }
+
+    function showLoadingEffect(mode='refresh',options={}){
+      const effect=LOADING_EFFECTS[mode]||LOADING_EFFECTS.refresh;
+      const duration=Math.max(500,Number(options.duration)||effect.duration);
+      const version=++loadingEffectVersion;
+
+      clearTimeout(loadingEffectTimer);
+      els.loadingEyebrow.textContent=options.eyebrow||effect.eyebrow;
+      els.loadingTitle.textContent=options.title||effect.title;
+      els.loadingSubtitle.textContent=options.subtitle||effect.subtitle;
+      els.loadingOverlay.style.setProperty('--loading-duration',`${duration}ms`);
+
+      // Reset kelas sebentar agar progress dan animasi selalu mulai dari awal.
+      els.loadingOverlay.className='loading-overlay';
+      void els.loadingOverlay.offsetWidth;
+      els.loadingOverlay.classList.add('show',`mode-${mode}`);
+      els.loadingOverlay.setAttribute('aria-hidden','false');
+      document.body.setAttribute('aria-busy','true');
+
+      loadingEffectTimer=setTimeout(
+        ()=>hideLoadingEffect(version),
+        duration
+      );
+
+      return version;
     }
 
     function showState(title,message){
@@ -3224,6 +3646,12 @@
 
       const today=dashboardMeta.today||getWibTodayKey();
       const isToday=value===today;
+      const selectedInfo=formatDateOption(value);
+
+      showLoadingEffect('date',{
+        title:isToday?'MENAMPILKAN HARI INI':'MEMBUKA ARSIP HASIL',
+        subtitle:`${selectedInfo.dayName}, ${selectedInfo.fullDate}`
+      });
 
       els.dateFilter.value=value;
       els.dateDisplay.textContent=prettyDate(value);
@@ -3944,6 +4372,40 @@
       }
     }
 
+    async function refreshDashboardManually(){
+      if(manualRefreshRunning)return;
+
+      manualRefreshRunning=true;
+      els.refreshBtn.disabled=true;
+      els.refreshBtn.classList.add('loading');
+
+      showLoadingEffect('refresh',{
+        title:'MEMINDAI DATA TERBARU',
+        subtitle:isViewingToday()
+          ? 'Menyinkronkan hasil live dan pengaturan dashboard'
+          : `Memperbarui arsip ${prettyDate(selectedDateKey())}`
+      });
+
+      try{
+        const dataRequest=isViewingToday()
+          ? loadSheetData({silent:true})
+          : loadStoredSnapshot(selectedDateKey(),{silent:true});
+
+        await Promise.allSettled([
+          dataRequest,
+          loadDashboardMeta({silent:true}),
+          loadWallpaperDirectFromSheet()
+        ]);
+
+        updateLastUpdateText(new Date());
+        showToast('Dashboard berhasil diperbarui.');
+      }finally{
+        manualRefreshRunning=false;
+        els.refreshBtn.disabled=false;
+        els.refreshBtn.classList.remove('loading');
+      }
+    }
+
     async function copyText(text){
       try{
         if(navigator.clipboard&&window.isSecureContext){
@@ -4108,6 +4570,7 @@
       const today=dashboardMeta.today||getWibTodayKey();
       await selectDashboardDate(today,{silent:false});
     });
+    els.refreshBtn.addEventListener('click',refreshDashboardManually);
     els.newest.addEventListener('click',()=>{
       activeSort='newest';
       els.newest.classList.add('active');
@@ -4133,6 +4596,12 @@
     });
 
     resetDateSelectionToToday();
+
+    showLoadingEffect('refresh',{
+      eyebrow:'INISIALISASI DASHBOARD',
+      title:'MENYIAPKAN HASIL RESULT',
+      subtitle:'Memuat data terbaru dan pengaturan tampilan'
+    });
 
     loadSheetData();
     loadDashboardMeta({silent:true});
