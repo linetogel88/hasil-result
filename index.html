@@ -1498,6 +1498,7 @@
       color:#9eafd8;
       font:700 12px/1.45 var(--font-ui);
     }
+    .loading-subtitle:empty{display:none}
     .loading-progress{
       position:relative;
       z-index:2;
@@ -2761,9 +2762,9 @@
       const version=++loadingEffectVersion;
 
       clearTimeout(loadingEffectTimer);
-      els.loadingEyebrow.textContent=options.eyebrow||effect.eyebrow;
-      els.loadingTitle.textContent=options.title||effect.title;
-      els.loadingSubtitle.textContent=options.subtitle||effect.subtitle;
+      els.loadingEyebrow.textContent=options.eyebrow??effect.eyebrow;
+      els.loadingTitle.textContent=options.title??effect.title;
+      els.loadingSubtitle.textContent=options.subtitle??effect.subtitle;
       els.loadingOverlay.style.setProperty('--loading-duration',`${duration}ms`);
 
       // Reset kelas sebentar agar progress dan animasi selalu mulai dari awal.
@@ -4600,7 +4601,7 @@
     showLoadingEffect('refresh',{
       eyebrow:'INISIALISASI DASHBOARD',
       title:'MENYIAPKAN HASIL RESULT',
-      subtitle:'Memuat data terbaru dan pengaturan tampilan'
+      subtitle:''
     });
 
     loadSheetData();
