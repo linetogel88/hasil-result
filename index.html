@@ -4265,7 +4265,6 @@
         lastDataSignature=nextSignature;
         updateLastUpdateText(new Date());
         renderResults({fresh:true});
-        if(!silent)showToast(`Berhasil memuat ${allResults.length} pasaran dengan prize lengkap`);
       }else if(!allResults.length){
         allResults=trackedResults;
         updateLastUpdateText(new Date());
@@ -4483,7 +4482,6 @@
       copiedUntil=Date.now()+1500;
 
       applyCopyVisual(item.id);
-      showToast(`Hasil ${item.market} berhasil disalin`);
 
       copiedResetTimer=setTimeout(()=>{
         if(effectVersion!==copiedEffectVersion)return;
