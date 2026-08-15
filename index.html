@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Assumption from brief: mockup font unspecified; using Orbitron + Exo 2 -->
-  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800;900&family=Orbitron:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&family=JetBrains+Mono:wght@600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23050914'/%3E%3Cpath d='M10 42L20 14h24l10 28H10z' fill='none' stroke='%23ff53b5' stroke-width='3'/%3E%3Cpath d='M16 20h32' stroke='%2353d8ff' stroke-width='3'/%3E%3Ccircle cx='18' cy='33' r='3' fill='%23ffce45'/%3E%3Ccircle cx='46' cy='33' r='3' fill='%23ffce45'/%3E%3C/svg%3E">
   <style>
     :root{
@@ -1996,6 +1996,167 @@
     #resultGrid{
       position:relative;
       z-index:10;
+    }
+
+  
+
+    /* ===== DESKTOP WIDE + MODERN TYPOGRAPHY OVERRIDE =====
+       Fokus khusus versi web/desktop:
+       - memakai area monitor lebih lebar
+       - grid tetap 3 kolom
+       - font lebih modern, tebal, dan mudah dibaca
+       - tidak mengubah struktur HTML atau fungsi JavaScript
+    */
+    :root{
+      --font-ui:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+      --font-display:"Sora","Inter",system-ui,sans-serif;
+      --font-mono:"JetBrains Mono","Cascadia Mono",Consolas,"SFMono-Regular",ui-monospace,monospace;
+    }
+
+    body{
+      font-weight:600;
+    }
+
+    @media (min-width:1181px){
+      .app{
+        width:min(2160px, calc(100% - 40px));
+        margin:14px auto 34px;
+        padding-inline:6px;
+      }
+
+      .topbar{
+        padding-inline:22px;
+      }
+
+      .title{
+        font-size:clamp(30px,2.25vw,50px);
+        font-weight:800;
+        letter-spacing:.045em;
+      }
+
+      .status-pill{
+        font-size:22px;
+        font-weight:800;
+        letter-spacing:.055em;
+      }
+
+      .stat{
+        font-size:14px;
+        font-weight:800;
+        letter-spacing:.035em;
+      }
+
+      .date-control,
+      .today-btn,
+      .sort-btn{
+        font-weight:800;
+        letter-spacing:.025em;
+      }
+
+      .date-control{
+        font-size:15px;
+      }
+
+      .today-btn{
+        font-size:15px;
+      }
+
+      .updated small{
+        font-size:10px;
+        font-weight:800;
+        letter-spacing:.085em;
+      }
+
+      .updated strong{
+        font-size:12px;
+        font-weight:700;
+      }
+
+      .search-wrap input{
+        font-size:17px;
+        font-weight:700;
+        letter-spacing:0;
+      }
+
+      .tab-btn{
+        font-size:16px;
+        font-weight:800;
+        letter-spacing:.01em;
+      }
+
+      .sort-btn{
+        font-size:15px;
+      }
+
+      .grid{
+        grid-template-columns:repeat(3,minmax(0,1fr));
+        gap:16px;
+        margin-top:14px;
+      }
+
+      .card{
+        min-height:236px;
+        padding:11px 14px 13px;
+      }
+
+      .card-titlebar{
+        min-height:41px;
+        padding-left:23px;
+        margin-bottom:10px;
+      }
+
+      .card-title{
+        font-size:15.5px;
+        font-weight:800;
+        letter-spacing:.085em;
+      }
+
+      .card-glass{
+        margin-inline:9px;
+        padding:14px 17px 0;
+      }
+
+      .card-text{
+        font-size:12.5px;
+        font-weight:700;
+        line-height:1.55;
+        letter-spacing:-.012em;
+      }
+
+      .card-line.result-line{
+        font-weight:800;
+        letter-spacing:0;
+      }
+
+      .copy-btn{
+        height:39px;
+        font-size:13px;
+        font-weight:800;
+        letter-spacing:.065em;
+      }
+    }
+
+    @media (min-width:1700px){
+      .app{
+        width:min(2160px, calc(100% - 48px));
+      }
+
+      .grid{
+        gap:18px;
+      }
+
+      .card{
+        min-height:244px;
+      }
+
+      .card-title{
+        font-size:16px;
+      }
+
+      .card-text{
+        font-size:13px;
+        line-height:1.58;
+      }
     }
 
   </style>
