@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -270,6 +269,7 @@
       background:rgba(255,255,255,.08);
       color:#f7fbff;
       font-size:14px;
+      font-variant-numeric:tabular-nums;
       box-shadow:inset 0 1px 0 rgba(255,255,255,.18);
     }
 
@@ -370,22 +370,38 @@
       position:absolute;
       top:calc(100% + 12px);
       right:0;
-      width:292px;
-      padding:10px;
+      width:min(336px, calc(100vw - 28px));
+      padding:12px;
       display:none;
-      border-radius:18px;
+      border-radius:20px;
       background:
-        linear-gradient(180deg, rgba(255,255,255,.06), transparent 20%),
-        linear-gradient(180deg, rgba(7,14,34,.98), rgba(4,8,22,.98));
-      border:1px solid rgba(107,130,220,.28);
+        linear-gradient(150deg, rgba(255,255,255,.075), transparent 28%),
+        radial-gradient(120% 72% at 100% 0%, rgba(179,79,255,.18), transparent 52%),
+        radial-gradient(100% 72% at 0% 100%, rgba(55,184,255,.14), transparent 56%),
+        linear-gradient(180deg, rgba(9,17,42,.99), rgba(4,8,24,.995));
+      border:1px solid rgba(113,151,255,.36);
       box-shadow:
         0 30px 60px rgba(0,0,0,.56),
-        inset 0 1px 0 rgba(255,255,255,.08),
-        0 0 34px rgba(84,132,255,.14);
+        inset 0 1px 0 rgba(255,255,255,.10),
+        inset 0 -20px 34px rgba(0,0,0,.24),
+        0 0 36px rgba(84,132,255,.17),
+        0 0 18px rgba(199,84,255,.08);
       backdrop-filter:blur(18px);
       -webkit-backdrop-filter:blur(18px);
       overflow:hidden;
       z-index:1000;
+    }
+    .date-menu::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:inherit;
+      padding:1px;
+      background:linear-gradient(135deg,rgba(83,216,255,.58),transparent 32%,transparent 66%,rgba(218,85,255,.46));
+      -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor;
+      mask-composite:exclude;
+      pointer-events:none;
     }
     .date-picker.open .date-menu{
       display:block;
@@ -395,63 +411,179 @@
       from{opacity:0;transform:translateY(-8px) scale(.975)}
       to{opacity:1;transform:translateY(0) scale(1)}
     }
-    .date-option{
-      width:100%;
-      min-height:54px;
-      padding:10px 12px;
-      display:flex;
-      justify-content:space-between;
+
+    .calendar-header{
+      position:relative;
+      display:grid;
+      grid-template-columns:38px minmax(0,1fr) 38px;
       align-items:center;
-      gap:12px;
-      border-radius:14px;
-      border:1px solid transparent;
-      background:transparent;
-      text-align:left;
-      color:#d3ddfb;
-      transition:all .16s ease;
+      gap:8px;
+      min-height:42px;
+      margin-bottom:9px;
+      padding-bottom:9px;
+      border-bottom:1px solid rgba(113,145,224,.18);
     }
-    .date-option:hover{
-      background:linear-gradient(90deg, rgba(23,43,96,.70), rgba(18,31,74,.58));
-      border-color:rgba(103,148,255,.36);
-      box-shadow:0 0 16px rgba(83,168,255,.12);
-    }
-    .date-option.active{
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.05), transparent 42%),
-        linear-gradient(90deg, rgba(29,111,201,.76), rgba(61,34,150,.66));
-      border-color:rgba(94,192,255,.48);
-      color:#f5fbff;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.12),
-        0 0 20px rgba(83,216,255,.16);
-    }
-    .date-option-main{
-      display:flex; flex-direction:column; gap:3px; min-width:0;
-    }
-    .date-option-day{
-      font:800 14px/1 var(--font-ui);
-      color:#f3f7ff;
-    }
-    .date-option-date{
-      font:700 11px/1 var(--font-ui);
-      color:#95a6d0;
-      letter-spacing:.03em;
-    }
-    .date-option-badge{
-      min-width:68px; height:24px; padding:0 10px;
-      display:grid; place-items:center;
-      border-radius:999px;
-      background:rgba(255,255,255,.06);
-      color:#9cadd9;
-      font:900 10px/1 var(--font-display);
-      letter-spacing:.08em;
+    .calendar-title{
+      min-width:0;
+      text-align:center;
+      color:#f5f8ff;
+      font:900 14px/1 var(--font-display);
+      letter-spacing:.075em;
       text-transform:uppercase;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.12);
+      text-shadow:0 0 16px rgba(111,173,255,.24);
     }
-    .date-option.active .date-option-badge{
-      background:rgba(83,216,255,.18);
-      color:#effcff;
-      box-shadow:0 0 14px rgba(83,216,255,.18), inset 0 1px 0 rgba(255,255,255,.18);
+    .calendar-nav{
+      width:38px;
+      height:38px;
+      padding:0;
+      display:grid;
+      place-items:center;
+      border:0;
+      border-radius:11px;
+      color:#e7eeff;
+      background:
+        linear-gradient(180deg,rgba(255,255,255,.08),transparent 46%),
+        linear-gradient(180deg,rgba(24,36,80,.86),rgba(10,16,43,.94));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 8px 18px rgba(0,0,0,.22);
+      transition:color .16s ease,background .16s ease,box-shadow .16s ease,transform .16s ease;
+    }
+    .calendar-nav svg{width:17px;height:17px}
+    .calendar-nav:not(:disabled):hover{
+      color:#fff;
+      transform:translateY(-1px);
+      background:
+        linear-gradient(180deg,rgba(255,255,255,.14),transparent 44%),
+        linear-gradient(180deg,rgba(48,92,166,.88),rgba(46,29,111,.92));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 0 18px rgba(83,216,255,.14),0 8px 18px rgba(0,0,0,.24);
+    }
+    .calendar-nav:disabled{
+      opacity:.24;
+      cursor:not-allowed;
+      box-shadow:none;
+    }
+
+    .calendar-weekdays,
+    .calendar-days{
+      position:relative;
+      display:grid;
+      grid-template-columns:repeat(7,minmax(0,1fr));
+      gap:4px;
+    }
+    .calendar-weekdays{
+      margin-bottom:4px;
+    }
+    .calendar-weekday{
+      height:26px;
+      display:grid;
+      place-items:center;
+      color:#8fa2d1;
+      font:900 9px/1 var(--font-display);
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    .calendar-day{
+      position:relative;
+      width:100%;
+      aspect-ratio:1/1;
+      min-width:0;
+      padding:0;
+      display:grid;
+      place-items:center;
+      border:1px solid transparent;
+      border-radius:10px;
+      color:#dbe5ff;
+      background:rgba(255,255,255,.025);
+      font:800 12px/1 var(--font-ui);
+      font-variant-numeric:tabular-nums;
+      transition:transform .15s ease,color .15s ease,border-color .15s ease,background .15s ease,box-shadow .15s ease;
+    }
+    .calendar-day.outside-month:not(:disabled){
+      color:#8494bd;
+      background:rgba(255,255,255,.014);
+    }
+    .calendar-day:not(:disabled):hover{
+      transform:translateY(-1px);
+      color:#fff;
+      border-color:rgba(83,216,255,.52);
+      background:linear-gradient(145deg,rgba(42,134,216,.48),rgba(91,45,165,.44));
+      box-shadow:0 0 16px rgba(83,216,255,.14),inset 0 1px 0 rgba(255,255,255,.12);
+    }
+    .calendar-day.today:not(.active){
+      color:#8eeaff;
+      border-color:rgba(83,216,255,.46);
+      background:rgba(50,161,221,.14);
+      box-shadow:inset 0 0 12px rgba(83,216,255,.07);
+    }
+    .calendar-day.active{
+      color:#fff;
+      border-color:rgba(218,166,255,.82);
+      background:
+        linear-gradient(180deg,rgba(255,255,255,.16),transparent 43%),
+        linear-gradient(145deg,rgba(48,167,231,.90),rgba(117,55,207,.94));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.22),
+        0 0 18px rgba(83,216,255,.24),
+        0 0 24px rgba(194,81,255,.18);
+    }
+    .calendar-day:disabled{
+      color:#71809f;
+      opacity:.31;
+      cursor:not-allowed;
+      background:rgba(255,255,255,.018);
+      border-color:transparent;
+      box-shadow:none;
+    }
+    .calendar-day:disabled.outside-month{opacity:.18}
+    .calendar-day .archive-dot{
+      position:absolute;
+      left:50%;
+      bottom:4px;
+      width:4px;
+      height:4px;
+      margin-left:-2px;
+      border-radius:50%;
+      background:#5ff2bd;
+      box-shadow:0 0 8px rgba(95,242,189,.88);
+    }
+    .calendar-day.active .archive-dot{
+      background:#fff;
+      box-shadow:0 0 8px rgba(255,255,255,.88);
+    }
+
+    .calendar-footer{
+      position:relative;
+      margin-top:10px;
+      padding-top:10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border-top:1px solid rgba(113,145,224,.18);
+    }
+    .calendar-today{
+      min-height:34px;
+      padding:0 13px;
+      border:1px solid rgba(83,216,255,.28);
+      border-radius:10px;
+      color:#eafaff;
+      background:linear-gradient(145deg,rgba(32,125,199,.48),rgba(77,42,151,.46));
+      font:900 10px/1 var(--font-display);
+      letter-spacing:.075em;
+      text-transform:uppercase;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.10);
+      transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;
+    }
+    .calendar-today:hover{
+      transform:translateY(-1px);
+      border-color:rgba(83,216,255,.52);
+      box-shadow:0 0 16px rgba(83,216,255,.15),inset 0 1px 0 rgba(255,255,255,.14);
+    }
+    .calendar-limit{
+      color:#8395c2;
+      text-align:right;
+      font:800 9px/1.35 var(--font-display);
+      letter-spacing:.055em;
+      text-transform:uppercase;
     }
 
     .today-btn{
@@ -535,6 +667,14 @@
     .refresh-btn svg{
       width:22px;height:22px;
       filter:drop-shadow(0 0 10px rgba(194,108,255,.32));
+    }
+    .refresh-btn.loading svg{
+      animation:spin .68s linear infinite;
+    }
+    .refresh-btn:disabled{
+      cursor:wait;
+      color:#8feeff;
+      opacity:.82;
     }
     @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 
@@ -655,6 +795,7 @@
       background:rgba(255,255,255,.08);
       color:#eef4ff;
       font:900 12px/1 var(--font-display);
+      font-variant-numeric:tabular-nums;
       box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
     }
     .tab-btn.active{
@@ -729,6 +870,7 @@
       gap:18px;
       align-items:stretch;
       perspective:none;
+      overflow-anchor:none;
     }
 
     .card{
@@ -752,8 +894,25 @@
       transform:none;
       transform-style:flat;
       transition:filter .20s ease;
+      backface-visibility:hidden;
 
       isolation:isolate;
+    }
+
+    .card[data-grid-ghost="true"]{
+      margin:0;
+      pointer-events:none;
+      user-select:none;
+      contain:layout style;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .card,
+      .copy-btn,
+      .toast{
+        animation-duration:.01ms!important;
+        transition-duration:.01ms!important;
+      }
     }
     .card.multi{
       --accent:#cf6bff;
@@ -1083,6 +1242,331 @@
         0 0 26px rgba(255,103,143,.24);
     }
 
+    /* ===== Two-mode loading effects ===== */
+    .loading-overlay{
+      --loading-duration:1800ms;
+      --effect-a:#52d9ff;
+      --effect-b:#bd63ff;
+      position:fixed;
+      inset:0;
+      z-index:5000;
+      display:grid;
+      place-items:center;
+      padding:20px;
+      visibility:hidden;
+      opacity:0;
+      pointer-events:none;
+      background:
+        radial-gradient(80% 70% at 50% 42%,rgba(17,31,78,.56),transparent 72%),
+        rgba(2,5,18,.84);
+      transition:opacity .20s ease,visibility .20s ease;
+      isolation:isolate;
+    }
+    .loading-overlay.show{
+      visibility:visible;
+      opacity:1;
+      pointer-events:auto;
+    }
+    .loading-overlay.mode-date{
+      --effect-a:#55dfff;
+      --effect-b:#d067ff;
+    }
+    .loading-overlay.mode-refresh{
+      --effect-a:#55f2c0;
+      --effect-b:#44bfff;
+    }
+    .loading-grid{
+      position:absolute;
+      inset:0;
+      opacity:.24;
+      background-image:
+        linear-gradient(rgba(92,139,255,.12) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(92,139,255,.12) 1px,transparent 1px);
+      background-size:38px 38px;
+      mask-image:radial-gradient(circle at center,#000 0,transparent 70%);
+      animation:loadingGridDrift 8s linear infinite;
+      pointer-events:none;
+    }
+    .loading-panel{
+      position:relative;
+      width:min(390px,calc(100vw - 32px));
+      min-height:330px;
+      padding:28px 28px 24px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      border:1px solid rgba(119,150,240,.30);
+      border-radius:26px;
+      background:
+        linear-gradient(145deg,rgba(255,255,255,.085),transparent 28%),
+        radial-gradient(90% 56% at 50% 0%,rgba(98,100,255,.18),transparent 64%),
+        linear-gradient(180deg,rgba(10,18,48,.985),rgba(4,8,25,.995));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.11),
+        inset 0 -26px 38px rgba(0,0,0,.28),
+        0 34px 80px rgba(0,0,0,.58),
+        0 0 44px color-mix(in srgb,var(--effect-a) 16%,transparent);
+      transform:translateY(12px) scale(.965);
+      transition:transform .24s cubic-bezier(.2,.85,.3,1);
+    }
+    .loading-overlay.show .loading-panel{
+      transform:translateY(0) scale(1);
+    }
+    .loading-panel::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:inherit;
+      padding:1px;
+      background:linear-gradient(135deg,var(--effect-a),transparent 30%,transparent 68%,var(--effect-b));
+      -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor;
+      mask-composite:exclude;
+      opacity:.72;
+      pointer-events:none;
+    }
+    .loading-panel::after{
+      content:"";
+      position:absolute;
+      left:8%;
+      right:8%;
+      top:0;
+      height:2px;
+      background:linear-gradient(90deg,transparent,var(--effect-a),var(--effect-b),transparent);
+      box-shadow:0 0 18px var(--effect-a);
+      opacity:.76;
+    }
+
+    .date-loading-visual,
+    .refresh-loading-visual{
+      position:relative;
+      width:132px;
+      height:132px;
+      margin-bottom:18px;
+      flex:0 0 auto;
+    }
+    .date-loading-visual,
+    .refresh-loading-visual{display:none}
+    .loading-overlay.mode-date .date-loading-visual{display:block}
+    .loading-overlay.mode-refresh .refresh-loading-visual{display:block}
+
+    .date-orbit{
+      position:absolute;
+      border-radius:50%;
+      border:1px solid rgba(114,169,255,.22);
+    }
+    .date-orbit::before,
+    .date-orbit::after{
+      content:"";
+      position:absolute;
+      width:7px;
+      height:7px;
+      border-radius:50%;
+      background:var(--effect-a);
+      box-shadow:0 0 12px var(--effect-a);
+    }
+    .orbit-one{
+      inset:1px;
+      border-top-color:var(--effect-a);
+      border-right-color:rgba(208,103,255,.62);
+      animation:dateOrbit 1.8s linear infinite;
+    }
+    .orbit-one::before{left:12px;top:17px}
+    .orbit-one::after{right:8px;bottom:27px;background:var(--effect-b);box-shadow:0 0 12px var(--effect-b)}
+    .orbit-two{
+      inset:13px;
+      border-bottom-color:var(--effect-b);
+      border-left-color:rgba(85,223,255,.56);
+      animation:dateOrbitReverse 1.35s linear infinite;
+    }
+    .orbit-two::before{right:5px;top:26px;width:5px;height:5px}
+    .orbit-two::after{display:none}
+    .date-core{
+      position:absolute;
+      inset:32px 35px 27px;
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      grid-template-rows:repeat(2,1fr);
+      gap:5px;
+      padding:24px 10px 10px;
+      border:1px solid color-mix(in srgb,var(--effect-a) 62%,white 10%);
+      border-radius:12px;
+      background:
+        linear-gradient(180deg,rgba(255,255,255,.12),transparent 28%),
+        linear-gradient(145deg,rgba(35,95,162,.88),rgba(77,34,139,.92));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 0 24px rgba(84,189,255,.25);
+      animation:calendarFloat 1.6s ease-in-out infinite;
+    }
+    .date-core::before{
+      content:"";
+      position:absolute;
+      left:0;right:0;top:15px;
+      height:1px;
+      background:rgba(255,255,255,.28);
+    }
+    .date-core i{
+      position:absolute;
+      top:-5px;
+      width:4px;
+      height:12px;
+      border-radius:4px;
+      background:#e9f9ff;
+      box-shadow:0 0 8px var(--effect-a);
+    }
+    .date-core i:nth-child(1){left:15px}
+    .date-core i:nth-child(2){left:50%;margin-left:-2px}
+    .date-core i:nth-child(3){right:15px}
+    .date-core span{
+      border-radius:3px;
+      background:rgba(235,246,255,.78);
+      box-shadow:0 0 7px rgba(126,211,255,.22);
+      animation:dateCellPulse 1.2s ease-in-out infinite;
+    }
+    .date-core span:nth-of-type(2){animation-delay:.14s}
+    .date-core span:nth-of-type(3){animation-delay:.28s}
+    .date-core span:nth-of-type(4){animation-delay:.42s;background:#e9b8ff}
+
+    .refresh-ring{
+      position:absolute;
+      border-radius:50%;
+      border:2px solid transparent;
+    }
+    .ring-one{
+      inset:5px;
+      border-top-color:var(--effect-a);
+      border-right-color:rgba(68,191,255,.58);
+      border-bottom-color:rgba(85,242,192,.16);
+      animation:refreshOrbit .92s linear infinite;
+      filter:drop-shadow(0 0 7px rgba(85,242,192,.32));
+    }
+    .ring-two{
+      inset:21px;
+      border-left-color:var(--effect-b);
+      border-bottom-color:rgba(85,242,192,.52);
+      animation:refreshOrbitReverse .68s linear infinite;
+    }
+    .refresh-loading-visual svg{
+      position:absolute;
+      inset:41px;
+      width:50px;
+      height:50px;
+      color:#e9fffa;
+      filter:drop-shadow(0 0 12px var(--effect-a));
+      animation:refreshIconPulse 1s ease-in-out infinite;
+    }
+    .refresh-scan{
+      position:absolute;
+      left:5px;
+      right:5px;
+      top:50%;
+      height:2px;
+      background:linear-gradient(90deg,transparent,var(--effect-a),#fff,var(--effect-b),transparent);
+      box-shadow:0 0 13px var(--effect-a);
+      animation:refreshScan 1.1s ease-in-out infinite;
+      z-index:2;
+    }
+
+    .loading-copy{
+      position:relative;
+      z-index:2;
+      width:100%;
+      text-align:center;
+    }
+    .loading-eyebrow{
+      display:block;
+      margin-bottom:8px;
+      color:var(--effect-a);
+      font:900 10px/1 var(--font-display);
+      letter-spacing:.22em;
+      text-transform:uppercase;
+      text-shadow:0 0 12px color-mix(in srgb,var(--effect-a) 56%,transparent);
+    }
+    .loading-title{
+      display:block;
+      color:#f7f9ff;
+      font:900 21px/1.15 var(--font-display);
+      letter-spacing:.075em;
+      text-transform:uppercase;
+      text-shadow:0 0 20px rgba(114,171,255,.22);
+    }
+    .loading-subtitle{
+      display:block;
+      min-height:18px;
+      margin-top:9px;
+      color:#9eafd8;
+      font:700 12px/1.45 var(--font-ui);
+    }
+    .loading-subtitle:empty{display:none}
+    .loading-progress{
+      position:relative;
+      z-index:2;
+      width:100%;
+      height:5px;
+      margin-top:22px;
+      overflow:hidden;
+      border-radius:99px;
+      background:rgba(255,255,255,.065);
+      box-shadow:inset 0 1px 2px rgba(0,0,0,.42);
+    }
+    .loading-progress i{
+      display:block;
+      width:100%;
+      height:100%;
+      border-radius:inherit;
+      background:linear-gradient(90deg,var(--effect-a),var(--effect-b),#fff);
+      box-shadow:0 0 12px var(--effect-a);
+      transform-origin:left center;
+      animation:loadingProgress var(--loading-duration) cubic-bezier(.2,.75,.25,1) forwards;
+    }
+    .loading-pulses{
+      position:relative;
+      z-index:2;
+      display:flex;
+      gap:6px;
+      margin-top:14px;
+    }
+    .loading-pulses i{
+      width:5px;
+      height:5px;
+      border-radius:50%;
+      background:var(--effect-a);
+      box-shadow:0 0 8px var(--effect-a);
+      animation:loadingDot .9s ease-in-out infinite;
+    }
+    .loading-pulses i:nth-child(2){animation-delay:.15s;background:var(--effect-b);box-shadow:0 0 8px var(--effect-b)}
+    .loading-pulses i:nth-child(3){animation-delay:.30s}
+
+    @keyframes loadingGridDrift{to{transform:translate3d(38px,38px,0)}}
+    @keyframes loadingProgress{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+    @keyframes loadingDot{0%,100%{opacity:.28;transform:scale(.72)}50%{opacity:1;transform:scale(1.12)}}
+    @keyframes dateOrbit{to{transform:rotate(360deg)}}
+    @keyframes dateOrbitReverse{to{transform:rotate(-360deg)}}
+    @keyframes calendarFloat{0%,100%{transform:translateY(1px)}50%{transform:translateY(-4px)}}
+    @keyframes dateCellPulse{0%,100%{opacity:.38}50%{opacity:1}}
+    @keyframes refreshOrbit{to{transform:rotate(360deg)}}
+    @keyframes refreshOrbitReverse{to{transform:rotate(-360deg)}}
+    @keyframes refreshIconPulse{0%,100%{transform:scale(.94);opacity:.76}50%{transform:scale(1.05);opacity:1}}
+    @keyframes refreshScan{0%,100%{transform:translateY(-43px);opacity:.12}50%{transform:translateY(43px);opacity:1}}
+
+    @media (max-width:520px){
+      .loading-panel{
+        min-height:300px;
+        padding:24px 20px 21px;
+        border-radius:22px;
+      }
+      .date-loading-visual,
+      .refresh-loading-visual{
+        width:118px;
+        height:118px;
+        margin-bottom:14px;
+        transform:scale(.90);
+      }
+      .loading-title{font-size:18px}
+      .loading-subtitle{font-size:11px}
+    }
+
     .hidden{display:none!important}
 
     /* ===== ambient ornaments ===== */
@@ -1288,27 +1772,32 @@
       }
       .date-menu{
         top:calc(100% + 9px);
-        width:250px;
-        padding:8px;
-        border-radius:15px;
+        width:min(314px, calc(100vw - 28px));
+        padding:10px;
+        border-radius:17px;
       }
-      .date-option{
-        min-height:45px;
-        padding:8px 10px;
-        border-radius:11px;
+      .calendar-header{
+        grid-template-columns:34px minmax(0,1fr) 34px;
+        min-height:38px;
+        margin-bottom:7px;
+        padding-bottom:7px;
       }
-      .date-option-day{
-        font-size:12px;
+      .calendar-nav{
+        width:34px;
+        height:34px;
+        border-radius:10px;
       }
-      .date-option-date{
-        font-size:10px;
+      .calendar-nav svg{
+        width:15px;
+        height:15px;
       }
-      .date-option-badge{
-        min-width:58px;
-        height:21px;
-        padding:0 8px;
-        font-size:8px;
-      }
+      .calendar-title{font-size:12px}
+      .calendar-weekday{height:23px;font-size:8px}
+      .calendar-day{font-size:11px;border-radius:9px}
+      .calendar-day .archive-dot{bottom:3px}
+      .calendar-footer{margin-top:8px;padding-top:8px}
+      .calendar-today{min-height:31px;padding:0 11px;font-size:9px}
+      .calendar-limit{font-size:8px}
       .today-btn{
         min-width:122px;
         padding:0 17px;
@@ -1467,8 +1956,14 @@
         grid-template-columns:1fr;
       }
     }
+    @media (min-width:761px) and (max-width:980px){
+      .date-menu{
+        left:0;
+        right:auto;
+      }
+    }
 
-  
+
 
     /* ===== FIX LAPISAN DROPDOWN TANGGAL =====
        Dropdown sebelumnya berada di dalam stacking context header,
@@ -1683,16 +2178,19 @@
         <div class="top-right">
           <div class="date-actions">
             <div class="date-picker" id="datePicker">
-              <button class="date-control" id="datePickerButton" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <button class="date-control" id="datePickerButton" type="button" aria-haspopup="dialog" aria-controls="dateMenu" aria-expanded="false">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M8 2v4M16 2v4M3 10h18"></path></svg>
                 <span id="dateDisplay">Pilih tanggal</span>
                 <svg class="date-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 10 5 5 5-5"></path></svg>
               </button>
               <input id="dateFilter" type="hidden">
-              <div class="date-menu" id="dateMenu" role="listbox" aria-label="Select date"></div>
+              <div class="date-menu" id="dateMenu" role="dialog" aria-label="Pilih tanggal dalam tujuh hari terakhir"></div>
             </div>
 
             <button class="today-btn" id="todayBtn" type="button">◉ HARI INI</button>
+            <button class="refresh-btn" id="refreshBtn" type="button" aria-label="Refresh data dashboard" title="Refresh data dashboard">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" aria-hidden="true"><path d="M20 6v5h-5"></path><path d="M4 18v-5h5"></path><path d="M6.1 9a7 7 0 0 1 11.4-2.6L20 9M4 15l2.5 2.6A7 7 0 0 0 17.9 15"></path></svg>
+            </button>
           </div>
 
         </div>
@@ -1748,6 +2246,36 @@
   </main>
 
   <div class="toast" id="toast"></div>
+
+  <div class="loading-overlay" id="loadingOverlay" aria-hidden="true">
+    <div class="loading-grid" aria-hidden="true"></div>
+    <div class="loading-panel" role="status" aria-live="polite">
+      <div class="date-loading-visual" aria-hidden="true">
+        <div class="date-orbit orbit-one"></div>
+        <div class="date-orbit orbit-two"></div>
+        <div class="date-core">
+          <i></i><i></i><i></i>
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <div class="refresh-loading-visual" aria-hidden="true">
+        <div class="refresh-ring ring-one"></div>
+        <div class="refresh-ring ring-two"></div>
+        <div class="refresh-scan"></div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 6v5h-5"></path><path d="M4 18v-5h5"></path><path d="M6.1 9a7 7 0 0 1 11.4-2.6L20 9M4 15l2.5 2.6A7 7 0 0 0 17.9 15"></path></svg>
+      </div>
+
+      <div class="loading-copy">
+        <span class="loading-eyebrow" id="loadingEyebrow">SINKRONISASI</span>
+        <strong class="loading-title" id="loadingTitle">MEMUAT DATA</strong>
+        <small class="loading-subtitle" id="loadingSubtitle">Mohon tunggu sebentar</small>
+      </div>
+
+      <div class="loading-progress" aria-hidden="true"><i></i></div>
+      <div class="loading-pulses" aria-hidden="true"><i></i><i></i><i></i></div>
+    </div>
+  </div>
 
   <script>
     const CONFIG = Object.freeze({
@@ -1849,6 +2377,7 @@
       datePickerButton: document.getElementById('datePickerButton'),
       dateMenu: document.getElementById('dateMenu'),
       todayBtn: document.getElementById('todayBtn'),
+      refreshBtn: document.getElementById('refreshBtn'),
       newest: document.getElementById('newestBtn'),
       oldest: document.getElementById('oldestBtn'),
       totalCount: document.getElementById('totalCount'),
@@ -1857,6 +2386,10 @@
       normalTabCount: document.getElementById('normalTabCount'),
       hokiTabCount: document.getElementById('hokiTabCount'),
       toast: document.getElementById('toast'),
+      loadingOverlay: document.getElementById('loadingOverlay'),
+      loadingEyebrow: document.getElementById('loadingEyebrow'),
+      loadingTitle: document.getElementById('loadingTitle'),
+      loadingSubtitle: document.getElementById('loadingSubtitle'),
       tabs: [...document.querySelectorAll('[data-tab]')]
     };
 
@@ -1882,6 +2415,10 @@
     let currentSnapshotDate = '';
     let appliedWallpaperUrl = null;
     let dateSelectionVersion = 0;
+    let calendarViewMonth = '';
+    let loadingEffectTimer = null;
+    let loadingEffectVersion = 0;
+    let manualRefreshRunning = false;
 
     // Safeguard late live/history responses.
     let liveRequestVersion = 0;
@@ -1896,6 +2433,28 @@
     let copiedUntil = 0;
     let copiedResetTimer = null;
     let copiedEffectVersion = 0;
+
+    const GRID_MOTION = Object.freeze({
+      moveMs:380,
+      enterMs:300,
+      exitMs:220,
+      easing:'cubic-bezier(.22,.82,.24,1)'
+    });
+
+    const LOADING_EFFECTS = Object.freeze({
+      date:Object.freeze({
+        duration:1800,
+        eyebrow:'PERPINDAHAN TANGGAL',
+        title:'MEMBUKA ARSIP HASIL',
+        subtitle:'Menyiapkan data berdasarkan tanggal pilihan'
+      }),
+      refresh:Object.freeze({
+        duration:1400,
+        eyebrow:'LIVE DATA SCAN',
+        title:'MEMINDAI DATA TERBARU',
+        subtitle:'Menyinkronkan hasil terbaru dari dashboard'
+      })
+    });
 
     // Preserve market order as they first become complete.
     const MARKET_ACTIVITY_KEY = 'hasil-result-market-first-seen-order-v2';
@@ -2187,6 +2746,40 @@
       els.toast.textContent=message;
       els.toast.className=`toast ${type==='error'?'error':''} show`;
       toastTimer=setTimeout(()=>els.toast.classList.remove('show'),2200);
+    }
+
+    function hideLoadingEffect(version=loadingEffectVersion){
+      if(version!==loadingEffectVersion)return;
+      clearTimeout(loadingEffectTimer);
+      els.loadingOverlay.classList.remove('show');
+      els.loadingOverlay.setAttribute('aria-hidden','true');
+      document.body.removeAttribute('aria-busy');
+    }
+
+    function showLoadingEffect(mode='refresh',options={}){
+      const effect=LOADING_EFFECTS[mode]||LOADING_EFFECTS.refresh;
+      const duration=Math.max(500,Number(options.duration)||effect.duration);
+      const version=++loadingEffectVersion;
+
+      clearTimeout(loadingEffectTimer);
+      els.loadingEyebrow.textContent=options.eyebrow??effect.eyebrow;
+      els.loadingTitle.textContent=options.title??effect.title;
+      els.loadingSubtitle.textContent=options.subtitle??effect.subtitle;
+      els.loadingOverlay.style.setProperty('--loading-duration',`${duration}ms`);
+
+      // Reset kelas sebentar agar progress dan animasi selalu mulai dari awal.
+      els.loadingOverlay.className='loading-overlay';
+      void els.loadingOverlay.offsetWidth;
+      els.loadingOverlay.classList.add('show',`mode-${mode}`);
+      els.loadingOverlay.setAttribute('aria-hidden','false');
+      document.body.setAttribute('aria-busy','true');
+
+      loadingEffectTimer=setTimeout(
+        ()=>hideLoadingEffect(version),
+        duration
+      );
+
+      return version;
     }
 
     function showState(title,message){
@@ -2772,9 +3365,86 @@
       return {dayName,fullDate};
     }
 
-    function getSevenDateOptions(){
+    function dashboardDateRange(){
       const today=dashboardMeta.today||getWibTodayKey();
-      return Array.from({length:7},(_,index)=>shiftDateKey(today,-index));
+      return {
+        today,
+        minDate:shiftDateKey(today,-13)
+      };
+    }
+
+    function isDashboardDateSelectable(dateKey=''){
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(dateKey))return false;
+      const {today,minDate}=dashboardDateRange();
+      return dateKey>=minDate&&dateKey<=today;
+    }
+
+    function calendarMonthKey(dateKey=''){
+      const fallback=dashboardMeta.today||getWibTodayKey();
+      const clean=/^\d{4}-\d{2}(?:-\d{2})?$/.test(dateKey)?dateKey:fallback;
+      return clean.slice(0,7);
+    }
+
+    function shiftCalendarMonth(monthKey,offset){
+      const [year,month]=calendarMonthKey(monthKey).split('-').map(Number);
+      const date=new Date(Date.UTC(year,month-1+offset,1));
+      return [
+        date.getUTCFullYear(),
+        String(date.getUTCMonth()+1).padStart(2,'0')
+      ].join('-');
+    }
+
+    function calendarMonthBounds(monthKey){
+      const normalized=calendarMonthKey(monthKey);
+      const firstDate=`${normalized}-01`;
+      const nextMonth=shiftCalendarMonth(normalized,1);
+      return {
+        firstDate,
+        lastDate:shiftDateKey(`${nextMonth}-01`,-1)
+      };
+    }
+
+    function calendarMonthHasSelectableDate(monthKey){
+      const {today,minDate}=dashboardDateRange();
+      const {firstDate,lastDate}=calendarMonthBounds(monthKey);
+      return firstDate<=today&&lastDate>=minDate;
+    }
+
+    function clampCalendarViewMonth(monthKey){
+      const normalized=calendarMonthKey(monthKey);
+      if(calendarMonthHasSelectableDate(normalized))return normalized;
+
+      const {today,minDate}=dashboardDateRange();
+      const minMonth=calendarMonthKey(minDate);
+      const maxMonth=calendarMonthKey(today);
+      if(normalized<minMonth)return minMonth;
+      return maxMonth;
+    }
+
+    function calendarMonthLabel(monthKey){
+      const [year,month]=calendarMonthKey(monthKey).split('-').map(Number);
+      return new Intl.DateTimeFormat('id-ID',{
+        month:'long',
+        year:'numeric',
+        timeZone:'UTC'
+      }).format(new Date(Date.UTC(year,month-1,1,12,0,0)));
+    }
+
+    function getCalendarCells(monthKey){
+      const normalized=calendarMonthKey(monthKey);
+      const firstDate=`${normalized}-01`;
+      const [year,month]=normalized.split('-').map(Number);
+      const leadingDays=new Date(Date.UTC(year,month-1,1)).getUTCDay();
+      const gridStart=shiftDateKey(firstDate,-leadingDays);
+
+      return Array.from({length:42},(_,index)=>{
+        const dateKey=shiftDateKey(gridStart,index);
+        return {
+          dateKey,
+          day:Number(dateKey.slice(8,10)),
+          outsideMonth:calendarMonthKey(dateKey)!==normalized
+        };
+      });
     }
 
     function closeDateMenu(){
@@ -2783,6 +3453,8 @@
     }
 
     function openDateMenu(){
+      const selected=els.dateFilter.value||dashboardMeta.today||getWibTodayKey();
+      calendarViewMonth=clampCalendarViewMonth(calendarMonthKey(selected));
       renderDateMenu();
       els.datePicker.classList.add('open');
       els.datePickerButton.setAttribute('aria-expanded','true');
@@ -2795,26 +3467,66 @@
 
     function renderDateMenu(){
       const selected=els.dateFilter.value||dashboardMeta.today||getWibTodayKey();
-      const today=dashboardMeta.today||getWibTodayKey();
+      const {today,minDate}=dashboardDateRange();
       const available=new Set(dashboardMeta.availableDates||[]);
+      const weekdays=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
 
-      els.dateMenu.innerHTML=getSevenDateOptions().map(dateKey=>{
-        const info=formatDateOption(dateKey);
-        const isToday=dateKey===today;
-        const isActive=dateKey===selected;
-        const hasArchive=isToday||available.has(dateKey);
-        const badge=isToday?'HARI INI':(hasArchive?'TERSIMPAN':'BELUM ADA');
+      calendarViewMonth=clampCalendarViewMonth(
+        calendarViewMonth||calendarMonthKey(selected)
+      );
+
+      const previousMonth=shiftCalendarMonth(calendarViewMonth,-1);
+      const nextMonth=shiftCalendarMonth(calendarViewMonth,1);
+      const canPrevious=calendarMonthHasSelectableDate(previousMonth);
+      const canNext=calendarMonthHasSelectableDate(nextMonth);
+
+      const dayButtons=getCalendarCells(calendarViewMonth).map(cell=>{
+        const selectable=isDashboardDateSelectable(cell.dateKey);
+        const isToday=cell.dateKey===today;
+        const isActive=cell.dateKey===selected;
+        const hasArchive=available.has(cell.dateKey);
+        const info=formatDateOption(cell.dateKey);
+        const disabledReason=cell.dateKey<minDate
+          ? 'Tanggal lebih dari 14 hari yang lalu'
+          : (cell.dateKey>today?'Tanggal mendatang belum dapat dipilih':'');
 
         return `
-          <button class="date-option ${isActive?'active':''}" type="button" role="option"
-                  aria-selected="${isActive?'true':'false'}" data-date-value="${dateKey}">
-            <span class="date-option-main">
-              <span class="date-option-day">${escapeHtml(info.dayName)}</span>
-              <span class="date-option-date">${escapeHtml(info.fullDate)}</span>
-            </span>
-            <span class="date-option-badge">${badge}</span>
+          <button
+            class="calendar-day ${cell.outsideMonth?'outside-month':''} ${isToday?'today':''} ${isActive?'active':''}"
+            type="button"
+            role="gridcell"
+            data-date-value="${cell.dateKey}"
+            aria-label="${escapeHtml(`${info.dayName}, ${info.fullDate}${disabledReason?`. ${disabledReason}`:''}`)}"
+            aria-selected="${isActive?'true':'false'}"
+            ${selectable?'':`disabled aria-disabled="true" title="${escapeHtml(disabledReason)}"`}
+          >
+            <span>${cell.day}</span>
+            ${hasArchive&&selectable?'<i class="archive-dot" aria-hidden="true"></i>':''}
           </button>`;
       }).join('');
+
+      els.dateMenu.innerHTML=`
+        <div class="calendar-header">
+          <button class="calendar-nav" type="button" data-calendar-nav="-1"
+                  aria-label="Bulan sebelumnya" ${canPrevious?'':'disabled'}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+          </button>
+          <div class="calendar-title" aria-live="polite">${escapeHtml(calendarMonthLabel(calendarViewMonth))}</div>
+          <button class="calendar-nav" type="button" data-calendar-nav="1"
+                  aria-label="Bulan berikutnya" ${canNext?'':'disabled'}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+          </button>
+        </div>
+        <div class="calendar-weekdays" aria-hidden="true">
+          ${weekdays.map(day=>`<span class="calendar-weekday">${day}</span>`).join('')}
+        </div>
+        <div class="calendar-days" role="grid" aria-label="Kalender ${escapeHtml(calendarMonthLabel(calendarViewMonth))}">
+          ${dayButtons}
+        </div>
+        <div class="calendar-footer">
+          <button class="calendar-today" type="button" data-calendar-today>Hari Ini</button>
+          <span class="calendar-limit">${escapeHtml(prettyDate(minDate))} – ${escapeHtml(prettyDate(today))}<br>14 hari terakhir</span>
+        </div>`;
     }
 
     function showNoResultForDate(dateKey){
@@ -2909,6 +3621,7 @@
       dateSelectionVersion+=1;
       els.dateFilter.value=today;
       els.dateDisplay.textContent=prettyDate(today);
+      calendarViewMonth=calendarMonthKey(today);
       currentDataMode='live';
       currentSnapshotDate='';
       closeDateMenu();
@@ -2920,6 +3633,13 @@
     async function selectDashboardDate(value,{silent=false}={}){
       if(!value)return;
 
+      if(!isDashboardDateSelectable(value)){
+        showToast('Tanggal hanya dapat dipilih untuk 14 hari terakhir.','error');
+        calendarViewMonth=clampCalendarViewMonth(calendarMonthKey(value));
+        renderDateMenu();
+        return false;
+      }
+
       const selectionVersion=++dateSelectionVersion;
       liveRequestVersion+=1;
       snapshotRequestVersion+=1;
@@ -2927,9 +3647,16 @@
 
       const today=dashboardMeta.today||getWibTodayKey();
       const isToday=value===today;
+      const selectedInfo=formatDateOption(value);
+
+      showLoadingEffect('date',{
+        title:isToday?'MENAMPILKAN HARI INI':'MEMBUKA ARSIP HASIL',
+        subtitle:`${selectedInfo.dayName}, ${selectedInfo.fullDate}`
+      });
 
       els.dateFilter.value=value;
       els.dateDisplay.textContent=prettyDate(value);
+      calendarViewMonth=calendarMonthKey(value);
       closeDateMenu();
       renderDateMenu();
 
@@ -2956,10 +3683,11 @@
           currentSnapshotDate='';
           await loadSheetData({silent:true});
         }
-        return;
+        return true;
       }
 
       await loadStoredSnapshot(value,{silent,selectionVersion});
+      return true;
     }
 
     function selectedDateKey(){
@@ -2974,7 +3702,19 @@
     function updateDateLimits(meta={}){
       const today=meta.today||getWibTodayKey();
       els.dateFilter.max=today;
-      els.dateFilter.min=shiftDateKey(today,-6);
+      els.dateFilter.min=shiftDateKey(today,-13);
+
+      if(
+        els.dateFilter.value&&
+        !isDashboardDateSelectable(els.dateFilter.value)
+      ){
+        els.dateFilter.value=today;
+        els.dateDisplay.textContent=prettyDate(today);
+      }
+
+      calendarViewMonth=clampCalendarViewMonth(
+        calendarMonthKey(els.dateFilter.value||today)
+      );
       renderDateMenu();
     }
 
@@ -3291,6 +4031,204 @@
       return rows;
     }
 
+    function gridMotionAllowed(){
+      return !(
+        typeof window.matchMedia==='function' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      );
+    }
+
+    function playGridMotion(element,keyframes,options){
+      if(!gridMotionAllowed()||typeof element.animate!=='function')return null;
+      const animation=element.animate(keyframes,{
+        fill:'both',
+        ...options
+      });
+      animation.finished.catch(()=>{});
+      return animation;
+    }
+
+    function cardRenderSignature(item){
+      return JSON.stringify([
+        item.market,
+        Boolean(item.isMulti),
+        item.localizedLines||item.lines.map(localizeDateLanguage)
+      ]);
+    }
+
+    function createCardNode(item){
+      const template=document.createElement('template');
+      template.innerHTML=cardTemplate(item).trim();
+      const card=template.content.firstElementChild;
+      card.dataset.cardId=item.id;
+      card.dataset.cardSignature=cardRenderSignature(item);
+      return card;
+    }
+
+    function syncCardNode(card,item){
+      const nextSignature=cardRenderSignature(item);
+      if(card.dataset.cardSignature===nextSignature)return false;
+
+      const copyButton=card.querySelector('.copy-btn');
+      const hadCopyFocus=Boolean(copyButton&&copyButton===document.activeElement);
+      const wasCopying=copyButton?.dataset.copying==='true';
+      const freshCard=createCardNode(item);
+
+      card.className=freshCard.className;
+      card.replaceChildren(...freshCard.childNodes);
+      card.dataset.cardId=item.id;
+      card.dataset.cardSignature=nextSignature;
+
+      const nextCopyButton=card.querySelector('.copy-btn');
+      if(wasCopying&&nextCopyButton)nextCopyButton.dataset.copying='true';
+      if(hadCopyFocus&&nextCopyButton){
+        requestAnimationFrame(()=>{
+          try{nextCopyButton.focus({preventScroll:true});}
+          catch{nextCopyButton.focus();}
+        });
+      }
+
+      return true;
+    }
+
+    function animateRemovedCard(card,rect){
+      if(!gridMotionAllowed()||rect.width<1||rect.height<1)return;
+
+      const ghost=card.cloneNode(true);
+      ghost.dataset.gridGhost='true';
+      ghost.setAttribute('aria-hidden','true');
+      Object.assign(ghost.style,{
+        position:'fixed',
+        left:`${rect.left}px`,
+        top:`${rect.top}px`,
+        width:`${rect.width}px`,
+        height:`${rect.height}px`,
+        minHeight:'0',
+        zIndex:'450',
+        pointerEvents:'none'
+      });
+      document.body.appendChild(ghost);
+
+      const animation=playGridMotion(
+        ghost,
+        [
+          {opacity:1,transform:'translate3d(0,0,0) scale(1)'},
+          {opacity:0,transform:'translate3d(0,8px,0) scale(.975)'}
+        ],
+        {duration:GRID_MOTION.exitMs,easing:'ease-out'}
+      );
+
+      if(animation){
+        animation.finished.finally(()=>ghost.remove());
+      }else{
+        ghost.remove();
+      }
+    }
+
+    function reconcileResultCards(rows,{fresh=false}={}){
+      document
+        .querySelectorAll('[data-grid-ghost="true"]')
+        .forEach(ghost=>ghost.remove());
+
+      const oldCards=[...els.grid.children]
+        .filter(card=>card.matches('.card[data-card-id]'));
+
+      oldCards.forEach(card=>{
+        if(typeof card.getAnimations==='function'){
+          card.getAnimations().forEach(animation=>animation.cancel());
+        }
+      });
+
+      const oldRects=new Map(
+        oldCards.map(card=>[card.dataset.cardId,card.getBoundingClientRect()])
+      );
+      const existingCards=new Map(
+        oldCards.map(card=>[card.dataset.cardId,card])
+      );
+      const nextIds=new Set(rows.map(item=>item.id));
+      const sharedCount=rows.reduce(
+        (count,item)=>count+(existingCards.has(item.id)?1:0),
+        0
+      );
+      const removedCards=sharedCount>0
+        ? oldCards
+            .filter(card=>!nextIds.has(card.dataset.cardId))
+            .map(card=>({
+              card:card.cloneNode(true),
+              rect:oldRects.get(card.dataset.cardId)
+            }))
+        : [];
+
+      const fragment=document.createDocumentFragment();
+      const newCards=[];
+      const updatedCards=[];
+      const reusedCards=[];
+
+      rows.forEach(item=>{
+        let card=existingCards.get(item.id);
+
+        if(card){
+          reusedCards.push(card);
+          if(syncCardNode(card,item))updatedCards.push(card);
+        }else{
+          card=createCardNode(item);
+          newCards.push(card);
+        }
+
+        fragment.appendChild(card);
+      });
+
+      els.grid.replaceChildren(fragment);
+      els.state.classList.add('hidden');
+      els.grid.classList.remove('hidden');
+
+      removedCards.forEach(({card,rect})=>animateRemovedCard(card,rect));
+
+      reusedCards.forEach(card=>{
+        const first=oldRects.get(card.dataset.cardId);
+        const last=card.getBoundingClientRect();
+        if(!first||first.width<1||last.width<1)return;
+
+        const deltaX=first.left-last.left;
+        const deltaY=first.top-last.top;
+        if(Math.abs(deltaX)<.5&&Math.abs(deltaY)<.5)return;
+
+        playGridMotion(
+          card,
+          [
+            {transform:`translate3d(${deltaX}px,${deltaY}px,0)`},
+            {transform:'translate3d(0,0,0)'}
+          ],
+          {duration:GRID_MOTION.moveMs,easing:GRID_MOTION.easing}
+        );
+      });
+
+      newCards.forEach((card,index)=>{
+        playGridMotion(
+          card,
+          [
+            {opacity:0,transform:'translate3d(0,10px,0) scale(.985)'},
+            {opacity:1,transform:'translate3d(0,0,0) scale(1)'}
+          ],
+          {
+            duration:GRID_MOTION.enterMs,
+            delay:Math.min(index*18,108),
+            easing:GRID_MOTION.easing
+          }
+        );
+      });
+
+      if(fresh){
+        updatedCards.forEach(card=>{
+          playGridMotion(
+            card,
+            [{opacity:.86},{opacity:1}],
+            {duration:260,easing:'ease-out'}
+          );
+        });
+      }
+    }
+
     function renderResults({fresh=false}={}){
       updateCounts();
       if(!allResults.length){
@@ -3302,9 +4240,7 @@
         showState('Data tidak ditemukan','Tidak ada data terisi pada pilihan pasaran, tanggal, atau pencarian tersebut.');
         return;
       }
-      els.grid.innerHTML=rows.map(cardTemplate).join('');
-      els.state.classList.add('hidden');
-      els.grid.classList.remove('hidden');
+      reconcileResultCards(rows,{fresh});
 
       if(copiedMarketId&&Date.now()<copiedUntil){
         applyCopyVisual(copiedMarketId);
@@ -3329,7 +4265,6 @@
         lastDataSignature=nextSignature;
         updateLastUpdateText(new Date());
         renderResults({fresh:true});
-        if(!silent)showToast(`Berhasil memuat ${allResults.length} pasaran dengan prize lengkap`);
       }else if(!allResults.length){
         allResults=trackedResults;
         updateLastUpdateText(new Date());
@@ -3437,6 +4372,40 @@
       }
     }
 
+    async function refreshDashboardManually(){
+      if(manualRefreshRunning)return;
+
+      manualRefreshRunning=true;
+      els.refreshBtn.disabled=true;
+      els.refreshBtn.classList.add('loading');
+
+      showLoadingEffect('refresh',{
+        title:'MEMINDAI DATA TERBARU',
+        subtitle:isViewingToday()
+          ? 'Menyinkronkan hasil live dan pengaturan dashboard'
+          : `Memperbarui arsip ${prettyDate(selectedDateKey())}`
+      });
+
+      try{
+        const dataRequest=isViewingToday()
+          ? loadSheetData({silent:true})
+          : loadStoredSnapshot(selectedDateKey(),{silent:true});
+
+        await Promise.allSettled([
+          dataRequest,
+          loadDashboardMeta({silent:true}),
+          loadWallpaperDirectFromSheet()
+        ]);
+
+        updateLastUpdateText(new Date());
+        showToast('Dashboard berhasil diperbarui.');
+      }finally{
+        manualRefreshRunning=false;
+        els.refreshBtn.disabled=false;
+        els.refreshBtn.classList.remove('loading');
+      }
+    }
+
     async function copyText(text){
       try{
         if(navigator.clipboard&&window.isSecureContext){
@@ -3513,7 +4482,6 @@
       copiedUntil=Date.now()+1500;
 
       applyCopyVisual(item.id);
-      showToast(`Hasil ${item.market} berhasil disalin`);
 
       copiedResetTimer=setTimeout(()=>{
         if(effectVersion!==copiedEffectVersion)return;
@@ -3563,8 +4531,29 @@
     });
 
     els.dateMenu.addEventListener('click',async event=>{
+      const navigation=event.target.closest('[data-calendar-nav]');
+      if(navigation){
+        if(navigation.disabled)return;
+        const nextMonth=shiftCalendarMonth(
+          calendarViewMonth,
+          Number(navigation.dataset.calendarNav)||0
+        );
+        if(calendarMonthHasSelectableDate(nextMonth)){
+          calendarViewMonth=nextMonth;
+          renderDateMenu();
+        }
+        return;
+      }
+
+      const calendarToday=event.target.closest('[data-calendar-today]');
+      if(calendarToday){
+        const today=dashboardMeta.today||getWibTodayKey();
+        await selectDashboardDate(today,{silent:false});
+        return;
+      }
+
       const option=event.target.closest('[data-date-value]');
-      if(!option)return;
+      if(!option||option.disabled)return;
       await selectDashboardDate(option.dataset.dateValue,{silent:false});
     });
 
@@ -3580,6 +4569,7 @@
       const today=dashboardMeta.today||getWibTodayKey();
       await selectDashboardDate(today,{silent:false});
     });
+    els.refreshBtn.addEventListener('click',refreshDashboardManually);
     els.newest.addEventListener('click',()=>{
       activeSort='newest';
       els.newest.classList.add('active');
@@ -3605,6 +4595,12 @@
     });
 
     resetDateSelectionToToday();
+
+    showLoadingEffect('refresh',{
+      eyebrow:'INISIALISASI DASHBOARD',
+      title:'MENYIAPKAN HASIL RESULT',
+      subtitle:''
+    });
 
     loadSheetData();
     loadDashboardMeta({silent:true});
