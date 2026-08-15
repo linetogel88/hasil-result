@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Assumption from brief: mockup font unspecified; using Orbitron + Exo 2 -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&family=JetBrains+Mono:wght@600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700;800&family=Sora:wght@500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23050914'/%3E%3Cpath d='M10 42L20 14h24l10 28H10z' fill='none' stroke='%23ff53b5' stroke-width='3'/%3E%3Cpath d='M16 20h32' stroke='%2353d8ff' stroke-width='3'/%3E%3Ccircle cx='18' cy='33' r='3' fill='%23ffce45'/%3E%3Ccircle cx='46' cy='33' r='3' fill='%23ffce45'/%3E%3C/svg%3E">
   <style>
     :root{
@@ -38,9 +38,9 @@
       --chrome-stroke:rgba(110,148,255,.20);
       --chrome-inner:rgba(255,255,255,.04);
       --copy-glass:rgba(255,255,255,.03);
-      --font-ui:"Exo 2",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      --font-display:"Orbitron","Exo 2",sans-serif;
-      --font-mono:"Consolas","Cascadia Mono","SFMono-Regular",ui-monospace,monospace;
+      --font-ui:"Sora",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      --font-display:"Space Grotesk","Sora",sans-serif;
+      --font-mono:"JetBrains Mono","Cascadia Mono","SFMono-Regular",ui-monospace,monospace;
     }
 
     *{box-sizing:border-box}
@@ -93,9 +93,9 @@
     .app{
       position:relative;
       z-index:1;
-      width:min(1680px, calc(100% - 34px));
-      margin:18px auto 42px;
-      padding-inline:8px;
+      width:min(1760px, calc(100% - 56px));
+      margin:20px auto 46px;
+      padding-inline:10px;
     }
 
     .ui-defs{
@@ -170,8 +170,8 @@
       gap:10px;
       padding:0 24px;
       color:#fff2f7;
-      font:900 28px/1 var(--font-display);
-      letter-spacing:.09em;
+      font:700 27px/1 var(--font-display);
+      letter-spacing:.055em;
       text-transform:uppercase;
       text-shadow:0 0 20px rgba(255,78,155,.55), 0 0 10px rgba(255,78,155,.32);
       clip-path:polygon(8% 0, 92% 0, 100% 50%, 92% 100%, 8% 100%, 0 50%);
@@ -213,8 +213,8 @@
     .title{
       margin:0;
       white-space:nowrap;
-      font:900 clamp(28px,2.8vw,58px)/1 var(--font-display);
-      letter-spacing:.08em;
+      font:700 clamp(30px,2.65vw,56px)/1.02 var(--font-display);
+      letter-spacing:.045em;
       text-transform:uppercase;
       color:#eff4ff;
       text-shadow:
@@ -592,7 +592,7 @@
       min-width:148px;
       padding:0 22px;
       border-radius:16px;
-      font:900 18px/1 var(--font-display);
+      font:700 17px/1 var(--font-display);
       letter-spacing:.04em;
       color:#effcff;
       text-transform:uppercase;
@@ -739,7 +739,7 @@
       width:100%;
       border:0; outline:0; background:transparent;
       color:#eef4ff;
-      font:700 20px/1 var(--font-ui);
+      font:700 19px/1 var(--font-ui);
       letter-spacing:.01em;
     }
     .search-wrap input::placeholder{
@@ -782,7 +782,7 @@
       min-height:60px;
       padding:0 20px;
       color:#cfd7fb;
-      font:900 20px/1 var(--font-ui);
+      font:700 19px/1 var(--font-ui);
       white-space:nowrap;
       background:transparent;
       clip-path:polygon(7% 0, 93% 0, 100% 22%, 100% 78%, 93% 100%, 7% 100%, 0 78%, 0 22%);
@@ -835,7 +835,7 @@
       height:58px;
       padding:0 20px;
       color:#d7defb;
-      font:900 18px/1 var(--font-ui);
+      font:700 17px/1 var(--font-ui);
       background:
         linear-gradient(180deg, rgba(255,255,255,.04), transparent 34%),
         linear-gradient(180deg, rgba(10,16,42,.94), rgba(6,11,28,.98));
@@ -864,10 +864,10 @@
 
     /* ===== Grid ===== */
     .grid{
-      margin-top:18px;
+      margin-top:20px;
       display:grid;
       grid-template-columns:repeat(3, minmax(0,1fr));
-      gap:18px;
+      gap:20px;
       align-items:stretch;
       perspective:none;
       overflow-anchor:none;
@@ -882,8 +882,8 @@
       --body-grad-a:#151b3f;
       --body-grad-b:#09112a;
       position:relative;
-      min-height:268px;
-      padding:14px 16px 16px;
+      min-height:278px;
+      padding:16px 18px 18px;
       display:flex;
       flex-direction:column;
 
@@ -978,8 +978,8 @@
       margin:0;
       color:var(--accent);
       text-align:center;
-      font:900 17px/1 var(--font-display);
-      letter-spacing:.16em;
+      font:700 18px/1.05 var(--font-display);
+      letter-spacing:.085em;
       text-transform:uppercase;
       text-shadow:
         0 0 18px rgba(var(--accent-rgb), .32),
@@ -1060,8 +1060,9 @@
       white-space:pre-wrap;
       word-break:break-word;
       color:#f0f4ff;
-      font:700 12.5px/1.52 var(--font-mono);
-      text-shadow:0 1px 2px rgba(0,0,0,.46);
+      font:700 13.2px/1.56 var(--font-mono);
+      letter-spacing:.005em;
+      text-shadow:0 1px 2px rgba(0,0,0,.52);
       overflow-wrap:anywhere;
     }
 
@@ -1996,167 +1997,6 @@
     #resultGrid{
       position:relative;
       z-index:10;
-    }
-
-  
-
-    /* ===== DESKTOP WIDE + MODERN TYPOGRAPHY OVERRIDE =====
-       Fokus khusus versi web/desktop:
-       - memakai area monitor lebih lebar
-       - grid tetap 3 kolom
-       - font lebih modern, tebal, dan mudah dibaca
-       - tidak mengubah struktur HTML atau fungsi JavaScript
-    */
-    :root{
-      --font-ui:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
-      --font-display:"Sora","Inter",system-ui,sans-serif;
-      --font-mono:"JetBrains Mono","Cascadia Mono",Consolas,"SFMono-Regular",ui-monospace,monospace;
-    }
-
-    body{
-      font-weight:600;
-    }
-
-    @media (min-width:1181px){
-      .app{
-        width:min(2160px, calc(100% - 40px));
-        margin:14px auto 34px;
-        padding-inline:6px;
-      }
-
-      .topbar{
-        padding-inline:22px;
-      }
-
-      .title{
-        font-size:clamp(30px,2.25vw,50px);
-        font-weight:800;
-        letter-spacing:.045em;
-      }
-
-      .status-pill{
-        font-size:22px;
-        font-weight:800;
-        letter-spacing:.055em;
-      }
-
-      .stat{
-        font-size:14px;
-        font-weight:800;
-        letter-spacing:.035em;
-      }
-
-      .date-control,
-      .today-btn,
-      .sort-btn{
-        font-weight:800;
-        letter-spacing:.025em;
-      }
-
-      .date-control{
-        font-size:15px;
-      }
-
-      .today-btn{
-        font-size:15px;
-      }
-
-      .updated small{
-        font-size:10px;
-        font-weight:800;
-        letter-spacing:.085em;
-      }
-
-      .updated strong{
-        font-size:12px;
-        font-weight:700;
-      }
-
-      .search-wrap input{
-        font-size:17px;
-        font-weight:700;
-        letter-spacing:0;
-      }
-
-      .tab-btn{
-        font-size:16px;
-        font-weight:800;
-        letter-spacing:.01em;
-      }
-
-      .sort-btn{
-        font-size:15px;
-      }
-
-      .grid{
-        grid-template-columns:repeat(3,minmax(0,1fr));
-        gap:16px;
-        margin-top:14px;
-      }
-
-      .card{
-        min-height:236px;
-        padding:11px 14px 13px;
-      }
-
-      .card-titlebar{
-        min-height:41px;
-        padding-left:23px;
-        margin-bottom:10px;
-      }
-
-      .card-title{
-        font-size:15.5px;
-        font-weight:800;
-        letter-spacing:.085em;
-      }
-
-      .card-glass{
-        margin-inline:9px;
-        padding:14px 17px 0;
-      }
-
-      .card-text{
-        font-size:12.5px;
-        font-weight:700;
-        line-height:1.55;
-        letter-spacing:-.012em;
-      }
-
-      .card-line.result-line{
-        font-weight:800;
-        letter-spacing:0;
-      }
-
-      .copy-btn{
-        height:39px;
-        font-size:13px;
-        font-weight:800;
-        letter-spacing:.065em;
-      }
-    }
-
-    @media (min-width:1700px){
-      .app{
-        width:min(2160px, calc(100% - 48px));
-      }
-
-      .grid{
-        gap:18px;
-      }
-
-      .card{
-        min-height:244px;
-      }
-
-      .card-title{
-        font-size:16px;
-      }
-
-      .card-text{
-        font-size:13px;
-        line-height:1.58;
-      }
     }
 
   </style>
