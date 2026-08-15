@@ -3369,7 +3369,7 @@
       const today=dashboardMeta.today||getWibTodayKey();
       return {
         today,
-        minDate:shiftDateKey(today,-6)
+        minDate:shiftDateKey(today,-13)
       };
     }
 
@@ -3487,7 +3487,7 @@
         const hasArchive=available.has(cell.dateKey);
         const info=formatDateOption(cell.dateKey);
         const disabledReason=cell.dateKey<minDate
-          ? 'Tanggal lebih dari 7 hari yang lalu'
+          ? 'Tanggal lebih dari 14 hari yang lalu'
           : (cell.dateKey>today?'Tanggal mendatang belum dapat dipilih':'');
 
         return `
@@ -3525,7 +3525,7 @@
         </div>
         <div class="calendar-footer">
           <button class="calendar-today" type="button" data-calendar-today>Hari Ini</button>
-          <span class="calendar-limit">${escapeHtml(prettyDate(minDate))} – ${escapeHtml(prettyDate(today))}<br>7 hari terakhir</span>
+          <span class="calendar-limit">${escapeHtml(prettyDate(minDate))} – ${escapeHtml(prettyDate(today))}<br>14 hari terakhir</span>
         </div>`;
     }
 
@@ -3634,7 +3634,7 @@
       if(!value)return;
 
       if(!isDashboardDateSelectable(value)){
-        showToast('Tanggal hanya dapat dipilih untuk 7 hari terakhir.','error');
+        showToast('Tanggal hanya dapat dipilih untuk 14 hari terakhir.','error');
         calendarViewMonth=clampCalendarViewMonth(calendarMonthKey(value));
         renderDateMenu();
         return false;
@@ -3702,7 +3702,7 @@
     function updateDateLimits(meta={}){
       const today=meta.today||getWibTodayKey();
       els.dateFilter.max=today;
-      els.dateFilter.min=shiftDateKey(today,-6);
+      els.dateFilter.min=shiftDateKey(today,-13);
 
       if(
         els.dateFilter.value&&
