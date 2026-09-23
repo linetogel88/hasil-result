@@ -2000,6 +2000,27 @@
     }
 
   </style>
+
+<style id="mobile-satset">
+@media(max-width:760px){
+ html{scroll-behavior:auto}
+ body::before{filter:none;transform:none;position:absolute;inset:0}
+ body::after{position:absolute}
+ .topbar .frame-shadow,.card-ambient{display:none}
+ .card,.date-menu,.search-wrap,.command-shell,.card-glass,.toast{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+ .card{content-visibility:auto;contain-intrinsic-size:auto 300px;transition:none!important}
+ .card svg [filter],.frame-svg [filter]{filter:none!important}
+ .status-dot{animation:none!important}
+ .card-glass,.stats{box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+ .copy-btn,.calendar-nav,.tab-btn,.sort-btn,.date-control,.refresh-btn,.today-btn{touch-action:manipulation;min-height:44px}
+ .card-title{text-shadow:none}
+ .date-menu{animation:none!important;opacity:1;transform:none}
+ .loading-overlay *{animation:none!important;filter:none!important;backdrop-filter:none!important}
+ .loading-overlay .loading-panel{box-shadow:none}
+}
+#hasil-ai-launch{position:fixed;right:18px;bottom:18px;z-index:1200;padding:13px 18px;border-radius:999px;background:#7537d6;color:white;border:1px solid #bd95ff;text-decoration:none;font:700 14px system-ui;box-shadow:0 5px 18px #0005}
+@media(max-width:760px){#hasil-ai-launch{right:12px;bottom:max(12px,env(safe-area-inset-bottom));padding:12px 16px}}
+</style>
 </head>
 <body>
   <!-- Shared SVG definitions for glow, bevel, and badge icons -->
@@ -2435,6 +2456,8 @@
     let copiedResetTimer = null;
     let copiedEffectVersion = 0;
 
+    const isMobileSatset = () => window.matchMedia('(max-width:760px)').matches;
+
     const GRID_MOTION = Object.freeze({
       moveMs:380,
       enterMs:300,
@@ -2759,7 +2782,7 @@
 
     function showLoadingEffect(mode='refresh',options={}){
       const effect=LOADING_EFFECTS[mode]||LOADING_EFFECTS.refresh;
-      const duration=Math.max(500,Number(options.duration)||effect.duration);
+      const duration=isMobileSatset()?180:Math.max(500,Number(options.duration)||effect.duration);
       const version=++loadingEffectVersion;
 
       clearTimeout(loadingEffectTimer);
@@ -2770,7 +2793,7 @@
 
       // Reset kelas sebentar agar progress dan animasi selalu mulai dari awal.
       els.loadingOverlay.className='loading-overlay';
-      void els.loadingOverlay.offsetWidth;
+      if(!isMobileSatset())void els.loadingOverlay.offsetWidth;
       els.loadingOverlay.classList.add('show',`mode-${mode}`);
       els.loadingOverlay.setAttribute('aria-hidden','false');
       document.body.setAttribute('aria-busy','true');
@@ -4033,6 +4056,7 @@
     }
 
     function gridMotionAllowed(){
+      if(isMobileSatset())return false;
       return !(
         typeof window.matchMedia==='function' &&
         window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -4126,7 +4150,27 @@
       }
     }
 
+    function reconcileMobileCards(rows){
+      const existing=new Map([...els.grid.children].filter(c=>c.matches('.card[data-card-id]')).map(c=>[c.dataset.cardId,c]));
+      const wanted=new Set(rows.map(item=>String(item.id)));
+      // Remove only obsolete cards; keep unchanged nodes and clipboard focus intact.
+      existing.forEach((card,id)=>{if(!wanted.has(String(id)))card.remove();});
+      rows.forEach((item,index)=>{
+        let card=existing.get(String(item.id));
+        if(card)syncCardNode(card,item);else card=createCardNode(item);
+        const current=els.grid.children[index]||null;
+        if(current!==card)els.grid.insertBefore(card,current);
+      });
+      els.state.classList.add('hidden');
+      els.grid.classList.remove('hidden');
+    }
+
     function reconcileResultCards(rows,{fresh=false}={}){
+      if(isMobileSatset()){
+        document.querySelectorAll('[data-grid-ghost="true"]').forEach(ghost=>ghost.remove());
+        reconcileMobileCards(rows);
+        return;
+      }
       document
         .querySelectorAll('[data-grid-ghost="true"]')
         .forEach(ghost=>ghost.remove());
@@ -4523,7 +4567,16 @@
       renderResults();
     }));
 
-    els.search.addEventListener('input',renderResults);
+    let mobileSearchTimer;
+    els.search.addEventListener('input',event=>{
+      clearTimeout(mobileSearchTimer);
+      if(!isMobileSatset()){renderResults(event);return;}
+      if(event.isComposing)return;
+      mobileSearchTimer=setTimeout(()=>renderResults(),100);
+    });
+    els.search.addEventListener('compositionend',()=>{
+      if(isMobileSatset()){clearTimeout(mobileSearchTimer);renderResults();}
+    });
 
     els.datePickerButton.addEventListener('click',event=>{
       event.preventDefault();
@@ -4609,7 +4662,7 @@
 
     wallpaperPollTimer=setInterval(()=>{
       if(!document.hidden)loadWallpaperDirectFromSheet();
-    },5000);
+    },isMobileSatset()?30000:5000);
 
     archiveMetaTimer=setInterval(()=>{
       if(!document.hidden)loadDashboardMeta({silent:true});
@@ -4770,5 +4823,6 @@
       return false;
     });
   </script>
+<a id="hasil-ai-launch" href="https://bacoud97.page.gd/hasil-ai.html" target="_blank" rel="noopener noreferrer" aria-label="Buka AI MemoDash">✦ Tanya AI</a>
 </body>
 </html>
