@@ -4826,10 +4826,10 @@
 <button id="hasil-ai-launch" type="button" aria-expanded="false" aria-controls="hasil-ai-panel">✦ RESULT AI</button>
 <section id="hasil-ai-panel" role="dialog" aria-label="Chat AI" hidden>
  <div id="hasil-ai-bar"><strong>✦ RESULT AI <small style="color:#94a4c9;font-size:9px;letter-spacing:1px">ASSISTANT</small></strong><span><button type="button" id="hasil-ai-minimize" aria-label="Minimize chat">−</button><button type="button" id="hasil-ai-close" aria-label="Tutup chat">✕</button></span></div>
- <div id="result-ai-tools"><span id="result-ai-status" role="status">Belum terhubung</span><button id="result-ai-connect" type="button">Hubungkan</button></div>
+ <div id="result-ai-tools"><span id="result-ai-status" role="status">Siap • RESULT AI</span></div>
  <div id="result-ai-messages" role="log" aria-live="polite"><div class="result-ai-message">Halo, bosku! Mau bahas hasil result atau tanya hal lain?
 
-Klik Hubungkan sekali untuk memakai AI MemoDash. Sertakan tanggal dan hasil jika ingin membahas data tertentu.</div></div>
+Langsung tulis pertanyaanmu. Sertakan tanggal dan hasil jika ingin membahas data tertentu.</div></div>
  <form id="result-ai-form"><textarea id="result-ai-input" rows="2" maxlength="1200" required placeholder="Tulis pertanyaan…" aria-label="Pertanyaan AI"></textarea><button id="result-ai-send" type="submit">Kirim</button></form>
 </section>
 <style>
@@ -4844,7 +4844,6 @@ Klik Hubungkan sekali untuk memakai AI MemoDash. Sertakan tanggal dan hasil jika
 #hasil-ai-minimize,#hasil-ai-close{background:transparent;color:white;border:0;font:22px system-ui;min-width:36px;min-height:36px;cursor:pointer}
 #result-ai-tools{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:9px 12px;background:#101b31;border-bottom:1px solid #304766}
 #result-ai-status{font:11px/1.4 system-ui;color:#ffce45}
-#result-ai-connect{padding:6px 10px;background:#172e49;border:1px solid #5485a8;border-radius:8px 2px;color:#9ee4ff;font:12px system-ui;min-height:34px}
 #result-ai-messages{flex:1;min-height:0;overflow:auto;padding:12px;overscroll-behavior:contain;scrollbar-width:thin}
 .result-ai-message{padding:11px 13px;margin:0 18px 13px 0;background:linear-gradient(120deg,#10213a,#0b152b);border:1px solid #365273;border-left:2px solid #53d8ff;border-radius:3px 12px 12px;font:13px/1.65 system-ui;white-space:pre-wrap;overflow-wrap:anywhere;user-select:text}
 .result-ai-message.user{margin:0 0 13px 18px;border-left:1px solid #715076;border-right:2px solid #ff53b5;background:#21182f;border-radius:12px 3px 12px}
@@ -4857,41 +4856,40 @@ Klik Hubungkan sekali untuk memakai AI MemoDash. Sertakan tanggal dan hasil jika
 </style>
 <script>
 (()=>{
- const $=id=>document.getElementById(id),origin='https://bacoud97.page.gd';
- let bridge=null,channel='',ready=false,pending=null,requestSeq=0,connectTimer=null;
- const panel=$('hasil-ai-panel'),launch=$('hasil-ai-launch');
+ const $=id=>document.getElementById(id);
+ const panel=$('hasil-ai-panel'),launch=$('hasil-ai-launch'),input=$('result-ai-input'),send=$('result-ai-send');
+ let busy=false,history=[];
  function toggle(open){panel.hidden=!open;launch.setAttribute('aria-expanded',String(open));if(!open)launch.focus();}
  launch.addEventListener('click',()=>toggle(panel.hidden));
  ['hasil-ai-close','hasil-ai-minimize'].forEach(id=>$(id).addEventListener('click',()=>toggle(false)));
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)toggle(false);});
  function status(text){$('result-ai-status').textContent=text;}
- function add(text,type=''){const el=document.createElement('div');el.className='result-ai-message '+type;el.textContent=text;$('result-ai-messages').appendChild(el);$('result-ai-messages').scrollTop=$('result-ai-messages').scrollHeight;}
- function connect(){
-  if(bridge&&!bridge.closed){bridge.focus();bridge.postMessage({type:'result-ai-ping',channel},origin);return;}
-  if(!window.crypto?.getRandomValues){status('Buka dashboard melalui alamat HTTPS.');return;}
-  channel=Array.from(crypto.getRandomValues(new Uint8Array(24)),b=>b.toString(16).padStart(2,'0')).join('');ready=false;
-  bridge=window.open(origin+'/hasil-ai-bridge.html#'+new URLSearchParams({origin:location.origin,channel}).toString(),'resultAiBridge','width=520,height=420');
-  status(bridge?'Klik Hubungkan dashboard di tab penghubung.':'Popup diblokir. Izinkan popup lalu klik Hubungkan.');
-  clearTimeout(connectTimer);if(bridge)connectTimer=setTimeout(()=>{if(!ready)status('Belum terhubung. Pastikan hasil-ai-bridge.html sudah diunggah dan klik Hubungkan dashboard.');},20000);
+ function add(text,type=''){
+  const el=document.createElement('div');el.className='result-ai-message '+type;el.textContent=text;
+  const log=$('result-ai-messages');log.appendChild(el);
+  while(log.children.length>60)log.firstElementChild.remove();
+  log.scrollTop=log.scrollHeight;
  }
- $('result-ai-connect').addEventListener('click',connect);
- function finish(){if(!pending)return;clearTimeout(pending.timer);pending=null;$('result-ai-send').disabled=false;$('result-ai-input').disabled=false;}
- window.addEventListener('message',e=>{
-  if(e.origin!==origin||e.source!==bridge||e.data?.channel!==channel)return;
-  const d=e.data;
-  if(d.type==='result-ai-ready'){clearTimeout(connectTimer);ready=true;status('Terhubung • AI MemoDash');$('result-ai-connect').textContent='Koneksi';return;}
-  if(d.type!=='result-ai-response'||!pending||d.id!==pending.id)return;
-  const text=pending.message;
-  if(typeof d.reply==='string'&&d.reply.trim())add(d.reply);
-  else{add(typeof d.error==='string'?d.error:'AI belum memberi jawaban.','error');$('result-ai-input').value=text;}
-  finish();status('Terhubung • AI MemoDash');
- });
- $('result-ai-form').addEventListener('submit',e=>{
-  e.preventDefault();const message=$('result-ai-input').value.trim();if(!message||pending)return;
-  if(!ready||!bridge||bridge.closed){ready=false;connect();return;}
-  const id=String(++requestSeq);add(message,'user');$('result-ai-input').value='';$('result-ai-send').disabled=true;$('result-ai-input').disabled=true;status('AI sedang menjawab…');
-  pending={id,message,timer:setTimeout(()=>{add('Koneksi belum merespons. Periksa tab penghubung, lalu kirim ulang.','error');$('result-ai-input').value=message;finish();status('Periksa koneksi AI.');},50000)};
-  bridge.postMessage({type:'result-ai-request',channel,id,message},origin);
+ $('result-ai-form').addEventListener('submit',async e=>{
+  e.preventDefault();const message=input.value.trim();if(!message||busy)return;
+  if(location.protocol==='file:'){add('Upload hasil-result.html dan hasil-result-ai.php ke htdocs MemoDash, lalu buka halaman melalui alamat website.','error');return;}
+  busy=true;send.disabled=true;input.disabled=true;add(message,'user');input.value='';status('AI sedang menjawab…');
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),45000);
+  try{
+   const response=await fetch('./hasil-result-ai.php',{
+    method:'POST',credentials:'same-origin',cache:'no-store',signal:controller.signal,
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body:JSON.stringify({message,history})
+   });
+   const raw=await response.text();let data;
+   try{data=JSON.parse(raw);}catch(_){throw new Error('Server belum mengembalikan jawaban AI. Pastikan kedua file berada di htdocs MemoDash dan buka hasil-result.html dari hosting tersebut.');}
+   if(!response.ok||!data.success||typeof data.reply!=='string'||!data.reply.trim())throw new Error(data.error||'AI belum memberi jawaban. Coba kirim lagi.');
+   add(data.reply);history.push({role:'user',content:message},{role:'assistant',content:data.reply.slice(0,3000)});history=history.slice(-6);
+   status('Siap • RESULT AI');
+  }catch(error){
+   add(error.name==='AbortError'?'AI terlalu lama merespons. Silakan kirim ulang.':error.message||'Koneksi terputus. Silakan kirim ulang.','error');
+   input.value=message;status('Pesan belum terjawab • coba lagi');
+  }finally{clearTimeout(timer);busy=false;send.disabled=false;input.disabled=false;}
  });
 })();
 </script>
