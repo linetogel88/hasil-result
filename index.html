@@ -4825,25 +4825,74 @@
   </script>
 <button id="hasil-ai-launch" type="button" aria-expanded="false" aria-controls="hasil-ai-panel">✦ RESULT AI</button>
 <section id="hasil-ai-panel" role="dialog" aria-label="Chat AI" hidden>
- <div id="hasil-ai-bar"><strong>✦ RESULT AI <small style="color:#94a4c9;font-size:9px;letter-spacing:1px">ASSISTANT</small></strong><span><button type="button" id="hasil-ai-minimize" aria-label="Minimize chat" style="background:transparent;color:white;border:0;font-size:20px;min-width:36px;min-height:36px">−</button><button type="button" id="hasil-ai-close" aria-label="Tutup chat">✕</button></span></div>
- <iframe id="hasil-ai-frame" title="Chat AI Hasil Result" referrerpolicy="strict-origin" allow="clipboard-write"></iframe>
+ <div id="hasil-ai-bar"><strong>✦ RESULT AI <small style="color:#94a4c9;font-size:9px;letter-spacing:1px">ASSISTANT</small></strong><span><button type="button" id="hasil-ai-minimize" aria-label="Minimize chat">−</button><button type="button" id="hasil-ai-close" aria-label="Tutup chat">✕</button></span></div>
+ <div id="result-ai-tools"><span id="result-ai-status" role="status">Belum terhubung</span><button id="result-ai-connect" type="button">Hubungkan</button></div>
+ <div id="result-ai-messages" role="log" aria-live="polite"><div class="result-ai-message">Halo, bosku! Mau bahas hasil result atau tanya hal lain?
+
+Klik Hubungkan sekali untuk memakai AI MemoDash. Sertakan tanggal dan hasil jika ingin membahas data tertentu.</div></div>
+ <form id="result-ai-form"><textarea id="result-ai-input" rows="2" maxlength="1200" required placeholder="Tulis pertanyaan…" aria-label="Pertanyaan AI"></textarea><button id="result-ai-send" type="submit">Kirim</button></form>
 </section>
 <style>
 #hasil-ai-panel{position:fixed;right:18px;bottom:78px;z-index:1300;width:390px;max-width:calc(100vw - 24px);height:min(580px,calc(100dvh - 100px));background:#071025;border:1px solid #537faf;border-radius:18px 6px 18px 6px;overflow:hidden;box-shadow:0 12px 45px #0008;display:flex;flex-direction:column}
 #hasil-ai-launch{background:linear-gradient(120deg,#112c48,#281639);border-color:#53d8ff88;color:#eef7ff;border-radius:14px 4px 14px 4px;font-family:var(--font-display);letter-spacing:1px}#hasil-ai-launch::before{content:"";position:absolute;left:15%;right:15%;top:0;height:2px;background:linear-gradient(90deg,#53d8ff,#ff53b5,#ffce45)}
 #hasil-ai-panel[hidden]{display:none}#hasil-ai-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;color:#eaf5ff;background:linear-gradient(115deg,#101f3e,#191331);border-bottom:1px solid #53d8ff55;font:700 14px var(--font-display);letter-spacing:1px}
-#hasil-ai-close{border:0;background:transparent;color:white;min-width:38px;min-height:36px;font-size:20px}#hasil-ai-frame{width:100%;flex:1;min-height:0;border:0;background:#071025}
+#hasil-ai-close{border:0;background:transparent;color:white;min-width:38px;min-height:36px;font-size:20px}
 @media(max-width:760px){#hasil-ai-panel{right:12px;bottom:max(72px,calc(env(safe-area-inset-bottom) + 66px));height:min(560px,calc(100dvh - 94px));box-shadow:none}}
+</style>
+<style>
+#hasil-ai-panel{font-family:var(--font-ui);color:#edf3ff}
+#hasil-ai-minimize,#hasil-ai-close{background:transparent;color:white;border:0;font:22px system-ui;min-width:36px;min-height:36px;cursor:pointer}
+#result-ai-tools{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:9px 12px;background:#101b31;border-bottom:1px solid #304766}
+#result-ai-status{font:11px/1.4 system-ui;color:#ffce45}
+#result-ai-connect{padding:6px 10px;background:#172e49;border:1px solid #5485a8;border-radius:8px 2px;color:#9ee4ff;font:12px system-ui;min-height:34px}
+#result-ai-messages{flex:1;min-height:0;overflow:auto;padding:12px;overscroll-behavior:contain;scrollbar-width:thin}
+.result-ai-message{padding:11px 13px;margin:0 18px 13px 0;background:linear-gradient(120deg,#10213a,#0b152b);border:1px solid #365273;border-left:2px solid #53d8ff;border-radius:3px 12px 12px;font:13px/1.65 system-ui;white-space:pre-wrap;overflow-wrap:anywhere;user-select:text}
+.result-ai-message.user{margin:0 0 13px 18px;border-left:1px solid #715076;border-right:2px solid #ff53b5;background:#21182f;border-radius:12px 3px 12px}
+.result-ai-message.error{border-color:#db7b87;color:#ffd6dc}
+#result-ai-form{display:flex;gap:8px;padding:10px;background:#0c172d;border-top:1px solid #304766}
+#result-ai-input{width:auto;flex:1;min-width:0;resize:none;padding:10px;color:#edf4ff;background:#060e1f;border:1px solid #425d84;border-radius:10px 3px;font:16px/1.4 system-ui;outline:none;user-select:text}
+#result-ai-input:focus{border-color:#53d8ff}
+#result-ai-send{background:linear-gradient(120deg,#19405d,#2c2449);color:white;border:1px solid #5485a8;border-radius:10px 3px;font:700 12px system-ui;padding:0 12px}
+#result-ai-send:disabled{opacity:.45}
 </style>
 <script>
 (()=>{
- const launch=document.getElementById('hasil-ai-launch'),panel=document.getElementById('hasil-ai-panel'),frame=document.getElementById('hasil-ai-frame');
- function toggle(open){panel.hidden=!open;launch.setAttribute('aria-expanded',String(open));if(open&&!frame.getAttribute('src'))frame.src='https://bacoud97.page.gd/hasil-ai.html?v=inline2';if(!open)launch.focus();}
+ const $=id=>document.getElementById(id),origin='https://bacoud97.page.gd';
+ let bridge=null,channel='',ready=false,pending=null,requestSeq=0,connectTimer=null;
+ const panel=$('hasil-ai-panel'),launch=$('hasil-ai-launch');
+ function toggle(open){panel.hidden=!open;launch.setAttribute('aria-expanded',String(open));if(!open)launch.focus();}
  launch.addEventListener('click',()=>toggle(panel.hidden));
- document.getElementById('hasil-ai-minimize').addEventListener('click',()=>toggle(false));
- document.getElementById('hasil-ai-close').addEventListener('click',()=>toggle(false));
+ ['hasil-ai-close','hasil-ai-minimize'].forEach(id=>$(id).addEventListener('click',()=>toggle(false)));
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)toggle(false);});
- window.addEventListener('message',e=>{if(e.origin==='https://bacoud97.page.gd'&&e.source===frame.contentWindow&&e.data?.type==='result-chat-close')toggle(false);});
+ function status(text){$('result-ai-status').textContent=text;}
+ function add(text,type=''){const el=document.createElement('div');el.className='result-ai-message '+type;el.textContent=text;$('result-ai-messages').appendChild(el);$('result-ai-messages').scrollTop=$('result-ai-messages').scrollHeight;}
+ function connect(){
+  if(bridge&&!bridge.closed){bridge.focus();bridge.postMessage({type:'result-ai-ping',channel},origin);return;}
+  if(!window.crypto?.getRandomValues){status('Buka dashboard melalui alamat HTTPS.');return;}
+  channel=Array.from(crypto.getRandomValues(new Uint8Array(24)),b=>b.toString(16).padStart(2,'0')).join('');ready=false;
+  bridge=window.open(origin+'/hasil-ai-bridge.html#'+new URLSearchParams({origin:location.origin,channel}).toString(),'resultAiBridge','width=520,height=420');
+  status(bridge?'Klik Hubungkan dashboard di tab penghubung.':'Popup diblokir. Izinkan popup lalu klik Hubungkan.');
+  clearTimeout(connectTimer);if(bridge)connectTimer=setTimeout(()=>{if(!ready)status('Belum terhubung. Pastikan hasil-ai-bridge.html sudah diunggah dan klik Hubungkan dashboard.');},20000);
+ }
+ $('result-ai-connect').addEventListener('click',connect);
+ function finish(){if(!pending)return;clearTimeout(pending.timer);pending=null;$('result-ai-send').disabled=false;$('result-ai-input').disabled=false;}
+ window.addEventListener('message',e=>{
+  if(e.origin!==origin||e.source!==bridge||e.data?.channel!==channel)return;
+  const d=e.data;
+  if(d.type==='result-ai-ready'){clearTimeout(connectTimer);ready=true;status('Terhubung • AI MemoDash');$('result-ai-connect').textContent='Koneksi';return;}
+  if(d.type!=='result-ai-response'||!pending||d.id!==pending.id)return;
+  const text=pending.message;
+  if(typeof d.reply==='string'&&d.reply.trim())add(d.reply);
+  else{add(typeof d.error==='string'?d.error:'AI belum memberi jawaban.','error');$('result-ai-input').value=text;}
+  finish();status('Terhubung • AI MemoDash');
+ });
+ $('result-ai-form').addEventListener('submit',e=>{
+  e.preventDefault();const message=$('result-ai-input').value.trim();if(!message||pending)return;
+  if(!ready||!bridge||bridge.closed){ready=false;connect();return;}
+  const id=String(++requestSeq);add(message,'user');$('result-ai-input').value='';$('result-ai-send').disabled=true;$('result-ai-input').disabled=true;status('AI sedang menjawab…');
+  pending={id,message,timer:setTimeout(()=>{add('Koneksi belum merespons. Periksa tab penghubung, lalu kirim ulang.','error');$('result-ai-input').value=message;finish();status('Periksa koneksi AI.');},50000)};
+  bridge.postMessage({type:'result-ai-request',channel,id,message},origin);
+ });
 })();
 </script>
 </body>
