@@ -4823,6 +4823,28 @@
       return false;
     });
   </script>
-<a id="hasil-ai-launch" href="https://bacoud97.page.gd/hasil-ai.html" target="_blank" rel="noopener noreferrer" aria-label="Buka AI MemoDash">✦ Tanya AI</a>
+<button id="hasil-ai-launch" type="button" aria-expanded="false" aria-controls="hasil-ai-panel">✦ RESULT AI</button>
+<section id="hasil-ai-panel" role="dialog" aria-label="Chat AI" hidden>
+ <div id="hasil-ai-bar"><strong>✦ RESULT AI <small style="color:#94a4c9;font-size:9px;letter-spacing:1px">ASSISTANT</small></strong><span><button type="button" id="hasil-ai-minimize" aria-label="Minimize chat" style="background:transparent;color:white;border:0;font-size:20px;min-width:36px;min-height:36px">−</button><button type="button" id="hasil-ai-close" aria-label="Tutup chat">✕</button></span></div>
+ <iframe id="hasil-ai-frame" title="Chat AI Hasil Result" referrerpolicy="strict-origin" allow="clipboard-write"></iframe>
+</section>
+<style>
+#hasil-ai-panel{position:fixed;right:18px;bottom:78px;z-index:1300;width:390px;max-width:calc(100vw - 24px);height:min(580px,calc(100dvh - 100px));background:#071025;border:1px solid #537faf;border-radius:18px 6px 18px 6px;overflow:hidden;box-shadow:0 12px 45px #0008;display:flex;flex-direction:column}
+#hasil-ai-launch{background:linear-gradient(120deg,#112c48,#281639);border-color:#53d8ff88;color:#eef7ff;border-radius:14px 4px 14px 4px;font-family:var(--font-display);letter-spacing:1px}#hasil-ai-launch::before{content:"";position:absolute;left:15%;right:15%;top:0;height:2px;background:linear-gradient(90deg,#53d8ff,#ff53b5,#ffce45)}
+#hasil-ai-panel[hidden]{display:none}#hasil-ai-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;color:#eaf5ff;background:linear-gradient(115deg,#101f3e,#191331);border-bottom:1px solid #53d8ff55;font:700 14px var(--font-display);letter-spacing:1px}
+#hasil-ai-close{border:0;background:transparent;color:white;min-width:38px;min-height:36px;font-size:20px}#hasil-ai-frame{width:100%;flex:1;min-height:0;border:0;background:#071025}
+@media(max-width:760px){#hasil-ai-panel{right:12px;bottom:max(72px,calc(env(safe-area-inset-bottom) + 66px));height:min(560px,calc(100dvh - 94px));box-shadow:none}}
+</style>
+<script>
+(()=>{
+ const launch=document.getElementById('hasil-ai-launch'),panel=document.getElementById('hasil-ai-panel'),frame=document.getElementById('hasil-ai-frame');
+ function toggle(open){panel.hidden=!open;launch.setAttribute('aria-expanded',String(open));if(open&&!frame.getAttribute('src'))frame.src='https://bacoud97.page.gd/hasil-ai.html?v=inline2';if(!open)launch.focus();}
+ launch.addEventListener('click',()=>toggle(panel.hidden));
+ document.getElementById('hasil-ai-minimize').addEventListener('click',()=>toggle(false));
+ document.getElementById('hasil-ai-close').addEventListener('click',()=>toggle(false));
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)toggle(false);});
+ window.addEventListener('message',e=>{if(e.origin==='https://bacoud97.page.gd'&&e.source===frame.contentWindow&&e.data?.type==='result-chat-close')toggle(false);});
+})();
+</script>
 </body>
 </html>
